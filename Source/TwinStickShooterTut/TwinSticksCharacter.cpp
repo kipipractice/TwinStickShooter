@@ -2,8 +2,8 @@
 
 
 #include "TwinSticksCharacter.h"
-#include "Gun.h"
 #include "Components/InputComponent.h"
+#include "Gun.h"
 
 // Sets default values
 ATwinSticksCharacter::ATwinSticksCharacter()
@@ -33,7 +33,6 @@ void ATwinSticksCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInpu
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 	
 	// PlayerInputComponent->BindAction("Fire", IE_Pressed, this, &ATwinSticksCharacter::FireGun);
-
 }
 
 /*

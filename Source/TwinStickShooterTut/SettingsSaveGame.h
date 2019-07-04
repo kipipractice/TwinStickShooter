@@ -8,6 +8,10 @@
 
 
 enum class InputType : uint8;
+
+const FString SettingsSaveName = "Settings";
+const uint8 SaveSlotIndex = 0;
+
 /**
  * 
  */

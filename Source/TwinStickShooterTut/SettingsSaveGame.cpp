@@ -6,8 +6,8 @@
 
 USettingsSaveGame::USettingsSaveGame() {
 	this->Type = InputType::PC;
-	this->SaveSlotName = "Settings";
-	this->UserIndex = 0;
+	this->SaveSlotName = SettingsSaveName;
+	this->UserIndex = SaveSlotIndex;
 }
 
 FString USettingsSaveGame::GetSaveSlotName() {

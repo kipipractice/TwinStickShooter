@@ -3,10 +3,11 @@
 
 #include "MenuPlayerController.h"
 
+
+// TODO: Dynamically get type of input device here!
 AMenuPlayerController::AMenuPlayerController() {
 	bShowMouseCursor = true;
 	bEnableClickEvents = true;
 	bEnableMouseOverEvents = true;
-
-	UE_LOG(LogTemp, Warning, TEXT("Should show mouse!"));
 }
+
