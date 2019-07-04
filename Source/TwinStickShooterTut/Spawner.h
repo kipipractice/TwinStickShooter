@@ -7,7 +7,9 @@
 #include "Engine/World.h"
 #include "Spawner.generated.h"
 
+//forward declarations
 class ATwinSticksCharacter;
+class UBoxComponent;
 
 UCLASS()
 class TWINSTICKSHOOTERTUT_API ASpawner : public AActor
@@ -22,11 +24,16 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = Spawner)
-	TSubclassOf<ATwinSticksCharacter> CharacterTemplate;
 
+	UFUNCTION()
 	void SpawnEnemy();
 
+
+	UPROPERTY(BlueprintReadWrite, Category = "Setup")
+	UBoxComponent* BoxComponent;
+
+	UPROPERTY(EditAnywhere, Category = "Setup")
+		TSubclassOf<ATwinSticksCharacter> EnemyClass;
 public:
 
 	virtual void Tick(float DeltaTime) override;

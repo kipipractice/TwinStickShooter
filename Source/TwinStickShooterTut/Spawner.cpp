@@ -3,6 +3,10 @@
 
 #include "Spawner.h"
 #include "TwinSticksCharacter.h"
+#include "TwinStickGameMode.h"
+#include "DebugPrinter.h"
+#include "Runtime/Engine/Classes/Components/BoxComponent.h"
+#include "Runtime/Engine/Classes/Kismet/KismetMathLibrary.h"
 
 // Sets default values
 ASpawner::ASpawner()
@@ -14,6 +18,11 @@ ASpawner::ASpawner()
 void ASpawner::BeginPlay()
 {
 	Super::BeginPlay();
+	if (!BoxComponent) {
+		DebugPrinter::Print("No box component attached to spawner", false);
+	}
+	Cast<ATwinStickGameMode>(GetWorld()->GetAuthGameMode())->OnSpawnEnemies.AddDynamic(this, &ASpawner::SpawnEnemy);
+
 	
 }
 
@@ -23,12 +32,18 @@ void ASpawner::Tick(float DeltaTime) {
 
 
 void ASpawner::SpawnEnemy() {
-	/*
-	FVector Position = FVector(0, 0, 100);
-	GetWorld()->SpawnActor<ATwinSticksCharacter>(
-		CharacterTemplate,
-		Position,
-		FRotator(0, 0, 0)
+	if (!ensure(BoxComponent) && !ensure(EnemyClass)) {
+		return;
+	}
+	DebugPrinter::Print("Spawning Enemy");
+
+	FTransform EnemySpawnPosition = FTransform(
+		UKismetMathLibrary::RandomPointInBoundingBox(
+			GetActorLocation(),
+			BoxComponent->GetScaledBoxExtent()
+		)
 	);
-	*/
+	GetWorld()->SpawnActor<ATwinSticksCharacter>(EnemyClass, EnemySpawnPosition);
+
 }
+

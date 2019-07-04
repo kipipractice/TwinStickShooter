@@ -12,9 +12,13 @@ class ATwinSticksCharacter;
 /**
  * 
  */
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FSpawnEnemies);
+
 UCLASS()
 class TWINSTICKSHOOTERTUT_API ATwinStickGameMode : public AGameModeBase
 {
+
 	GENERATED_BODY()
 public:
 
@@ -28,15 +32,16 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void RespawnPlayer();
 
-	// Sets the respawn location of the player, Call this funciton befre respawning the player
-	UFUNCTION(BlueprintCallable)
-		void SetPlayerRespawnLocation(const FTransform& Location);
 
-	protected:
+	FSpawnEnemies OnSpawnEnemies;
+
+protected:
+	void SpawnEnemies();
+
 	UPROPERTY(BlueprintReadOnly)
-		int CurrentScore;
+		int CurrentScore = 0;
 	UPROPERTY(BlueprintReadWrite)
-		float WaveTimeInterval;
+		float WaveTimeInterval = 1.0f;
 	UPROPERTY(BlueprintReadWrite)
 		FTransform PlayerRespawnLocation;
 	// TODO: TSubclassOf<ATwinStickCharacter> and find a way to cast it to AActor
@@ -45,4 +50,7 @@ public:
 	//player class reference
 	UPROPERTY(EditDefaultsOnly)
 		TSubclassOf<ATwinSticksCharacter> PlayerClass;
+
+	FTimerHandle SpawnTimerHandler;
+
 };
