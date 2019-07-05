@@ -22,10 +22,16 @@ public:
 	UFUNCTION(BlueprintCallable, Category = Projectile)
 	void Fire();
 
+	void PullTrigger();
+
+	void ReleaseTrigger();
+
 	float GetFireRate();
 
 
 protected:
+	FTimerHandle FireTimerHandle;
+
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 

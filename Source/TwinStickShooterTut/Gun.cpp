@@ -4,6 +4,7 @@
 #include "Gun.h"
 #include "Engine/World.h"
 #include "GameFramework/PlayerController.h"
+#include "TimerManager.h"
 #include "Projectile.h"
 
 
@@ -27,6 +28,22 @@ void AGun::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+}
+
+void AGun::PullTrigger() {
+	Fire();
+
+	GetWorld()->GetTimerManager().SetTimer(
+		FireTimerHandle,
+		this,
+		&AGun::Fire,
+		1 / GetFireRate(),
+		true
+	);
+}
+
+void AGun::ReleaseTrigger() {
+	GetWorld()->GetTimerManager().ClearTimer(FireTimerHandle);
 }
 
 
