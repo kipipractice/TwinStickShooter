@@ -47,7 +47,9 @@ void AProjectile::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* Ot
 			EnemyCharacter->GetActorLocation());
 
 		*/
+
+		// TODO: sshe opravime po kusno.
+		Destroy();
 	}
-	Destroy();
 }
 

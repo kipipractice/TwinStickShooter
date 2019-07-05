@@ -39,31 +39,35 @@ protected:
 			class UPrimitiveComponent* OtherComp,
 			int32 OtherBodyIndex);
 
+	void Die_Implementation() override;
+
 	void DealDamage();
 
 
 
 	UPROPERTY(BlueprintReadWrite)
-		UBoxComponent* DamageBox = nullptr;
+	UBoxComponent* DamageBox = nullptr;
 
 
 	//Rate at which the ai controller deals damage (in seconds)
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Setup")
-		float DamageRate = 1.0f;
+	float DamageRate = 1.0f;
 
 	//Delay before starting to deal damage (in seconds)
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Setup")
-		float DamageDelay = 0.1f;
+	float DamageDelay = 0.1f;
 
 	//Damage to deal to the player, per hit
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Setup")
-		float DamagePerHit = 30.0f;
+	float DamagePerHit = 30.0f;
+
+	// Added score when enemy dies.
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Setup")
+	float Score = 500;
 
 
 	FTimerHandle DamageTimerHandle;
 
 	// target player used for checking collision actor
 	APlayerCharacter* PlayerCharacter = nullptr;
-
-
 };

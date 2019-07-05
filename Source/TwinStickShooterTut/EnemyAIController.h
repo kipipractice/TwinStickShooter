@@ -6,6 +6,7 @@
 #include "AIController.h"
 #include "EnemyAIController.generated.h"
 
+class AEnemyCharacter;
 
 /**
  * 
@@ -37,5 +38,4 @@ protected:
 		float TrackDelay = 0.25f;
 
 	void FollowActor();
-
 };

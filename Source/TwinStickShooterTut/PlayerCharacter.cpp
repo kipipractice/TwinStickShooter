@@ -25,8 +25,9 @@ void APlayerCharacter::BeginPlay() {
 }
 
 void APlayerCharacter::Tick(float DeltaTime) {
-	checkf(LookAroundDelegate.IsBound(), TEXT("Delegate for looking around is not set on PlayerCharacter!"));
-	LookAroundDelegate.Execute();
+	if (LookAroundDelegate.IsBound()) {
+		LookAroundDelegate.Execute();
+	}
 }
 
 
@@ -106,6 +107,8 @@ void APlayerCharacter::Die_Implementation() {
 		UE_LOG(LogTemp, Warning, TEXT("Disable input from player!"));
 		DisableInput(PlayerController);
 	}
+
+	LookAroundDelegate.Unbind();
 }
 
 

@@ -8,6 +8,10 @@
 #include "PlayerCharacter.h"
 #include "Runtime/Engine/Classes/Engine/World.h"
 #include "Runtime/Engine/Public/TimerManager.h"
+#include "Classes/AIController.h"
+#include "GameFramework/Controller.h"
+#include "TwinStickGameMode.h"
+
 // Sets default values
 AEnemyCharacter::AEnemyCharacter()
 {
@@ -51,7 +55,6 @@ void AEnemyCharacter::OnBoxBeginOverlap(UPrimitiveComponent* OverlappedComp, AAc
 
 void AEnemyCharacter::DealDamage()
 {
-
 	if (!ensure(DamageBox)) {
 		return;
 	}
@@ -74,3 +77,16 @@ void AEnemyCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComp
 
 }
 
+
+void AEnemyCharacter::Die_Implementation() {
+	Super::Die_Implementation();
+
+	SetActorEnableCollision(false);
+	GetController()->StopMovement();
+	GetController()->Destroy();
+
+	ATwinStickGameMode* GameMode = Cast<ATwinStickGameMode>(GetWorld()->GetAuthGameMode());
+	if (ensure(GameMode)) {
+		GameMode->IncrementScore(Score);
+	}
+}

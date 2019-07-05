@@ -118,7 +118,6 @@ void ATwinSticksCharacter::SetGun(AGun* NewGun) {
 void ATwinSticksCharacter::Die_Implementation() {
 	// TODO: Use error debug printer instead.
 	checkf(DeathSoundComponent, TEXT("No sound component on %s"), *GetName());
-
 	UE_LOG(LogTemp, Warning, TEXT("Character %s is dead!"), *GetName());
 
 	DeathSoundComponent->Play();

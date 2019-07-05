@@ -61,7 +61,8 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Instanced, Category = "Sound")
 	UAudioComponent* DeathSoundComponent;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Base Character")
+	// Time for death animation to play. OnDeathTimerEnd() is called after that.
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Base Character", Meta=(ClampMin = 0.01))
 	float DeathAnimationTime;
 
 	UFUNCTION()
