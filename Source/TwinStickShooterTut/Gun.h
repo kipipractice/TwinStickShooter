@@ -17,20 +17,25 @@ public:
 	// Sets default values for this actor's properties
 	AGun();
 
-protected:
-	// Called when the game starts or when spawned
-	virtual void BeginPlay() override;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Projectile)
-	USceneComponent* GunSpawnPosition;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Projectile)
-	TSubclassOf<class AProjectile> ProjectileTemplate;
-
-public:	
-	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
 	UFUNCTION(BlueprintCallable, Category = Projectile)
 	void Fire();
+
+	float GetFireRate();
+
+
+protected:
+	// Called when the game starts or when spawned
+	virtual void BeginPlay() override;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = Projectile)
+	USceneComponent* GunSpawnPosition;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = Projectile)
+	TSubclassOf<class AProjectile> ProjectileTemplate;
+
+	// Ammount of times gun can fire in a second.
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Gun)
+	float FireRate = 5;
 };

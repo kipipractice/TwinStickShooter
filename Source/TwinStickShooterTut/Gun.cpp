@@ -6,6 +6,7 @@
 #include "GameFramework/PlayerController.h"
 #include "Projectile.h"
 
+
 // Sets default values
 AGun::AGun()
 {
@@ -30,7 +31,6 @@ void AGun::Tick(float DeltaTime)
 
 
 void AGun::Fire() {
-	/*
 	UE_LOG(LogTemp, Warning, TEXT("FIRE!"))
 	checkf(GunSpawnPosition, TEXT("GunSpawnPosition is not set!"));
 	checkf(ProjectileTemplate, TEXT("Projectile template to fire is not set!"));
@@ -47,5 +47,9 @@ void AGun::Fire() {
 		GunSpawnPosition->GetComponentRotation(),
 		SpawnParameters
 	);
-	*/
+}
+
+
+float AGun::GetFireRate() {
+	return FireRate;
 }

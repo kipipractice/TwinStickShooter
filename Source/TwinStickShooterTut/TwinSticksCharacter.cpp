@@ -3,7 +3,13 @@
 
 #include "TwinSticksCharacter.h"
 #include "Components/InputComponent.h"
+#include "GameFramework/Controller.h"
+#include "Kismet/KismetMathLibrary.h"
+#include "TimerManager.h"
+#include "Engine/World.h"
+#include "DebugPrinter.h"
 #include "Gun.h"
+#include "TwinStickGameMode.h"
 
 // Sets default values
 ATwinSticksCharacter::ATwinSticksCharacter()
@@ -18,6 +24,19 @@ ATwinSticksCharacter::ATwinSticksCharacter()
 void ATwinSticksCharacter::BeginPlay()
 {
 	Super::BeginPlay();
+
+	if (StartingGunTemplate) {
+		FActorSpawnParameters SpawnInfo;
+		SpawnInfo.Owner = this;
+		SpawnInfo.Instigator = Instigator;
+
+		Gun = GetWorld()->SpawnActor<AGun>(StartingGunTemplate, SpawnInfo);
+		if (CharacterMesh && CharacterMesh->DoesSocketExist("GunSocket")) {
+			Gun->AttachToComponent(CharacterMesh, FAttachmentTransformRules::SnapToTargetNotIncludingScale, "GunSocket");
+			UE_LOG(LogTemp, Error, TEXT("%s can't attach a gun because socket named 'GunSocket' doesn't exist or there is no mesh!"));
+		}
+	}
+
 }
 
 // Called every frame
@@ -32,24 +51,77 @@ void ATwinSticksCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInpu
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 	
-	// PlayerInputComponent->BindAction("Fire", IE_Pressed, this, &ATwinSticksCharacter::FireGun);
+	PlayerInputComponent->BindAction("Fire", IE_Pressed, this, &ATwinSticksCharacter::StartFiring);
+	PlayerInputComponent->BindAction("Fire", IE_Released, this, &ATwinSticksCharacter::StopFiring);
+
+	PlayerInputComponent->BindAxis("MoveForward", this, &ATwinSticksCharacter::MoveForward);
+	PlayerInputComponent->BindAxis("MoveRight", this, &ATwinSticksCharacter::MoveRight);
 }
 
-/*
+
+void ATwinSticksCharacter::StartFiring() {
+	if (!Gun)
+		return;
+
+	GetWorld()->GetTimerManager().SetTimer(
+		FireTimerHandle,
+		this,
+		&ATwinSticksCharacter::FireGun,
+		1 / Gun->GetFireRate(),
+		true
+	);
+}
+
 void ATwinSticksCharacter::FireGun() {
-	checkf(Gun != nullptr, TEXT("TwinSticksCharacter needs a reference to a gun!"))
+	
+	if (!Gun) {
+		DebugPrinter::Print("Character needs a gun to fire!");
+		return;
+	}
 	Gun->Fire();
 }
-*/
 
-bool ATwinSticksCharacter::IsDead() {
-	return Health <= 0 ? true : false;
+void ATwinSticksCharacter::StopFiring() {
+	if (!Gun)
+		return;
+
+	GetWorld()->GetTimerManager().ClearTimer(FireTimerHandle);
 }
+
+
+void ATwinSticksCharacter::MoveForward(float Value) {
+	AddMovementInput(FVector(1, 0, 0), Value);
+}
+
+
+void ATwinSticksCharacter::MoveRight(float Value) {
+	AddMovementInput(FVector(0, 1, 0), Value);
+}
+
 
 void ATwinSticksCharacter::TakeDamage(float Damage) {
 	UE_LOG(LogTemp, Warning, TEXT("Damage %s by %f"), *GetName(), Damage);
 	Health -= Damage;
-	if (IsDead()) {
+	if (Health <= 0 ? true : false) {
 		bDead = true;
+		Die();
 	}
 }
+
+
+void ATwinSticksCharacter::SetGun(AGun* NewGun) {
+
+}
+
+
+void ATwinSticksCharacter::Die_Implementation() {
+	Destroy();
+}
+
+
+void ATwinSticksCharacter::LookInDirection(FVector Direction) {
+	FRotator Rotation = UKismetMathLibrary::MakeRotFromX(Direction);
+	GetController()->SetControlRotation(Rotation);
+}
+
+

@@ -4,7 +4,9 @@
 #include "PlayerCharacter.h"
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetMathLibrary.h"
+#include "Engine/World.h"
 
+#include "TwinStickGameMode.h"
 #include "CharacterPlayerController.h"
 #include "InputType.h"
 
@@ -15,6 +17,12 @@ APlayerCharacter::APlayerCharacter() {
 
 }
 
+void APlayerCharacter::BeginPlay() {
+	Super::BeginPlay();
+
+	ATwinStickGameMode* GameMode = Cast<ATwinStickGameMode>(GetWorld()->GetAuthGameMode());
+	GameMode->SetPlayerRespawnLocation(GetActorTransform());
+}
 
 void APlayerCharacter::Tick(float DeltaTime) {
 	checkf(LookAroundDelegate.IsBound(), TEXT("Delegate for looking around is not set on PlayerCharacter!"));
@@ -23,6 +31,8 @@ void APlayerCharacter::Tick(float DeltaTime) {
 
 
 void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent) {
+	Super::SetupPlayerInputComponent(PlayerInputComponent);
+
 	ACharacterPlayerController* PlayerController = Cast<ACharacterPlayerController>(GetController());
 	if (PlayerController) {
 		checkf(PlayerInputComponent, TEXT("Player Input Component not found!"));
@@ -76,7 +86,6 @@ void APlayerCharacter::LookAtMousePosition() {
 }
 
 
-
 void APlayerCharacter::LookAtInputAxisDirection() {
 	float X = InputComponent->GetAxisValue("LookUp");
 	float Y = InputComponent->GetAxisValue("LookRight");
@@ -84,7 +93,6 @@ void APlayerCharacter::LookAtInputAxisDirection() {
 	FVector Direction = FVector(X, Y, 0);
 
 	if (Direction.Size() > InputDeadZone) {
-		FRotator Rotation = UKismetMathLibrary::MakeRotFromX(Direction);
-		GetController()->SetControlRotation(Rotation);
+		LookInDirection(Direction);
 	}
 }

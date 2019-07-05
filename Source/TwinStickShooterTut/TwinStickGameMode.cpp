@@ -42,3 +42,8 @@ void ATwinStickGameMode::SpawnEnemies()
 	OnSpawnEnemies.Broadcast();
 
 }
+
+
+void ATwinStickGameMode::SetPlayerRespawnLocation(FTransform PlayerRespawnTransform) {
+	PlayerRespawnLocation = PlayerRespawnTransform;
+}
