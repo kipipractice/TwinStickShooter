@@ -32,6 +32,7 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void RespawnPlayer();
 
+	void SetPlayerRespawnLocation(FTransform PlayerRespawnTransform);
 
 	FSpawnEnemies OnSpawnEnemies;
 
