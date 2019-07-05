@@ -20,7 +20,7 @@ public:
 	bool IsDead();
 
 	UFUNCTION(BlueprintCallable, Category = "Base Character")
-	virtual void TakeDamage(float Damage);
+		virtual void TakeDamage(float Damage);
 
 protected:
 	// Called when the game starts or when spawned

@@ -5,11 +5,14 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "Engine/World.h"
+#include "Runtime/Core/Public/Containers/Array.h"
 #include "Spawner.generated.h"
+
 
 //forward declarations
 class ATwinSticksCharacter;
 class UBoxComponent;
+
 
 UCLASS()
 class TWINSTICKSHOOTERTUT_API ASpawner : public AActor
@@ -33,8 +36,6 @@ protected:
 	UBoxComponent* BoxComponent;
 
 	UPROPERTY(EditAnywhere, Category = "Setup")
-		TSubclassOf<ATwinSticksCharacter> EnemyClass;
-public:
+		TArray<TSubclassOf<ATwinSticksCharacter>> EnemyClasses;
 
-	virtual void Tick(float DeltaTime) override;
 };

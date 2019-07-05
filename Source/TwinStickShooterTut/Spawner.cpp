@@ -26,24 +26,23 @@ void ASpawner::BeginPlay()
 	
 }
 
-void ASpawner::Tick(float DeltaTime) {
-
-}
-
 
 void ASpawner::SpawnEnemy() {
-	if (!ensure(BoxComponent) && !ensure(EnemyClass)) {
+	if (!ensure(BoxComponent) && !ensure(EnemyClasses.Num() > 0)) {
 		return;
 	}
-	DebugPrinter::Print("Spawning Enemy");
+	//DebugPrinter::Print("Spawning Enemy");
+	for (auto&& EnemyClass : EnemyClasses) {
 
-	FTransform EnemySpawnPosition = FTransform(
-		UKismetMathLibrary::RandomPointInBoundingBox(
-			GetActorLocation(),
-			BoxComponent->GetScaledBoxExtent()
-		)
-	);
-	GetWorld()->SpawnActor<ATwinSticksCharacter>(EnemyClass, EnemySpawnPosition);
+		FTransform EnemySpawnPosition = FTransform(
+			UKismetMathLibrary::RandomPointInBoundingBox(
+				GetActorLocation(),
+				BoxComponent->GetScaledBoxExtent()
+			)
+		);
+		GetWorld()->SpawnActor<ATwinSticksCharacter>(EnemyClass, EnemySpawnPosition);
+	}
+
 
 }
 
