@@ -31,8 +31,11 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 protected:
-
 	virtual void BeginPlay() override;
+	
+	virtual void Die_Implementation() override;
+
+	virtual void OnDeathTimerEnd() override;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Input")
 	InputType ControllerInputType;
@@ -48,5 +51,4 @@ protected:
 	void LookAtInputAxisDirection();
 
 	FLookAroundDelegate LookAroundDelegate;
-	
 };

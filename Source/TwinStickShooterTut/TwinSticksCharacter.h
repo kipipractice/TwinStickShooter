@@ -4,11 +4,12 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
-#include "Engine/EngineTypes.h"
 #include "Components/MeshComponent.h"
+#include "Engine/EngineTypes.h"
 #include "TwinSticksCharacter.generated.h"
 
 class AGun;
+class UAudioComponent;
 
 UCLASS(Blueprintable)
 class TWINSTICKSHOOTERTUT_API ATwinSticksCharacter : public ACharacter
@@ -20,7 +21,7 @@ public:
 	ATwinSticksCharacter();
 
 	UFUNCTION(BlueprintCallable, Category = "Base Character")
-		virtual void TakeDamage(float Damage);
+	virtual void TakeDamage(float Damage);
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Base Character")
 	void Die();
@@ -57,17 +58,32 @@ protected:
 	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = "Gun")
 	AGun* Gun = nullptr;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Instanced, Category = "Sound")
+	UAudioComponent* DeathSoundComponent;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Base Character")
+	float DeathAnimationTime;
+
+	UFUNCTION()
 	virtual void Die_Implementation();
 
+	UFUNCTION()
 	void LookInDirection(FVector Direction);
 
+	UFUNCTION()
 	void SetGun(AGun* NewGun);
 
+	UFUNCTION()
 	void StartFiring();
 
+	UFUNCTION()
 	void StopFiring();
 
+	UFUNCTION()
+	virtual void OnDeathTimerEnd();
+
 private:
+	FTimerHandle DeathTimerHandle;
 
 	void MoveForward(float Value);
 

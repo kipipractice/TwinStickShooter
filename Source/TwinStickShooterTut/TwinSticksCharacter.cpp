@@ -7,6 +7,8 @@
 #include "Kismet/KismetMathLibrary.h"
 #include "TimerManager.h"
 #include "Engine/World.h"
+#include "Components/AudioComponent.h"
+
 #include "DebugPrinter.h"
 #include "Gun.h"
 #include "TwinStickGameMode.h"
@@ -16,6 +18,9 @@ ATwinSticksCharacter::ATwinSticksCharacter()
 {
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
+
+	DeathSoundComponent = CreateDefaultSubobject<UAudioComponent>("DeathSoundAudioComponent");
+	DeathSoundComponent->bAutoActivate = false;
 
 	Health = MaxHealth;
 }
@@ -31,14 +36,8 @@ void ATwinSticksCharacter::BeginPlay()
 		SpawnInfo.Instigator = Instigator;
 
 		Gun = GetWorld()->SpawnActor<AGun>(StartingGunTemplate, SpawnInfo);
-		if (CharacterMesh && CharacterMesh->DoesSocketExist("GunSocket")) {
-			Gun->AttachToComponent(CharacterMesh, FAttachmentTransformRules::SnapToTargetNotIncludingScale, "GunSocket");
-		}
-		else {
-			UE_LOG(LogTemp, Error, TEXT("%s can't attach a gun because socket named 'GunSocket' doesn't exist or there is no mesh!"));
-		}
+		SetGun(Gun);
 	}
-
 }
 
 // Called every frame
@@ -62,17 +61,16 @@ void ATwinSticksCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInpu
 
 
 void ATwinSticksCharacter::StartFiring() {
-	if (!ensure(Gun)) {
-		DebugPrinter::Print("Character needs a gun to fire!");
+	if (!Gun)
 		return;
-	}
+
 	Gun->PullTrigger();
 }
 
 void ATwinSticksCharacter::StopFiring() {
-	if (!ensure(Gun)) {
+	if (!Gun)
 		return;
-	}
+
 	Gun->ReleaseTrigger();
 }
 
@@ -88,6 +86,10 @@ void ATwinSticksCharacter::MoveRight(float Value) {
 
 
 void ATwinSticksCharacter::TakeDamage(float Damage) {
+	if (bDead) {
+		return;
+	}
+
 	UE_LOG(LogTemp, Warning, TEXT("Damage %s by %f"), *GetName(), Damage);
 	Health -= Damage;
 	if (Health <= 0 ? true : false) {
@@ -98,11 +100,41 @@ void ATwinSticksCharacter::TakeDamage(float Damage) {
 
 
 void ATwinSticksCharacter::SetGun(AGun* NewGun) {
-
+	if (CharacterMesh && CharacterMesh->DoesSocketExist("GunSocket")) {
+		Gun->AttachToComponent(CharacterMesh, FAttachmentTransformRules::SnapToTargetNotIncludingScale, "GunSocket");
+	}
+	else
+	{
+		UE_LOG(
+			LogTemp,
+			Error,
+			TEXT("%s can't attach a gun because socket named 'GunSocket' doesn't exist or there is no mesh!"),
+			*GetName()
+		);
+	}
 }
 
 
 void ATwinSticksCharacter::Die_Implementation() {
+	// TODO: Use error debug printer instead.
+	checkf(DeathSoundComponent, TEXT("No sound component on %s"), *GetName());
+
+	UE_LOG(LogTemp, Warning, TEXT("Character %s is dead!"), *GetName());
+
+	DeathSoundComponent->Play();
+	GetWorld()->GetTimerManager().SetTimer(
+		DeathTimerHandle,
+		this,
+		&ATwinSticksCharacter::OnDeathTimerEnd,
+		DeathAnimationTime,
+		true
+	);
+
+	StopFiring();
+}
+
+
+void ATwinSticksCharacter::OnDeathTimerEnd() {
 	Destroy();
 }
 

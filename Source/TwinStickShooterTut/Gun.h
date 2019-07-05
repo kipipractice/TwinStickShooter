@@ -6,9 +6,7 @@
 #include "GameFramework/Actor.h"
 #include "Gun.generated.h"
 
-
 class USceneComponent;
-class UAudioComponent;
 
 UCLASS()
 class TWINSTICKSHOOTERTUT_API AGun : public AActor
@@ -19,33 +17,31 @@ public:
 	// Sets default values for this actor's properties
 	AGun();
 
+	virtual void Tick(float DeltaTime) override;
 
-	UFUNCTION(BlueprintCallable, Category = "Projectile")
-		void PullTrigger();
+	UFUNCTION(BlueprintCallable, Category = Projectile)
+	void Fire();
 
-	// start spawning projectiles at the specified gun spawn position
-	UFUNCTION(BlueprintCallable, Category = "Projectile")
-		void ReleaseTrigger();
+	void PullTrigger();
+
+	void ReleaseTrigger();
+
+	float GetFireRate();
 
 
 protected:
+	FTimerHandle FireTimerHandle;
+
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-	virtual void Fire();
-
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = Projectile)
-	USceneComponent* ProjectileSpawnPosition;
+	USceneComponent* GunSpawnPosition;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = Projectile)
 	TSubclassOf<class AProjectile> ProjectileTemplate;
 
-	// Amount of times gun can fire in a second.
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = Gun)
-	float FireRate = 10.0f;
-
-	FTimerHandle FireTimerHandle;
-
-	UAudioComponent* AudioComponent;
-
+	// Ammount of times gun can fire in a second.
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Gun)
+	float FireRate = 5;
 };

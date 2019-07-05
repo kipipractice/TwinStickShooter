@@ -96,3 +96,22 @@ void APlayerCharacter::LookAtInputAxisDirection() {
 		LookInDirection(Direction);
 	}
 }
+
+
+void APlayerCharacter::Die_Implementation() {
+	Super::Die_Implementation();
+
+	APlayerController* PlayerController = Cast<APlayerController>(GetController());
+	if (PlayerController) {
+		UE_LOG(LogTemp, Warning, TEXT("Disable input from player!"));
+		DisableInput(PlayerController);
+	}
+}
+
+
+void APlayerCharacter::OnDeathTimerEnd() {
+	Super::OnDeathTimerEnd();
+
+	ATwinStickGameMode* GameMode = Cast<ATwinStickGameMode>(GetWorld()->GetAuthGameMode());
+	GameMode->RespawnPlayer();
+}
