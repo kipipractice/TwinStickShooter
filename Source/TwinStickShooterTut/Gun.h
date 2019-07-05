@@ -7,6 +7,7 @@
 #include "Gun.generated.h"
 
 class USceneComponent;
+class UAudioComponent;
 
 UCLASS()
 class TWINSTICKSHOOTERTUT_API AGun : public AActor
@@ -44,4 +45,7 @@ protected:
 	// Ammount of times gun can fire in a second.
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Gun)
 	float FireRate = 5;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Instanced, Category = "Sound")
+	UAudioComponent* FireSoundComponent;
 };
