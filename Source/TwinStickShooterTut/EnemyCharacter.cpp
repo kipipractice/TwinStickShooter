@@ -36,7 +36,6 @@ void AEnemyCharacter::BeginPlay() {
 
 void AEnemyCharacter::OnBoxBeginOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	DebugPrinter::Print("Overlap ended");
 	if (Cast<APlayerCharacter>(OtherActor) == PlayerCharacter) {
 		DebugPrinter::Print("overlapping with player");
 		GetWorldTimerManager().SetTimer(
@@ -61,7 +60,6 @@ void AEnemyCharacter::DealDamage()
 
 void AEnemyCharacter::OnOverlapEnd(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
 {
-	DebugPrinter::Print("Overlap ended");
 	if (Cast<APlayerCharacter>(OtherActor) == PlayerCharacter) {
 		GetWorldTimerManager().ClearTimer(DamageTimerHandle);
 		DebugPrinter::Print("stop the damage timer");

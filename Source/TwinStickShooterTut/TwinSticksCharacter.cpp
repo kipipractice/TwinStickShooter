@@ -33,6 +33,8 @@ void ATwinSticksCharacter::BeginPlay()
 		Gun = GetWorld()->SpawnActor<AGun>(StartingGunTemplate, SpawnInfo);
 		if (CharacterMesh && CharacterMesh->DoesSocketExist("GunSocket")) {
 			Gun->AttachToComponent(CharacterMesh, FAttachmentTransformRules::SnapToTargetNotIncludingScale, "GunSocket");
+		}
+		else {
 			UE_LOG(LogTemp, Error, TEXT("%s can't attach a gun because socket named 'GunSocket' doesn't exist or there is no mesh!"));
 		}
 	}
@@ -60,32 +62,18 @@ void ATwinSticksCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInpu
 
 
 void ATwinSticksCharacter::StartFiring() {
-	if (!Gun)
-		return;
-
-	GetWorld()->GetTimerManager().SetTimer(
-		FireTimerHandle,
-		this,
-		&ATwinSticksCharacter::FireGun,
-		1 / Gun->GetFireRate(),
-		true
-	);
-}
-
-void ATwinSticksCharacter::FireGun() {
-	
-	if (!Gun) {
+	if (!ensure(Gun)) {
 		DebugPrinter::Print("Character needs a gun to fire!");
 		return;
 	}
-	Gun->Fire();
+	Gun->PullTrigger();
 }
 
 void ATwinSticksCharacter::StopFiring() {
-	if (!Gun)
+	if (!ensure(Gun)) {
 		return;
-
-	GetWorld()->GetTimerManager().ClearTimer(FireTimerHandle);
+	}
+	Gun->ReleaseTrigger();
 }
 
 

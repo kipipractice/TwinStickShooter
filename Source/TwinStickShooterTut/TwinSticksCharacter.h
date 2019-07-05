@@ -4,8 +4,8 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
-#include "Components/MeshComponent.h"
 #include "Engine/EngineTypes.h"
+#include "Components/MeshComponent.h"
 #include "TwinSticksCharacter.generated.h"
 
 class AGun;
@@ -65,12 +65,9 @@ protected:
 
 	void StartFiring();
 
-	void FireGun();
-
 	void StopFiring();
 
 private:
-	FTimerHandle FireTimerHandle;
 
 	void MoveForward(float Value);
 

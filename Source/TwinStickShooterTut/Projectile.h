@@ -6,6 +6,11 @@
 #include "GameFramework/Actor.h"
 #include "Projectile.generated.h"
 
+
+//forward declarations
+class UProjectileMovementComponent;
+class UCapsuleComponent;
+
 UCLASS()
 class TWINSTICKSHOOTERTUT_API AProjectile : public AActor
 {
@@ -19,8 +24,20 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-public:	
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
+	UFUNCTION()
+		void OnOverlapBegin(UPrimitiveComponent * OverlappedComp,
+			AActor * OtherActor, UPrimitiveComponent * OtherComp,
+			int32 OtherBodyIndex, bool bFromSweep,
+			const FHitResult & SweepResult);
 
+	UProjectileMovementComponent* ProjectileMovementComponent;
+	
+	UPROPERTY(BlueprintReadWrite)
+	UCapsuleComponent* CapsuleComponent = nullptr;
+
+	//UPROPERTY(EditDefaultsOnly, Category = "Setup")
+	//	TSubclassOf<UParticleSystem> HitParticleEmitter;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Gameplay")
+		float Damage = 30.0f;
 };
