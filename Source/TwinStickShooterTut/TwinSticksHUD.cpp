@@ -2,33 +2,29 @@
 
 
 #include "TwinSticksHUD.h"
-#include "Components/TextBlock.h"
-#include "Components/ProgressBar.h"
+#include "Containers/UnrealString.h"
 #include "DebugPrinter.h"
-
-
 
 void ATwinSticksHUD::SetMaxHealth(float Health) {
 	MaxHealth = Health;
 }
 
 void ATwinSticksHUD::SetHealth(float Health) {
-	/*
-	if (!HealthBar) {
+	if (!ensure(HealthBar)) {
 		DebugPrinter::Print("No healthbar!");
+		return;
 	}
 
 	HealthBar->SetPercent((float)(Health / MaxHealth));
-	*/
 }
 
 
-void ATwinSticksHUD::SetScore(float Score) {
-	/*
-	if (!ScoreText) {
+void ATwinSticksHUD::SetScore(int Score) {
+
+	if (!ensure(ScoreText)) {
 		DebugPrinter::Print("No score text!");
+		return;
 	}
 
-	ScoreText->SetText(FText::AsPercent(Score));
-	*/
+	ScoreText->SetText(FText::FromString(FString::FromInt(Score)));
 }

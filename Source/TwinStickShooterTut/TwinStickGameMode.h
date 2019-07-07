@@ -54,4 +54,7 @@ protected:
 
 	FTimerHandle SpawnTimerHandler;
 
+	UFUNCTION()
+	void UpdateHUDScore(int Score);
+
 };

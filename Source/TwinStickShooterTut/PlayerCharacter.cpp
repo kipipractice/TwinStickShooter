@@ -5,7 +5,9 @@
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "Engine/World.h"
+#include "GameFramework/PlayerController.h"
 
+#include "TwinSticksHUD.h"
 #include "TwinStickGameMode.h"
 #include "CharacterPlayerController.h"
 #include "InputType.h"
@@ -68,6 +70,38 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 	else
 	{
 		UE_LOG(LogTemp, Error, TEXT("Wrong type of controller possesed player controlled character!"))
+	}
+}
+
+
+void APlayerCharacter::TakeDamage(float Damage) {
+	Super::TakeDamage(Damage);
+
+	if (ensure(HUD)) {
+		HUD->SetHealth(Health);
+	}
+}
+
+
+void APlayerCharacter::PossessedBy(AController* Controller) {
+	Super::PossessedBy(Controller);
+
+	APlayerController* PlayerController = Cast<APlayerController>(GetController());
+	if (PlayerController) {
+		HUD = Cast<ATwinSticksHUD>(PlayerController->GetHUD());
+		if (ensure(HUD)) {
+			HUD->SetMaxHealth(MaxHealth);
+			HUD->SetHealth(Health);
+		}
+		else
+		{
+			// TODO: Change when updated version of debug printer with error logging is available.
+			UE_LOG(LogTemp, Error, TEXT("Player Character doesn't have a controller with a TwinSticksHUD"));
+		}
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Initialized PlayerCharacter without a PlayerController"));
 	}
 }
 

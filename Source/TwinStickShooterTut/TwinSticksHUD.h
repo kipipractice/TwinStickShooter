@@ -4,10 +4,9 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/HUD.h"
+#include "Components/TextBlock.h"
+#include "Components/ProgressBar.h"
 #include "TwinSticksHUD.generated.h"
-
-class UProgressBar;
-class UTextBlock;
 
 /**
  * 
@@ -25,16 +24,21 @@ public:
 	void SetHealth(float Health);
 
 	UFUNCTION()
-	void SetScore(float Score);
+	void SetScore(int Score);
+
+
+	
+
 
 protected:
-
-	//UPROPERTY(BlueprintReadWrite)
-	//UProgressBar* HealthBar;
-
-	//UPROPERTY(BlueprintReadWrite)
-	//UTextBlock* ScoreText;
-
 	UPROPERTY(VisibleAnywhere, Category = "Health")
 	float MaxHealth = 100;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "HUD")
+	UProgressBar* HealthBar;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "HUD")
+	UTextBlock* ScoreText;
+
+
 };

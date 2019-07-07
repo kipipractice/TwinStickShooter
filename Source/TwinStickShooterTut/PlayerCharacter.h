@@ -6,7 +6,7 @@
 #include "TwinSticksCharacter.h"
 #include "PlayerCharacter.generated.h"
 
-
+class ATwinSticksHUD;
 
 
 enum class InputType : uint8;
@@ -27,8 +27,11 @@ public:
 
 	virtual void SetupPlayerInputComponent(UInputComponent* InputComponent) override;
 
-
 	virtual void Tick(float DeltaTime) override;
+
+	void TakeDamage(float Damage) override;
+
+	void PossessedBy(AController* Controller) override;
 
 protected:
 	virtual void BeginPlay() override;
@@ -36,6 +39,9 @@ protected:
 	virtual void Die_Implementation() override;
 
 	virtual void OnDeathTimerEnd() override;
+
+	UPROPERTY()
+	ATwinSticksHUD* HUD;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Input")
 	InputType ControllerInputType;

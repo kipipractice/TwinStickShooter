@@ -7,6 +7,8 @@
 #include "Runtime/Engine/Classes/Kismet/GameplayStatics.h"
 #include "TwinSticksCharacter.h"
 #include "Runtime/Engine/Public/TimerManager.h"
+#include "Kismet/GameplayStatics.h"
+#include "TwinSticksHUD.h"
 
 void ATwinStickGameMode::BeginPlay()
 {
@@ -19,6 +21,20 @@ void ATwinStickGameMode::BeginPlay()
 void ATwinStickGameMode::IncrementScore(const int Amount)
 {
 	this->CurrentScore += Amount;
+
+	UpdateHUDScore(this->CurrentScore);
+}
+
+
+void ATwinStickGameMode::UpdateHUDScore(int Score) {
+	TArray<AActor*> HUDs;
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), HUDClass, HUDs);
+	for (AActor* HUD : HUDs) {
+		ATwinSticksHUD* TwinSticksHUD = Cast<ATwinSticksHUD>(HUD);
+		if (TwinSticksHUD) {
+			TwinSticksHUD->SetScore(Score);
+		}
+	}
 }
 
 void ATwinStickGameMode::RespawnPlayer()
