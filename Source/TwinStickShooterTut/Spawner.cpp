@@ -19,7 +19,7 @@ void ASpawner::BeginPlay()
 {
 	Super::BeginPlay();
 	if (!BoxComponent) {
-		DebugPrinter::Print("No box component attached to spawner", false);
+		DebugPrinter::Print("No box component attached to spawner");
 	}
 	Cast<ATwinStickGameMode>(GetWorld()->GetAuthGameMode())->OnSpawnEnemies.AddDynamic(this, &ASpawner::SpawnEnemy);
 

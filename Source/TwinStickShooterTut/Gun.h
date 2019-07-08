@@ -31,10 +31,17 @@ public:
 
 
 protected:
-	FTimerHandle FireTimerHandle;
 
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
+
+	UFUNCTION()
+	void SpawnProjectile();
+
+	UFUNCTION()
+	void PlayFireSound();
+
+	FTimerHandle FireTimerHandle;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = Projectile)
 	USceneComponent* GunSpawnPosition;
@@ -48,4 +55,5 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Instanced, Category = "Sound")
 	UAudioComponent* FireSoundComponent;
+
 };

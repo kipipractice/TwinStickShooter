@@ -36,7 +36,7 @@ void ATwinSticksCharacter::BeginPlay()
 		SpawnInfo.Instigator = Instigator;
 
 		Gun = GetWorld()->SpawnActor<AGun>(StartingGunTemplate, SpawnInfo);
-		SetGun(Gun);
+		SpawnGun(Gun);
 	}
 }
 
@@ -90,7 +90,7 @@ void ATwinSticksCharacter::TakeDamage(float Damage) {
 		return;
 	}
 
-	UE_LOG(LogTemp, Warning, TEXT("Damage %s by %f"), *GetName(), Damage);
+
 	Health -= Damage;
 	if (Health <= 0 ? true : false) {
 		bDead = true;
@@ -99,19 +99,13 @@ void ATwinSticksCharacter::TakeDamage(float Damage) {
 }
 
 
-void ATwinSticksCharacter::SetGun(AGun* NewGun) {
-	if (CharacterMesh && CharacterMesh->DoesSocketExist("GunSocket")) {
-		Gun->AttachToComponent(CharacterMesh, FAttachmentTransformRules::SnapToTargetNotIncludingScale, "GunSocket");
+void ATwinSticksCharacter::SpawnGun(AGun* NewGun) {
+	if (!(ensure(CharacterMesh && CharacterMesh->DoesSocketExist("GunSocket")))) {
+		// TODO: Add formatting to DebugPrinter
+		DebugPrinter::Print("Cannot spawn a gun because no socket named 'GunSocket' exists or there is no character mesh!", EMessageType::Error);
 	}
-	else
-	{
-		UE_LOG(
-			LogTemp,
-			Error,
-			TEXT("%s can't attach a gun because socket named 'GunSocket' doesn't exist or there is no mesh!"),
-			*GetName()
-		);
-	}
+
+	Gun->AttachToComponent(CharacterMesh, FAttachmentTransformRules::SnapToTargetNotIncludingScale, "GunSocket");
 }
 
 

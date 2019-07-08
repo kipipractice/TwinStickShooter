@@ -24,7 +24,7 @@ void AEnemyCharacter::BeginPlay() {
 	Super::BeginPlay();
 
 	if (!DamageBox) {
-		DebugPrinter::Print("Enemy damage collision box not set");
+		DebugPrinter::Print("Enemy damage collision box not set", EMessageType::Error);
 	}
 	else {
 		DamageBox->OnComponentBeginOverlap.AddDynamic(this, &AEnemyCharacter::OnBoxBeginOverlap);
@@ -32,7 +32,7 @@ void AEnemyCharacter::BeginPlay() {
 	}
 	PlayerCharacter = Cast<APlayerCharacter>(GetWorld()->GetFirstPlayerController()->GetPawn());
 	if (!PlayerCharacter) {
-		DebugPrinter::Print("Could not find target player");
+		DebugPrinter::Print("Could not find target player", EMessageType::Error);
 	}
 
 }
@@ -41,7 +41,6 @@ void AEnemyCharacter::BeginPlay() {
 void AEnemyCharacter::OnBoxBeginOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
 	if (Cast<APlayerCharacter>(OtherActor) == PlayerCharacter) {
-		DebugPrinter::Print("overlapping with player");
 		GetWorldTimerManager().SetTimer(
 			DamageTimerHandle,
 			this,
@@ -65,7 +64,6 @@ void AEnemyCharacter::OnOverlapEnd(class UPrimitiveComponent* OverlappedComp, cl
 {
 	if (Cast<APlayerCharacter>(OtherActor) == PlayerCharacter) {
 		GetWorldTimerManager().ClearTimer(DamageTimerHandle);
-		DebugPrinter::Print("stop the damage timer");
 	}
 }
 

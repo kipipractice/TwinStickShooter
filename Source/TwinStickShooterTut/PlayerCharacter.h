@@ -34,11 +34,13 @@ public:
 	void PossessedBy(AController* Controller) override;
 
 protected:
-	virtual void BeginPlay() override;
+	void BeginPlay() override;
 	
-	virtual void Die_Implementation() override;
+	void Die_Implementation() override;
 
-	virtual void OnDeathTimerEnd() override;
+	void OnDeathTimerEnd() override;
+
+	FLookAroundDelegate LookAroundDelegate;
 
 	UPROPERTY()
 	ATwinSticksHUD* HUD;
@@ -56,5 +58,12 @@ protected:
 	UFUNCTION()
 	void LookAtInputAxisDirection();
 
-	FLookAroundDelegate LookAroundDelegate;
+	UFUNCTION()
+	void SetMouseEventsEnabled(bool bEnabled);
+
+	UFUNCTION()
+	void SetupMouseInputScheme(UInputComponent* PlayerInputComponent);
+
+	UFUNCTION()
+	void SetupControllerInputScheme(UInputComponent* PlayerInputComponent);
 };

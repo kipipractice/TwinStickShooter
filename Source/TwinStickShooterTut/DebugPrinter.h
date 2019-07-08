@@ -23,4 +23,9 @@ public:
 	~DebugPrinter();
 
 	static void Print(const char* Message, EMessageType MessageType = EMessageType::Info, const bool bPrintToScreen = true, const bool bPrintToLog = true);
+
+
+private:
+	static constexpr float MESSAGE_LENGTH = 5.0f;
+
 };

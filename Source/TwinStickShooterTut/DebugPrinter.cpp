@@ -18,13 +18,13 @@ void DebugPrinter::Print(const char* Message, EMessageType MessageType, const bo
 	if (bPrintToScreen && GEngine) {
 		switch (MessageType) {
 			case EMessageType::Info:
-				GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Blue, FString(UTF8_TO_TCHAR(Message)));
+				GEngine->AddOnScreenDebugMessage(-1, DebugPrinter::MESSAGE_LENGTH, FColor::Blue, FString(UTF8_TO_TCHAR(Message)));
 				break;
 			case EMessageType::Warning:
-				GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, FString(UTF8_TO_TCHAR(Message)));
+				GEngine->AddOnScreenDebugMessage(-1, DebugPrinter::MESSAGE_LENGTH, FColor::Yellow, FString(UTF8_TO_TCHAR(Message)));
 				break;
 			case EMessageType::Error:
-				GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, FString(UTF8_TO_TCHAR(Message)));
+				GEngine->AddOnScreenDebugMessage(-1, DebugPrinter::MESSAGE_LENGTH, FColor::Red, FString(UTF8_TO_TCHAR(Message)));
 				break;
 		}
 	}

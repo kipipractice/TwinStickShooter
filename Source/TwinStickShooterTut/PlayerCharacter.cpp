@@ -11,6 +11,7 @@
 #include "TwinStickGameMode.h"
 #include "CharacterPlayerController.h"
 #include "InputType.h"
+#include "DebugPrinter.h"
 
 
 
@@ -19,12 +20,14 @@ APlayerCharacter::APlayerCharacter() {
 
 }
 
+
 void APlayerCharacter::BeginPlay() {
 	Super::BeginPlay();
 
 	ATwinStickGameMode* GameMode = Cast<ATwinStickGameMode>(GetWorld()->GetAuthGameMode());
 	GameMode->SetPlayerRespawnLocation(GetActorTransform());
 }
+
 
 void APlayerCharacter::Tick(float DeltaTime) {
 	if (LookAroundDelegate.IsBound()) {
@@ -36,41 +39,49 @@ void APlayerCharacter::Tick(float DeltaTime) {
 void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent) {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
+	if (!PlayerInputComponent)
+		return;
+
 	ACharacterPlayerController* PlayerController = Cast<ACharacterPlayerController>(GetController());
 	if (PlayerController) {
-		checkf(PlayerInputComponent, TEXT("Player Input Component not found!"));
 		ControllerInputType = PlayerController->GetInputType();
 		if (ControllerInputType == InputType::PC) {
-			UE_LOG(LogTemp, Warning, TEXT("Setup input type for PC!"));
-
-			LookAroundDelegate.BindDynamic(this, &APlayerCharacter::LookAtMousePosition);
-
-			PlayerController->bShowMouseCursor = true;
-			PlayerController->bEnableClickEvents = true;
-			PlayerController->bEnableMouseOverEvents = true;
+			SetupMouseInputScheme(InputComponent);
 		}
 		else if (ControllerInputType == InputType::Controller)
 		{
-			UE_LOG(LogTemp, Warning, TEXT("Setup input type for Controller!"));
-
-			LookAroundDelegate.BindDynamic(this, &APlayerCharacter::LookAtInputAxisDirection);
-
-			PlayerInputComponent->BindAxis("LookUp");
-			PlayerInputComponent->BindAxis("LookRight");
-
-			PlayerController->bShowMouseCursor = false;
-			PlayerController->bEnableClickEvents = false;
-			PlayerController->bEnableMouseOverEvents = false;
+			SetupControllerInputScheme(InputComponent);
 		}
 		else
 		{
-			UE_LOG(LogTemp, Error, TEXT("Unknown input type detected!"));
+			unimplemented();
 		}
 	}
 	else
 	{
-		UE_LOG(LogTemp, Error, TEXT("Wrong type of controller possesed player controlled character!"))
+		DebugPrinter::Print("Wrong type of controller possesed PlayerCharacter!", EMessageType::Error);
 	}
+}
+
+
+void APlayerCharacter::SetupMouseInputScheme(UInputComponent* PlayerInputComponent) {
+	DebugPrinter::Print("Setup PC scheme!");
+
+	SetMouseEventsEnabled(true);
+
+	LookAroundDelegate.BindDynamic(this, &APlayerCharacter::LookAtMousePosition);
+}
+
+
+void APlayerCharacter::SetupControllerInputScheme(UInputComponent* PlayerInputComponent) {
+	DebugPrinter::Print("Setup controller scheme!");
+
+	SetMouseEventsEnabled(false);
+
+	LookAroundDelegate.BindDynamic(this, &APlayerCharacter::LookAtInputAxisDirection);
+
+	PlayerInputComponent->BindAxis("LookUp");
+	PlayerInputComponent->BindAxis("LookRight");
 }
 
 
@@ -79,6 +90,10 @@ void APlayerCharacter::TakeDamage(float Damage) {
 
 	if (ensure(HUD)) {
 		HUD->SetHealth(Health);
+	}
+	else
+	{
+		DebugPrinter::Print("No HUD for PlayerCharacter!", EMessageType::Error);
 	}
 }
 
@@ -95,13 +110,12 @@ void APlayerCharacter::PossessedBy(AController* Controller) {
 		}
 		else
 		{
-			// TODO: Change when updated version of debug printer with error logging is available.
-			UE_LOG(LogTemp, Error, TEXT("Player Character doesn't have a controller with a TwinSticksHUD"));
+			DebugPrinter::Print("Player Character doesn't have a controller with a TwinSticksHUD", EMessageType::Error);
 		}
 	}
 	else
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Initialized PlayerCharacter without a PlayerController"));
+		DebugPrinter::Print("Initialized PlayerCharacter without a PlayerController", EMessageType::Warning);
 	}
 }
 
@@ -138,7 +152,6 @@ void APlayerCharacter::Die_Implementation() {
 
 	APlayerController* PlayerController = Cast<APlayerController>(GetController());
 	if (PlayerController) {
-		UE_LOG(LogTemp, Warning, TEXT("Disable input from player!"));
 		DisableInput(PlayerController);
 	}
 
@@ -151,4 +164,14 @@ void APlayerCharacter::OnDeathTimerEnd() {
 
 	ATwinStickGameMode* GameMode = Cast<ATwinStickGameMode>(GetWorld()->GetAuthGameMode());
 	GameMode->RespawnPlayer();
+}
+
+
+void APlayerCharacter::SetMouseEventsEnabled(bool bEnabled) {
+	APlayerController* PlayerController = Cast<APlayerController>(GetController());
+	checkf(PlayerController, TEXT("Player is not controlled by APlayerController!"));
+
+	PlayerController->bShowMouseCursor = bEnabled;
+	PlayerController->bEnableClickEvents = bEnabled;
+	PlayerController->bEnableMouseOverEvents = bEnabled;
 }

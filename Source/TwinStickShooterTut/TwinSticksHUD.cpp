@@ -11,7 +11,7 @@ void ATwinSticksHUD::SetMaxHealth(float Health) {
 
 void ATwinSticksHUD::SetHealth(float Health) {
 	if (!ensure(HealthBar)) {
-		DebugPrinter::Print("No healthbar!");
+		DebugPrinter::Print("No healthbar!", EMessageType::Error);
 		return;
 	}
 
@@ -22,7 +22,7 @@ void ATwinSticksHUD::SetHealth(float Health) {
 void ATwinSticksHUD::SetScore(int Score) {
 
 	if (!ensure(ScoreText)) {
-		DebugPrinter::Print("No score text!");
+		DebugPrinter::Print("No score text!", EMessageType::Error);
 		return;
 	}
 

@@ -11,6 +11,8 @@
 class AGun;
 class UAudioComponent;
 
+
+// TODO: Tui zvuchi mnogo tupo. Rename na neshto po-umno
 UCLASS(Blueprintable)
 class TWINSTICKSHOOTERTUT_API ATwinSticksCharacter : public ACharacter
 {
@@ -27,6 +29,7 @@ public:
 	void Die();
 
 	// TODO: Figure out how to make a blueprint getter.
+	// losh kod ama ako ne e public ne bachka v animaciqta.
 	UPROPERTY(BlueprintReadOnly)
 	bool bDead;
 
@@ -43,14 +46,17 @@ public:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 protected:
-	UPROPERTY(BlueprintReadWrite, Category = "Base Character")
-	UMeshComponent* CharacterMesh;
-
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Base Character")
 	float MaxHealth = 100;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Base Character")
 	float Health;
+
+	UPROPERTY(BlueprintReadWrite, Category = "Base Character")
+	UMeshComponent* CharacterMesh;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Instanced, Category = "Base Character")
+	UAudioComponent* DeathSoundComponent;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Gun")
 	TSubclassOf<AGun> StartingGunTemplate;
@@ -58,8 +64,6 @@ protected:
 	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = "Gun")
 	AGun* Gun = nullptr;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Instanced, Category = "Sound")
-	UAudioComponent* DeathSoundComponent;
 
 	// Time for death animation to play. OnDeathTimerEnd() is called after that.
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Base Character", Meta=(ClampMin = 0.01))
@@ -72,7 +76,7 @@ protected:
 	void LookInDirection(FVector Direction);
 
 	UFUNCTION()
-	void SetGun(AGun* NewGun);
+	void SpawnGun(AGun* NewGun);
 
 	UFUNCTION()
 	void StartFiring();
