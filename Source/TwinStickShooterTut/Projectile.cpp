@@ -46,6 +46,7 @@ void AProjectile::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* Ot
 		EnemyCharacter->TakeDamage(Damage);	
 	}
 	if (ensure(HitParticleSystem)) {
+
 		UGameplayStatics::SpawnEmitterAtLocation(
 			GetWorld(),
 			HitParticleSystem,
