@@ -19,64 +19,54 @@ class TWINSTICKSHOOTERTUT_API ATwinSticksCharacter : public ACharacter
 	GENERATED_BODY()
 
 public:
-	// Sets default values for this character's properties
 	ATwinSticksCharacter();
 
 	UFUNCTION(BlueprintCallable, Category = "Base Character")
 	virtual void TakeDamage(float Damage);
 
-	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Base Character")
-	void Die();
+	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 	// TODO: Figure out how to make a blueprint getter.
 	// losh kod ama ako ne e public ne bachka v animaciqta.
 	UPROPERTY(BlueprintReadOnly)
 	bool bDead;
 
-
 protected:
-	// Called when the game starts or when spawned
+
 	virtual void BeginPlay() override;
 
-public:	
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
-
-	// Called to bind functionality to input
-	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
-
-protected:
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Base Character")
+	UPROPERTY(EditDefaultsOnly, Category = "Base Character")
 	float MaxHealth = 100;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Base Character")
+	UPROPERTY(VisibleAnywhere, Category = "Base Character")
 	float Health;
 
 	UPROPERTY(BlueprintReadWrite, Category = "Base Character")
 	UMeshComponent* CharacterMesh;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Instanced, Category = "Base Character")
+	UPROPERTY(Instanced)
 	UAudioComponent* DeathSoundComponent;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Gun")
-	TSubclassOf<AGun> StartingGunTemplate;
-
-	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = "Gun")
-	AGun* Gun = nullptr;
-
-
-	// Time for death animation to play. OnDeathTimerEnd() is called after that.
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Base Character", Meta=(ClampMin = 0.01))
+	UPROPERTY(EditDefaultsOnly, Category = "Base Character", Meta = (ClampMin = 0.01))
 	float DeathAnimationTime;
 
+	UPROPERTY(EditDefaultsOnly, Category = "Gun")
+	TSubclassOf<AGun> StartingGunTemplate = nullptr;
+
+	UPROPERTY(VisibleInstanceOnly, Category = "Gun")
+	AGun* Gun = nullptr;
+	
 	UFUNCTION()
-	virtual void Die_Implementation();
+	virtual void Die();
 
 	UFUNCTION()
 	void LookInDirection(FVector Direction);
 
 	UFUNCTION()
-	void SpawnGun(AGun* NewGun);
+	void SpawnStartingGun();
+
+	UFUNCTION()
+	void AttachGun(AGun* NewGun);
 
 	UFUNCTION()
 	void StartFiring();

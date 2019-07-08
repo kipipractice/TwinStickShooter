@@ -17,23 +17,33 @@ class TWINSTICKSHOOTERTUT_API AGun : public AActor
 public:	
 	// Sets default values for this actor's properties
 	AGun();
-
-	virtual void Tick(float DeltaTime) override;
-
-	UFUNCTION(BlueprintCallable, Category = Projectile)
-	void Fire();
-
+	
+	UFUNCTION()
 	void PullTrigger();
 
+	UFUNCTION()
 	void ReleaseTrigger();
 
+	UFUNCTION()
 	float GetFireRate();
 
-
 protected:
+	
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = Projectile)
+	USceneComponent* GunSpawnPosition;
 
-	// Called when the game starts or when spawned
-	virtual void BeginPlay() override;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = Projectile)
+	TSubclassOf<class AProjectile> ProjectileTemplate;
+
+	UPROPERTY(EditAnywhere, Instanced, Category = "Sound")
+	UAudioComponent* FireSoundComponent;
+	
+	// Ammount of times gun can fire in a second.
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Gun")
+	float FireRate = 5;
+
+	UFUNCTION()
+	void Fire();
 
 	UFUNCTION()
 	void SpawnProjectile();
@@ -42,18 +52,4 @@ protected:
 	void PlayFireSound();
 
 	FTimerHandle FireTimerHandle;
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = Projectile)
-	USceneComponent* GunSpawnPosition;
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = Projectile)
-	TSubclassOf<class AProjectile> ProjectileTemplate;
-
-	// Ammount of times gun can fire in a second.
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Gun)
-	float FireRate = 5;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Instanced, Category = "Sound")
-	UAudioComponent* FireSoundComponent;
-
 };

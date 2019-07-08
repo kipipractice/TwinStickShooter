@@ -58,7 +58,5 @@ void ASpawner::SpawnEnemy() {
 		);
 		World->SpawnActor<AEnemyCharacter>(EnemyClass, EnemySpawnPosition);
 	}
-
-
 }
 

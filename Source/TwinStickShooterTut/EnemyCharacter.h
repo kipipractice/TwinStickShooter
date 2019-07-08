@@ -23,6 +23,8 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
+	void Die() override;
+
 	//Box component overlap begin overlap event
 	UFUNCTION()
 	void OnBoxBeginOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,
@@ -35,8 +37,6 @@ protected:
 		class AActor* OtherActor,
 		class UPrimitiveComponent* OtherComp,
 		int32 OtherBodyIndex);
-
-	void Die() override;
 
 	void DealDamage();
 
@@ -56,12 +56,13 @@ protected:
 	float DamagePerHit = 30.0f;
 
 	// Added score when enemy dies.
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Setup")
+	UPROPERTY(EditDefaultsOnly, Category = "Setup")
 	float Score = 500;
 
 
 	FTimerHandle DamageTimerHandle;
 
 	// target player used for checking collision actor
+	UPROPERTY()
 	APlayerCharacter* PlayerCharacter = nullptr;
 };

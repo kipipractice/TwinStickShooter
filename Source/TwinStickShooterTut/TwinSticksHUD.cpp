@@ -3,15 +3,14 @@
 
 #include "TwinSticksHUD.h"
 #include "Containers/UnrealString.h"
-#include "DebugPrinter.h"
 
 void ATwinSticksHUD::SetMaxHealth(float Health) {
 	MaxHealth = Health;
 }
 
 void ATwinSticksHUD::SetHealth(float Health) {
-	if (!ensure(HealthBar)) {
-		DebugPrinter::Print("No healthbar!", EMessageType::Error);
+	if (IsValid(HealthBar) == false) {
+		UE_LOG(LogTemp, Error, TEXT("ATwinSticksHUD::SetScore IsValid(HealthBar) == false"));
 		return;
 	}
 
@@ -20,9 +19,8 @@ void ATwinSticksHUD::SetHealth(float Health) {
 
 
 void ATwinSticksHUD::SetScore(int Score) {
-
-	if (!ensure(ScoreText)) {
-		DebugPrinter::Print("No score text!", EMessageType::Error);
+	if (IsValid(ScoreText) == false) {
+		UE_LOG(LogTemp, Error, TEXT("ATwinSticksHUD::SetScore IsValid(ScoreText) == false"));
 		return;
 	}
 

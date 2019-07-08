@@ -8,11 +8,14 @@
 #include "TwinSticksCharacter.h"
 #include "Runtime/Engine/Public/TimerManager.h"
 #include "Kismet/GameplayStatics.h"
+#include "PlayerCharacter.h"
+#include "EnemyCharacter.h"
 #include "TwinSticksHUD.h"
 
 void ATwinStickGameMode::BeginPlay()
 {
 	Super::BeginPlay();
+
 	GetWorldTimerManager().SetTimer(SpawnTimerHandler, this, &ATwinStickGameMode::SpawnEnemies, WaveTimeInterval, true, 0.0f);
 }
 

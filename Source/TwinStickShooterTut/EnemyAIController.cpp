@@ -11,7 +11,7 @@
 #include "Kismet/KismetMathLibrary.h"
 
 AEnemyAIController::AEnemyAIController() {
-	PrimaryActorTick.bCanEverTick = false;
+	PrimaryActorTick.bCanEverTick = true;
 }
 
 
@@ -38,19 +38,23 @@ void AEnemyAIController::BeginPlay() {
 		&AEnemyAIController::FollowActor,
 		TrackInterval,
 		true,
-		TrackDelay);
+		TrackDelay
+	);
 }
 	
 
 void AEnemyAIController::Tick(float DeltaTime)
 {
 	if (IsValid(PlayerToFollow) == false) {
-		UE_LOG(LogTemp, Error, TEXT("AEnemyAIController::Tick IsValid(ActorToFollow) == false"))
+		UE_LOG(LogTemp, Error, TEXT("AEnemyAIController::Tick IsValid(ActorToFollow) == false"));
+		return;
 	}
 	AActor* Pawn = GetPawn();
 	if (IsValid(Pawn) == false) {
-		UE_LOG(LogTemp, Error, TEXT("AEnemyAIController::Tick IsValid(Pawn) == false"))
+		UE_LOG(LogTemp, Error, TEXT("AEnemyAIController::Tick IsValid(Pawn) == false"));
+		return;
 	}
+
 	FRotator NewRotation = UKismetMathLibrary::FindLookAtRotation(
 		Pawn->GetActorLocation(),
 		PlayerToFollow->GetActorLocation()

@@ -7,7 +7,6 @@
 #include "Kismet/GameplayStatics.h"
 
 void AMainMenuHUD::SetInputType(InputType Type) {
-	UE_LOG(LogTemp, Warning, TEXT("Set Type to %d"), Type);
 	this->Type = Type;
 }
 
@@ -16,12 +15,17 @@ void AMainMenuHUD::SaveSettings() {
 		UGameplayStatics::CreateSaveGameObject(USettingsSaveGame::StaticClass())
 	);
 
-	SaveGameInstance->Type = this->Type;
-	UE_LOG(LogTemp, Warning, TEXT("Save type of %d"), this->Type);
+	if (IsValid(SaveGameInstance)) {
+		SaveGameInstance->Type = Type;
 
-	UGameplayStatics::SaveGameToSlot(
-		SaveGameInstance,
-		SaveGameInstance->GetSaveSlotName(),
-		SaveGameInstance->GetUserIndex()
-	);
+		UGameplayStatics::SaveGameToSlot(
+			SaveGameInstance,
+			SaveGameInstance->GetSaveSlotName(),
+			SaveGameInstance->GetUserIndex()
+		);
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("AMainMenuHUD::SaveSettings() IsValid(SaveGameInstance) == false"));
+	}
 }

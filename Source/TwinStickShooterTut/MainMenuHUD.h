@@ -22,8 +22,6 @@ protected:
 	UFUNCTION(BlueprintCallable)
 	void SetInputType(InputType Type);
 
-	
-
 private:
 	InputType Type;
 

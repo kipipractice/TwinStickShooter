@@ -15,15 +15,12 @@ class TWINSTICKSHOOTERTUT_API ACharacterPlayerController : public APlayerControl
 {
 	GENERATED_BODY()
 
+public:
 	ACharacterPlayerController();
 
-
-public:
 	InputType GetInputType();
 
 protected:
-	// Called when the game starts or when spawned
-	virtual void BeginPlay() override;
 
 	InputType ControllerDeviceInputType;
 	

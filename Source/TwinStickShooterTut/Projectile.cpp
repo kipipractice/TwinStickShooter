@@ -4,11 +4,11 @@
 #include "Projectile.h"
 #include "DebugPrinter.h"
 #include "EnemyCharacter.h"
-#include "Runtime/Engine/Classes/Components/CapsuleComponent.h"
-#include "Runtime/Engine/Classes/GameFramework/ProjectileMovementComponent.h"
-#include "Runtime/Engine/Classes/Particles/ParticleSystemComponent.h"
-#include "Runtime/Engine/Classes/Kismet/GameplayStatics.h"
-#include "Runtime/Engine/Classes/Kismet/KismetSystemLibrary.h"
+#include "Components/CapsuleComponent.h"
+#include "GameFramework/ProjectileMovementComponent.h"
+#include "Particles/ParticleSystemComponent.h"
+#include "Kismet/GameplayStatics.h"
+#include "Kismet/KismetSystemLibrary.h"
 
 
 AProjectile::AProjectile()
@@ -25,7 +25,8 @@ void AProjectile::BeginPlay()
 	if (IsValid(CapsuleComponent) == false) {
 		UE_LOG(LogTemp, Warning, TEXT("AProjectile::BeginPlay IsValid(CapsuleComponent) == false"))
 	}
-	else {
+	else 
+	{
 		CapsuleComponent->OnComponentBeginOverlap.AddDynamic(this, &AProjectile::AProjectile::OnOverlapBegin);
 	}
 	if (IsValid(HitParticleSystem) == false) {
@@ -36,6 +37,11 @@ void AProjectile::BeginPlay()
 
 void AProjectile::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
+	UE_LOG(LogTemp, Warning, TEXT("Hit %s"), *OtherActor->GetName());
+	if (OtherActor->GetInstigator() == GetInstigator()) {
+		return;
+	}
+
 	AEnemyCharacter* EnemyCharacter = Cast<AEnemyCharacter>(OtherActor);
 	if (IsValid(EnemyCharacter)) {
 		EnemyCharacter->TakeDamage(Damage);	

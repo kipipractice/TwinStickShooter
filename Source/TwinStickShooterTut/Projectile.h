@@ -30,6 +30,7 @@ protected:
 		int32 OtherBodyIndex, bool bFromSweep,
 		const FHitResult & SweepResult);
 
+	UPROPERTY()
 	UProjectileMovementComponent* ProjectileMovementComponent;
 	
 	UPROPERTY(BlueprintReadWrite)

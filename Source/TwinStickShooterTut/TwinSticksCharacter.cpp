@@ -30,21 +30,28 @@ void ATwinSticksCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 
-	if (StartingGunTemplate) {
-		FActorSpawnParameters SpawnInfo;
-		SpawnInfo.Owner = this;
-		SpawnInfo.Instigator = Instigator;
-
-		Gun = GetWorld()->SpawnActor<AGun>(StartingGunTemplate, SpawnInfo);
-		SpawnGun(Gun);
-	}
+	SpawnStartingGun();
 }
 
-// Called every frame
-void ATwinSticksCharacter::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
 
+void ATwinSticksCharacter::SpawnStartingGun() {
+	if (IsValid(StartingGunTemplate) == false) {
+		UE_LOG(LogTemp, Error, TEXT("ATwinSticksCharacter::SpawnStartingGun() IsValid(StartingGunTemplate) == false"));
+		return;
+	}
+
+	UWorld* World = GetWorld();
+	if (IsValid(World) == false) {
+		UE_LOG(LogTemp, Error, TEXT("ATwinSticksCharacter::SpawnStartingGun() IsValid(World) == false"));
+		return;
+	}
+
+	FActorSpawnParameters SpawnInfo;
+	SpawnInfo.Owner = this;
+	SpawnInfo.Instigator = Instigator;
+
+	Gun = World->SpawnActor<AGun>(StartingGunTemplate, SpawnInfo);
+	AttachGun(Gun);
 }
 
 // Called to bind functionality to input
@@ -61,15 +68,19 @@ void ATwinSticksCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInpu
 
 
 void ATwinSticksCharacter::StartFiring() {
-	if (!Gun)
+	if (IsValid(Gun) == false) {
+		UE_LOG(LogTemp, Warning, TEXT("ATwinSticksCharacter::StartFiring() IsValid(Gun) == false"));
 		return;
+	}
 
 	Gun->PullTrigger();
 }
 
 void ATwinSticksCharacter::StopFiring() {
-	if (!Gun)
+	if (IsValid(Gun) == false) {
+		UE_LOG(LogTemp, Warning, TEXT("ATwinSticksCharacter::StopFiring IsValid(Gun) == false"));
 		return;
+	}
 
 	Gun->ReleaseTrigger();
 }
@@ -99,23 +110,39 @@ void ATwinSticksCharacter::TakeDamage(float Damage) {
 }
 
 
-void ATwinSticksCharacter::SpawnGun(AGun* NewGun) {
-	if (!(ensure(CharacterMesh && CharacterMesh->DoesSocketExist("GunSocket")))) {
-		// TODO: Add formatting to DebugPrinter
-		DebugPrinter::Print("Cannot spawn a gun because no socket named 'GunSocket' exists or there is no character mesh!", EMessageType::Error);
+void ATwinSticksCharacter::AttachGun(AGun* NewGun) {
+	if (IsValid(NewGun) == false) {
+		UE_LOG(LogTemp, Error, TEXT(" ATwinSticksCharacter::SpawnGun IsValid(NewGun) == false"));
+		return;
 	}
 
+	if (IsValid(CharacterMesh) == false) {
+		UE_LOG(LogTemp, Error, TEXT(" ATwinSticksCharacter::SpawnGun IsValid(CharacterMesh) == false"));
+		return;
+	}
+
+	if (CharacterMesh->DoesSocketExist("GunSocket") == false) {
+		UE_LOG(LogTemp, Error, TEXT(" ATwinSticksCharacter::SpawnGun CharacterMesh->DoesSocketExist('GunSocket') == false"));
+	}
+
+	Gun = NewGun;
 	Gun->AttachToComponent(CharacterMesh, FAttachmentTransformRules::SnapToTargetNotIncludingScale, "GunSocket");
 }
 
 
-void ATwinSticksCharacter::Die_Implementation() {
-	// TODO: Use error debug printer instead.
-	checkf(DeathSoundComponent, TEXT("No sound component on %s"), *GetName());
-	UE_LOG(LogTemp, Warning, TEXT("Character %s is dead!"), *GetName());
+void ATwinSticksCharacter::Die() {
+	if (IsValid(DeathSoundComponent) == false) {
+		UE_LOG(LogTemp, Error, TEXT("ATwinSticksCharacter::Die() IsValid(DeathSoundComponent) == false"));
+		return;
+	}
 
-	DeathSoundComponent->Play();
-	GetWorld()->GetTimerManager().SetTimer(
+	UWorld* World = GetWorld();
+	if (IsValid(World) == false) {
+		UE_LOG(LogTemp, Error, TEXT("ATwinSticksCharacter::Die() IsValid(World) == false"));
+		return;
+	}
+
+	World->GetTimerManager().SetTimer(
 		DeathTimerHandle,
 		this,
 		&ATwinSticksCharacter::OnDeathTimerEnd,

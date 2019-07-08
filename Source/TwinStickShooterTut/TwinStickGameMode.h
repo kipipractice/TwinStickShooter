@@ -50,10 +50,10 @@ protected:
 	FTransform PlayerRespawnLocation;
 
 	UPROPERTY(EditDefaultsOnly)
-	TSubclassOf<AEnemyCharacter> EnemyClass;
+	TSubclassOf<class AEnemyCharacter> EnemyClass;
 	
 	UPROPERTY(EditDefaultsOnly)
-	TSubclassOf<APlayerCharacter> PlayerClass;
+	TSubclassOf<class APlayerCharacter> PlayerClass;
 
 	FTimerHandle SpawnTimerHandler;
 

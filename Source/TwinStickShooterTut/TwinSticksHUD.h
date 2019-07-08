@@ -26,10 +26,6 @@ public:
 	UFUNCTION()
 	void SetScore(int Score);
 
-
-	
-
-
 protected:
 	UPROPERTY(VisibleAnywhere, Category = "Health")
 	float MaxHealth = 100;
@@ -39,6 +35,4 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "HUD")
 	UTextBlock* ScoreText;
-
-
 };

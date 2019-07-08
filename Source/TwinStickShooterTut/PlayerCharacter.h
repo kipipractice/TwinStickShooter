@@ -23,7 +23,6 @@ class TWINSTICKSHOOTERTUT_API APlayerCharacter : public ATwinSticksCharacter
 
 
 public:
-	APlayerCharacter();
 
 	virtual void SetupPlayerInputComponent(UInputComponent* InputComponent) override;
 
@@ -36,7 +35,7 @@ public:
 protected:
 	void BeginPlay() override;
 	
-	void Die_Implementation() override;
+	void Die() override;
 
 	void OnDeathTimerEnd() override;
 
@@ -45,11 +44,11 @@ protected:
 	UPROPERTY()
 	ATwinSticksHUD* HUD;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Input")
+	UPROPERTY(VisibleAnywhere, Category = "Input")
 	InputType ControllerInputType;
 
 	// Only register controller input if vector length is above this value
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Input")
+	UPROPERTY(EditDefaultsOnly, Category = "Input")
 	float InputDeadZone = 0.5f;
 
 	UFUNCTION()

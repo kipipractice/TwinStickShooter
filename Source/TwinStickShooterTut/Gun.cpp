@@ -20,25 +20,16 @@ AGun::AGun()
 	FireSoundComponent->AttachTo(GetRootComponent());
 }
 
-// Called when the game starts or when spawned
-void AGun::BeginPlay()
-{
-	Super::BeginPlay();
-	
-}
-
-// Called every frame
-void AGun::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
-
-}
-
 void AGun::PullTrigger() {
+	UWorld* World = GetWorld();
+	if (IsValid(World) == false) {
+		UE_LOG(LogTemp, Error, TEXT("AGun::ReleaseTrigger() IsValid(World) == false"));
+		return;
+	}
 	// Call Fire because Timer function is called after the delay.
 	Fire();
 
-	GetWorld()->GetTimerManager().SetTimer(
+	World->GetTimerManager().SetTimer(
 		FireTimerHandle,
 		this,
 		&AGun::Fire,
@@ -49,7 +40,12 @@ void AGun::PullTrigger() {
 
 
 void AGun::ReleaseTrigger() {
-	GetWorld()->GetTimerManager().ClearTimer(FireTimerHandle);
+	UWorld* World = GetWorld();
+	if (IsValid(World) == false) {
+		UE_LOG(LogTemp, Error, TEXT("AGun::ReleaseTrigger() IsValid(World) == false"));
+		return;
+	}
+	World->GetTimerManager().ClearTimer(FireTimerHandle);
 }
 
 
@@ -60,10 +56,26 @@ void AGun::Fire() {
 
 
 void AGun::SpawnProjectile() {
-	checkf(GunSpawnPosition, TEXT("GunSpawnPosition is not set!"));
-	checkf(ProjectileTemplate, TEXT("Projectile template to fire is not set!"));
+	if (IsValid(GunSpawnPosition) == false) {
+		UE_LOG(LogTemp, Error, TEXT("AGun::SpawnProjectile() IsValid(GunSpawnPosition) == false"));
+		return;
+	}
 
-	AActor* Player = GetWorld()->GetFirstPlayerController()->GetPawn();
+	if (IsValid(ProjectileTemplate) == false) {
+		UE_LOG(LogTemp, Error, TEXT("AGun::SpawnProjectile() IsValid(ProjectileTemplate) == false"));
+		return;
+	}
+
+	UWorld* World = GetWorld();
+	if (IsValid(World) == false) {
+		UE_LOG(LogTemp, Error, TEXT("AGun::SpawnProjectile() IsValid(World) == false"));
+		return;
+	}
+
+	AActor* Player = World->GetFirstPlayerController()->GetPawn();
+	if (IsValid(Player) == false) {
+		UE_LOG(LogTemp, Error, TEXT("AGun::SpawnProjectile() IsValid(Player) == false"));
+	}
 
 	FActorSpawnParameters SpawnParameters = FActorSpawnParameters();
 	SpawnParameters.Owner = Player;
@@ -71,8 +83,8 @@ void AGun::SpawnProjectile() {
 
 	FVector GunSpawnLocation = GunSpawnPosition->GetComponentLocation();
 	FRotator GunSpawnRotation = FRotator(0, GunSpawnPosition->GetComponentRotation().Yaw, 0);
-
-	AProjectile* Projectile = GetWorld()->SpawnActor<AProjectile>(
+	
+	AProjectile* Projectile = World->SpawnActor<AProjectile>(
 		ProjectileTemplate.Get(),
 		GunSpawnLocation,
 		GunSpawnRotation,
@@ -82,10 +94,12 @@ void AGun::SpawnProjectile() {
 
 
 void AGun::PlayFireSound() {
-	if ensure(FireSoundComponent)
-		FireSoundComponent->Play();
-	else
-		UE_LOG(LogTemp, Error, TEXT("%s does not have a sound component!"), *GetName());
+	if (IsValid(FireSoundComponent) == false) {
+		UE_LOG(LogTemp, Error, TEXT("AGun::PlayFireSound() IsValid(FireSoundComponent) == false"));
+		return;
+	}
+
+	FireSoundComponent->Play();
 }
 
 float AGun::GetFireRate() {

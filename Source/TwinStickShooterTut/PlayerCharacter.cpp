@@ -15,16 +15,19 @@
 
 
 
-
-APlayerCharacter::APlayerCharacter() {
-
-}
-
-
 void APlayerCharacter::BeginPlay() {
 	Super::BeginPlay();
+	UWorld* World = GetWorld();
+	if (IsValid(World) == false) {
+		UE_LOG(LogTemp, Error, TEXT("APlayerCharacter::BeginPlay() IsValid(World) == false"));
+		return;
+	}
 
-	ATwinStickGameMode* GameMode = Cast<ATwinStickGameMode>(GetWorld()->GetAuthGameMode());
+	ATwinStickGameMode* GameMode = Cast<ATwinStickGameMode>(World->GetAuthGameMode());
+	if (IsValid(GameMode) == false) {
+		UE_LOG(LogTemp, Error, TEXT("APlayerCharacter::BeginPlay() IsValid(GameMode) == false"));
+		return;
+	}
 	GameMode->SetPlayerRespawnLocation(GetActorTransform());
 }
 
@@ -39,33 +42,34 @@ void APlayerCharacter::Tick(float DeltaTime) {
 void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent) {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
-	if (!PlayerInputComponent)
+	if (IsValid(PlayerInputComponent) == false) {
+		UE_LOG(LogTemp, Error, TEXT("APlayerCharacter::SetupPlayerInputComponent IsValid(PlayerInputComponent) == false"));
 		return;
+	}
 
 	ACharacterPlayerController* PlayerController = Cast<ACharacterPlayerController>(GetController());
-	if (PlayerController) {
-		ControllerInputType = PlayerController->GetInputType();
-		if (ControllerInputType == InputType::PC) {
-			SetupMouseInputScheme(InputComponent);
-		}
-		else if (ControllerInputType == InputType::Controller)
-		{
-			SetupControllerInputScheme(InputComponent);
-		}
-		else
-		{
-			unimplemented();
-		}
+	if (IsValid(PlayerController) == false) {
+		UE_LOG(LogTemp, Error, TEXT("APlayerCharacter::SetupPlayerInputComponent IsValid(PlayerController) == false"));
+		return;
+	}
+
+	ControllerInputType = PlayerController->GetInputType();
+	if (ControllerInputType == InputType::PC) {
+		SetupMouseInputScheme(InputComponent);
+	}
+	else if (ControllerInputType == InputType::Controller)
+	{
+		SetupControllerInputScheme(InputComponent);
 	}
 	else
 	{
-		DebugPrinter::Print("Wrong type of controller possesed PlayerCharacter!", EMessageType::Error);
+		UE_LOG(LogTemp, Error, TEXT("APlayerCharacter::SetupPlayerInputComponent Unimplemented Input Scheme"));
 	}
 }
 
 
 void APlayerCharacter::SetupMouseInputScheme(UInputComponent* PlayerInputComponent) {
-	DebugPrinter::Print("Setup PC scheme!");
+	UE_LOG(LogTemp, Display, TEXT("Setup Mouse Input Scheme"));
 
 	SetMouseEventsEnabled(true);
 
@@ -74,8 +78,7 @@ void APlayerCharacter::SetupMouseInputScheme(UInputComponent* PlayerInputCompone
 
 
 void APlayerCharacter::SetupControllerInputScheme(UInputComponent* PlayerInputComponent) {
-	DebugPrinter::Print("Setup controller scheme!");
-
+	UE_LOG(LogTemp, Display, TEXT("Setup Controller Input Scheme"));
 	SetMouseEventsEnabled(false);
 
 	LookAroundDelegate.BindDynamic(this, &APlayerCharacter::LookAtInputAxisDirection);
@@ -88,13 +91,12 @@ void APlayerCharacter::SetupControllerInputScheme(UInputComponent* PlayerInputCo
 void APlayerCharacter::TakeDamage(float Damage) {
 	Super::TakeDamage(Damage);
 
-	if (ensure(HUD)) {
-		HUD->SetHealth(Health);
+	if (IsValid(HUD) == false) {
+		UE_LOG(LogTemp, Error, TEXT("APlayerCharacter::TakeDamage IsValid(HUD) == false"));
+		return;
 	}
-	else
-	{
-		DebugPrinter::Print("No HUD for PlayerCharacter!", EMessageType::Error);
-	}
+
+	HUD->SetHealth(Health);
 }
 
 
@@ -102,28 +104,31 @@ void APlayerCharacter::PossessedBy(AController* Controller) {
 	Super::PossessedBy(Controller);
 
 	APlayerController* PlayerController = Cast<APlayerController>(GetController());
-	if (PlayerController) {
-		HUD = Cast<ATwinSticksHUD>(PlayerController->GetHUD());
-		if (ensure(HUD)) {
-			HUD->SetMaxHealth(MaxHealth);
-			HUD->SetHealth(Health);
-		}
-		else
-		{
-			DebugPrinter::Print("Player Character doesn't have a controller with a TwinSticksHUD", EMessageType::Error);
-		}
+	if (IsValid(PlayerController) == false) {
+		UE_LOG(LogTemp, Error, TEXT("APlayerCharacter::PossessedBy IsValid(PlayerController) == false"));
+		return;
 	}
-	else
-	{
-		DebugPrinter::Print("Initialized PlayerCharacter without a PlayerController", EMessageType::Warning);
+
+	HUD = Cast<ATwinSticksHUD>(PlayerController->GetHUD());
+	if (IsValid(HUD) == false) {
+		UE_LOG(LogTemp, Error, TEXT("APlayerCharacter::PossessedBy IsValid(HUD) == false"));
+		return;
 	}
+
+	HUD->SetMaxHealth(MaxHealth);
+	HUD->SetHealth(Health);
 }
 
 
 void APlayerCharacter::LookAtMousePosition() {
+	APlayerController* PlayerController = Cast<APlayerController>(GetController());
+	if (IsValid(PlayerController) == false) {
+		UE_LOG(LogTemp, Error, TEXT("APlayerCharacter::LookAtMousePosition IsValid(PlayerController) == false"));
+		return;
+	}
+
 	float MouseX;
 	float MouseY;
-	APlayerController* PlayerController = Cast<APlayerController>(GetController());
 	PlayerController->GetMousePosition(MouseX, MouseY);
 	FVector2D MousePosition = FVector2D(MouseX, MouseY);
 	FHitResult HitResult;
@@ -147,14 +152,16 @@ void APlayerCharacter::LookAtInputAxisDirection() {
 }
 
 
-void APlayerCharacter::Die_Implementation() {
-	Super::Die_Implementation();
+void APlayerCharacter::Die() {
+	Super::Die();
 
 	APlayerController* PlayerController = Cast<APlayerController>(GetController());
-	if (PlayerController) {
-		DisableInput(PlayerController);
+	if (IsValid(PlayerController) == false) {
+		UE_LOG(LogTemp, Error, TEXT("APlayerCharacter::Die IsValid(PlayerController) == false"));
+		return;
 	}
 
+	DisableInput(PlayerController);
 	LookAroundDelegate.Unbind();
 }
 
@@ -163,13 +170,21 @@ void APlayerCharacter::OnDeathTimerEnd() {
 	Super::OnDeathTimerEnd();
 
 	ATwinStickGameMode* GameMode = Cast<ATwinStickGameMode>(GetWorld()->GetAuthGameMode());
+	if (IsValid(GameMode) == false) {
+		UE_LOG(LogTemp, Error, TEXT("APlayerCharacter::OnDeathTimerEnd() IsValid(GameMode) == false"));
+		return;
+	}
+
 	GameMode->RespawnPlayer();
 }
 
 
 void APlayerCharacter::SetMouseEventsEnabled(bool bEnabled) {
 	APlayerController* PlayerController = Cast<APlayerController>(GetController());
-	checkf(PlayerController, TEXT("Player is not controlled by APlayerController!"));
+	if (IsValid(PlayerController) == false) {
+		UE_LOG(LogTemp, Error, TEXT("APlayerCharacter::SetMouseEventsEnabled IsValid(PlayerController) == false"));
+		return;
+	}
 
 	PlayerController->bShowMouseCursor = bEnabled;
 	PlayerController->bEnableClickEvents = bEnabled;
