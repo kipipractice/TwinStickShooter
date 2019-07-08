@@ -10,7 +10,7 @@
 
 
 //forward declarations
-class ATwinSticksCharacter;
+class AEnemyCharacter;
 class UBoxComponent;
 
 

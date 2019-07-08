@@ -2,7 +2,7 @@
 
 
 #include "Spawner.h"
-#include "TwinSticksCharacter.h"
+#include "EnemyCharacter.h"
 #include "TwinStickGameMode.h"
 #include "DebugPrinter.h"
 #include "Runtime/Engine/Classes/Components/BoxComponent.h"
@@ -19,7 +19,7 @@ void ASpawner::BeginPlay()
 {
 	Super::BeginPlay();
 	if (!BoxComponent) {
-		DebugPrinter::Print("No box component attached to spawner");
+		DebugPrinter::Print("No box component attached to spawner", EMessageType::Error);
 	}
 	Cast<ATwinStickGameMode>(GetWorld()->GetAuthGameMode())->OnSpawnEnemies.AddDynamic(this, &ASpawner::SpawnEnemy);
 
@@ -29,6 +29,7 @@ void ASpawner::BeginPlay()
 
 void ASpawner::SpawnEnemy() {
 	if (!ensure(BoxComponent) && !ensure(EnemyClasses.Num() > 0)) {
+		DebugPrinter::Print("No box component or enemy templates set");
 		return;
 	}
 	//DebugPrinter::Print("Spawning Enemy");
@@ -40,7 +41,7 @@ void ASpawner::SpawnEnemy() {
 				BoxComponent->GetScaledBoxExtent()
 			)
 		);
-		GetWorld()->SpawnActor<ATwinSticksCharacter>(EnemyClass, EnemySpawnPosition);
+		GetWorld()->SpawnActor<AEnemyCharacter>(EnemyClass, EnemySpawnPosition);
 	}
 
 
