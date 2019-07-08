@@ -36,6 +36,6 @@ protected:
 	UBoxComponent* BoxComponent;
 
 	UPROPERTY(EditAnywhere, Category = "Setup")
-		TArray<TSubclassOf<ATwinSticksCharacter>> EnemyClasses;
+	TArray<TSubclassOf<AEnemyCharacter>> EnemyClasses;
 
 };
