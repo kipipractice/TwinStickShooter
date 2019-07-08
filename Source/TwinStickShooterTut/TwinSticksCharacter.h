@@ -44,7 +44,7 @@ protected:
 	UPROPERTY(BlueprintReadWrite, Category = "Base Character")
 	UMeshComponent* CharacterMesh;
 
-	UPROPERTY(Instanced)
+	UPROPERTY(EditDefaultsOnly, Instanced, Category = "Base Character")
 	UAudioComponent* DeathSoundComponent;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Base Character", Meta = (ClampMin = 0.01))

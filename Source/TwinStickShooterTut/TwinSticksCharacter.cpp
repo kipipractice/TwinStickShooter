@@ -130,16 +130,17 @@ void ATwinSticksCharacter::AttachGun(AGun* NewGun) {
 
 
 void ATwinSticksCharacter::Die() {
-	if (IsValid(DeathSoundComponent) == false) {
-		UE_LOG(LogTemp, Error, TEXT("ATwinSticksCharacter::Die() IsValid(DeathSoundComponent) == false"));
-		return;
-	}
-
 	UWorld* World = GetWorld();
 	if (IsValid(World) == false) {
 		UE_LOG(LogTemp, Error, TEXT("ATwinSticksCharacter::Die() IsValid(World) == false"));
 		return;
 	}
+
+	if (IsValid(DeathSoundComponent) == false) {
+		UE_LOG(LogTemp, Error, TEXT("ATwinSticksCharacter::Die() IsValid(DeathSoundComponent) == false"));
+		return;
+	}
+	DeathSoundComponent->Play();
 
 	World->GetTimerManager().SetTimer(
 		DeathTimerHandle,
