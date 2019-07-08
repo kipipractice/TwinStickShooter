@@ -65,10 +65,13 @@ void AGun::Fire() {
 	SpawnParameters.Owner = Player;
 	SpawnParameters.Instigator = Player->Instigator;
 
+
+	FRotator GunSpawnRotation = FRotator(0, GunSpawnPosition->GetComponentRotation().Yaw, 0);
+	// UE_LOG(LogTemp, Warning, TEXT("GunSpawnRotation: %s"), *GunSpawnRotation.Euler().ToString());
 	AProjectile* Projectile = GetWorld()->SpawnActor<AProjectile>(
 		ProjectileTemplate.Get(), 
 		GunSpawnPosition->GetComponentLocation(), 
-		GunSpawnPosition->GetComponentRotation(),
+		GunSpawnRotation,
 		SpawnParameters
 	);
 }

@@ -116,7 +116,7 @@ void APlayerCharacter::LookAtMousePosition() {
 	if (PlayerController->GetHitResultAtScreenPosition(MousePosition, ECC_Visibility, false, HitResult)) {
 		FVector Location = HitResult.Location;
 		FRotator LookAtRotation = UKismetMathLibrary::FindLookAtRotation(GetActorLocation(), Location);
-		PlayerController->SetControlRotation(LookAtRotation);
+		PlayerController->SetControlRotation(FRotator(0, LookAtRotation.Yaw, 0));
 	}
 }
 
