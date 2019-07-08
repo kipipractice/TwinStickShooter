@@ -6,6 +6,14 @@
 /**
  * 
  */
+UENUM()
+enum class EMessageType : uint8
+{
+	Info,
+	Warning,
+	Error
+};
+
 class TWINSTICKSHOOTERTUT_API DebugPrinter
 {
 public:
@@ -14,5 +22,5 @@ public:
 	DebugPrinter();
 	~DebugPrinter();
 
-	static void Print(const char* Message, const bool bPrintToScreen = true, const bool bPrintToLog = true);
+	static void Print(const char* Message, EMessageType MessageType = EMessageType::Info, const bool bPrintToScreen = true, const bool bPrintToLog = true);
 };

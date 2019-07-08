@@ -12,14 +12,34 @@ DebugPrinter::~DebugPrinter()
 {
 }
 
-void DebugPrinter::Print(const char* Message, const bool bPrintToScreen /*= true*/, const bool bPrintToLog /*= true*/)
+void DebugPrinter::Print(const char* Message, EMessageType MessageType, const bool bPrintToScreen /*= true*/, const bool bPrintToLog /*= true*/)
 {
 #ifdef WITH_EDITOR
-	if (bPrintToScreen && GEngine != nullptr) {
-		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Blue, FString(UTF8_TO_TCHAR(Message)));
-	}
-	if (bPrintToLog) {
-		UE_LOG(LogTemp, Warning, TEXT("%s"), *FString(UTF8_TO_TCHAR(Message)))
+	if (bPrintToScreen && GEngine) {
+		switch (MessageType) {
+			case EMessageType::Info:
+				GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Blue, FString(UTF8_TO_TCHAR(Message)));
+				break;
+			case EMessageType::Warning:
+				GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, FString(UTF8_TO_TCHAR(Message)));
+				break;
+			case EMessageType::Error:
+				GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, FString(UTF8_TO_TCHAR(Message)));
+				break;
+		}
 	}
 #endif
+	if (bPrintToLog) {
+		switch (MessageType) {
+		case EMessageType::Info:
+			UE_LOG(LogTemp, Log, TEXT("%s"), *FString(UTF8_TO_TCHAR(Message)))
+			break;
+		case EMessageType::Warning:
+			UE_LOG(LogTemp, Warning, TEXT("%s"), *FString(UTF8_TO_TCHAR(Message)))
+			break;
+		case EMessageType::Error:
+			UE_LOG(LogTemp, Error, TEXT("%s"), *FString(UTF8_TO_TCHAR(Message)))
+			break;
+		}
+	}
 }
