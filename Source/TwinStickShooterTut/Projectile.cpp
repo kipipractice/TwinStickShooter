@@ -4,14 +4,17 @@
 #include "Projectile.h"
 #include "DebugPrinter.h"
 #include "EnemyCharacter.h"
-#include "Runtime/Engine/Classes/Kismet/GameplayStatics.h"
 #include "Runtime/Engine/Classes/Components/CapsuleComponent.h"
 #include "Runtime/Engine/Classes/GameFramework/ProjectileMovementComponent.h"
+#include "Runtime/Engine/Classes/Particles/ParticleSystemComponent.h"
+#include "Runtime/Engine/Classes/Kismet/GameplayStatics.h"
+#include "Runtime/Engine/Classes/Kismet/KismetSystemLibrary.h"
 // Sets default values
 AProjectile::AProjectile()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
+
 
 }
 
@@ -21,10 +24,13 @@ void AProjectile::BeginPlay()
 	Super::BeginPlay();
 
 	if (!CapsuleComponent) {
-		DebugPrinter::Print("Projectile capsule component not set");
+		DebugPrinter::Print("Projectile capsule component not set", EMessageType::Warning);
 	}
 	else {
 		CapsuleComponent->OnComponentBeginOverlap.AddDynamic(this, &AProjectile::AProjectile::OnOverlapBegin);
+	}
+	if (!HitParticleSystem) {
+		DebugPrinter::Print("Hit particle system not set", EMessageType::Warning);
 	}
 	
 }
@@ -37,18 +43,16 @@ void AProjectile::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* Ot
 	//DebugPrinter::Print("projectile overlapping");
 	AEnemyCharacter* EnemyCharacter = dynamic_cast<AEnemyCharacter*>(OtherActor);
 	if (EnemyCharacter) {
-		EnemyCharacter->TakeDamage(Damage);
-		/*
+		EnemyCharacter->TakeDamage(Damage);	
+	}
+	if (ensure(HitParticleSystem)) {
 		UGameplayStatics::SpawnEmitterAtLocation(
 			GetWorld(),
-			HitParticleEmitter,
-			EnemyCharacter->GetActorLocation());
-
-		*/
-
-		// TODO: sshe opravime po kusno.
-		
+			HitParticleSystem,
+			OtherActor->GetActorTransform()
+		);
 	}
+
 	Destroy();
 }
 

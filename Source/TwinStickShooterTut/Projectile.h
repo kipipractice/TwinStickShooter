@@ -35,8 +35,8 @@ protected:
 	UPROPERTY(BlueprintReadWrite)
 	UCapsuleComponent* CapsuleComponent = nullptr;
 
-	//UPROPERTY(EditDefaultsOnly, Category = "Setup")
-	//	TSubclassOf<UParticleSystem> HitParticleEmitter;
+	UPROPERTY(BlueprintReadWrite)
+	UParticleSystem* HitParticleSystem;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Gameplay")
 		float Damage = 30.0f;

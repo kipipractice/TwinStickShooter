@@ -17,9 +17,10 @@ AEnemyAIController::AEnemyAIController() {
 
 void AEnemyAIController::BeginPlay() {
 	Super::BeginPlay();
-	ActorToFollow = GetWorld()->GetFirstPlayerController()->GetPawn();
+	ActorToFollow = Cast<APlayerCharacter>(GetWorld()->GetFirstPlayerController()->GetPawn());
 	if (!ActorToFollow) {
 		DebugPrinter::Print("Actor to follow not found");
+		return;
 	}
 	GetWorldTimerManager().SetTimer(
 		TrackPlayerTimerHandle,

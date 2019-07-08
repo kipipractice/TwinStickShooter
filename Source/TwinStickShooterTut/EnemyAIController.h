@@ -6,8 +6,7 @@
 #include "AIController.h"
 #include "EnemyAIController.generated.h"
 
-class AEnemyCharacter;
-
+class APlayerCharacter;
 /**
  * 
  */
@@ -26,7 +25,7 @@ protected:
 	
 	void Tick(float DeltaTime);
 
-	AActor* ActorToFollow = nullptr;
+	APlayerCharacter* ActorToFollow = nullptr;
 
 	FTimerHandle TrackPlayerTimerHandle;
 
