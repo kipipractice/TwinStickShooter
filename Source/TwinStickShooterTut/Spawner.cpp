@@ -4,7 +4,6 @@
 #include "Spawner.h"
 #include "EnemyCharacter.h"
 #include "TwinStickGameMode.h"
-#include "DebugPrinter.h"
 #include "Runtime/Engine/Classes/Components/BoxComponent.h"
 #include "Runtime/Engine/Classes/Kismet/KismetMathLibrary.h"
 

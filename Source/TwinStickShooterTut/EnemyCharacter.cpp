@@ -3,7 +3,6 @@
 
 #include "EnemyCharacter.h"
 #include "Runtime/Engine/Classes/Components/BoxComponent.h"
-#include "DebugPrinter.h"
 #include "Runtime/Engine/Classes/Engine/EngineTypes.h"
 #include "PlayerCharacter.h"
 #include "Runtime/Engine/Classes/Engine/World.h"

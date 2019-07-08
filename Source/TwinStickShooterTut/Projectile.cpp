@@ -2,7 +2,6 @@
 
 
 #include "Projectile.h"
-#include "DebugPrinter.h"
 #include "EnemyCharacter.h"
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/ProjectileMovementComponent.h"
