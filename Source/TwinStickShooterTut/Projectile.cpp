@@ -31,8 +31,7 @@ void AProjectile::BeginPlay()
 
 void AProjectile::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	// do not do anything when overlapping with the player
-	if (OtherActor == GetOwner()) {
+	if (OtherActor->GetInstigator() == GetInstigator()) {
 		return;
 	}
 	//DebugPrinter::Print("projectile overlapping");
@@ -48,7 +47,8 @@ void AProjectile::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* Ot
 		*/
 
 		// TODO: sshe opravime po kusno.
-		Destroy();
+		
 	}
+	Destroy();
 }
 
