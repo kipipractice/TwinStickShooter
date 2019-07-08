@@ -25,10 +25,10 @@ protected:
 	virtual void BeginPlay() override;
 
 	UFUNCTION()
-		void OnOverlapBegin(UPrimitiveComponent * OverlappedComp,
-			AActor * OtherActor, UPrimitiveComponent * OtherComp,
-			int32 OtherBodyIndex, bool bFromSweep,
-			const FHitResult & SweepResult);
+	void OnOverlapBegin(UPrimitiveComponent * OverlappedComp,
+		AActor * OtherActor, UPrimitiveComponent * OtherComp,
+		int32 OtherBodyIndex, bool bFromSweep,
+		const FHitResult & SweepResult);
 
 	UProjectileMovementComponent* ProjectileMovementComponent;
 	
@@ -36,8 +36,9 @@ protected:
 	UCapsuleComponent* CapsuleComponent = nullptr;
 
 	UPROPERTY(BlueprintReadWrite, Category = "Particle")
-	UParticleSystem* HitParticleSystem;
+	UParticleSystem* HitParticleSystem = nullptr;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Gameplay")
-		float Damage = 30.0f;
+	//Damage to deal on hit
+	UPROPERTY(EditDefaultsOnly, Category = "Gameplay")
+	float Damage = 30.0f;
 };

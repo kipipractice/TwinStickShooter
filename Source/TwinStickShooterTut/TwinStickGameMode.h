@@ -8,7 +8,9 @@
 
 
 //forward declarations
-class ATwinSticksCharacter;
+class AEnemyCharacter;
+class APlayerCharacter;
+
 /**
  * 
  */
@@ -39,18 +41,19 @@ public:
 protected:
 	void SpawnEnemies();
 
-	UPROPERTY(BlueprintReadOnly)
-		int CurrentScore = 0;
-	UPROPERTY(BlueprintReadWrite)
-		float WaveTimeInterval = 1.0f;
-	UPROPERTY(BlueprintReadWrite)
-		FTransform PlayerRespawnLocation;
-	// TODO: TSubclassOf<ATwinStickCharacter> and find a way to cast it to AActor
+	int CurrentScore = 0;
+
 	UPROPERTY(EditDefaultsOnly)
-		TSubclassOf<AActor> EnemyClass;
-	//player class reference
+	float WaveTimeInterval = 1.0f;
+	
 	UPROPERTY(EditDefaultsOnly)
-		TSubclassOf<ATwinSticksCharacter> PlayerClass;
+	FTransform PlayerRespawnLocation;
+
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<AEnemyCharacter> EnemyClass;
+	
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<APlayerCharacter> PlayerClass;
 
 	FTimerHandle SpawnTimerHandler;
 

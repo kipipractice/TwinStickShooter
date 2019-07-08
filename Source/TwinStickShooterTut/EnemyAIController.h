@@ -25,16 +25,16 @@ protected:
 	
 	void Tick(float DeltaTime);
 
-	APlayerCharacter* ActorToFollow = nullptr;
+	APlayerCharacter* PlayerToFollow = nullptr;
 
 	FTimerHandle TrackPlayerTimerHandle;
 
 	//interval at which the enemy changes direction and moves towards the player(in seconds)
 	UPROPERTY(EditDefaultsOnly)
-		float TrackInterval = 0.25f;
+	float TrackInterval = 0.25f;
 
 	UPROPERTY(EditDefaultsOnly)
-		float TrackDelay = 0.25f;
+	float TrackDelay = 0.25f;
 
 	void FollowActor();
 };

@@ -16,23 +16,34 @@
 AEnemyCharacter::AEnemyCharacter()
 {
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = true;
+	PrimaryActorTick.bCanEverTick = false;
 
 }
 
 void AEnemyCharacter::BeginPlay() {
 	Super::BeginPlay();
 
-	if (!DamageBox) {
-		DebugPrinter::Print("Enemy damage collision box not set", EMessageType::Error);
+	if (IsValid(DamageBox) == false) {
+		UE_LOG(LogTemp, Warning, TEXT("AEnemyCharacter::BeginPlay IsValid(DamageBox) == false"))
 	}
 	else {
 		DamageBox->OnComponentBeginOverlap.AddDynamic(this, &AEnemyCharacter::OnBoxBeginOverlap);
 		DamageBox->OnComponentEndOverlap.AddDynamic(this, &AEnemyCharacter::OnOverlapEnd);
 	}
-	PlayerCharacter = Cast<APlayerCharacter>(GetWorld()->GetFirstPlayerController()->GetPawn());
-	if (!PlayerCharacter) {
-		DebugPrinter::Print("Could not find target player", EMessageType::Error);
+	UWorld* World = GetWorld();
+	if (IsValid(World) == false) {
+		UE_LOG(LogTemp, Error, TEXT("AEnemyCharacter::BeginPlay IsValid(World) == false"))
+		return;
+	}
+	APlayerController* FirstPlayerController = World->GetFirstPlayerController();
+	if (IsValid(FirstPlayerController) == false) {
+		UE_LOG(LogTemp, Error, TEXT("AEnemyCharacter::BeginPlay IsValid(FirstPlayerController) == false"))
+		return;
+
+	}
+	PlayerCharacter = Cast<APlayerCharacter>(FirstPlayerController->GetPawn());
+	if (IsValid(PlayerCharacter) == false) {
+		UE_LOG(LogTemp, Error, TEXT("AEnemyCharacter::BeginPlay IsValid(PlayerCharacter) == false"))
 	}
 
 }
@@ -40,7 +51,7 @@ void AEnemyCharacter::BeginPlay() {
 
 void AEnemyCharacter::OnBoxBeginOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	if (Cast<APlayerCharacter>(OtherActor) == PlayerCharacter) {
+	if (OtherActor == PlayerCharacter) {
 		GetWorldTimerManager().SetTimer(
 			DamageTimerHandle,
 			this,
@@ -54,37 +65,38 @@ void AEnemyCharacter::OnBoxBeginOverlap(UPrimitiveComponent* OverlappedComp, AAc
 
 void AEnemyCharacter::DealDamage()
 {
-	if (!ensure(DamageBox)) {
-		return;
-	}
 	PlayerCharacter->TakeDamage(DamagePerHit);
 }
 
 void AEnemyCharacter::OnOverlapEnd(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
 {
-	if (Cast<APlayerCharacter>(OtherActor) == PlayerCharacter) {
+	if (OtherActor == PlayerCharacter) {
 		GetWorldTimerManager().ClearTimer(DamageTimerHandle);
 	}
 }
 
 
-// Called to bind functionality to input
-void AEnemyCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
-{
-	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
-}
-
-
-void AEnemyCharacter::Die_Implementation() {
-	Super::Die_Implementation();
+void AEnemyCharacter::Die() {
+	Super::Die();
 
 	SetActorEnableCollision(false);
-	GetController()->StopMovement();
-	GetController()->Destroy();
+	AController* Controller = GetController();
+	if (IsValid(Controller) == false) {
+		UE_LOG(LogTemp, Error, TEXT("AEnemyCharacter::Die IsValid(Controller) == false"))
+		return;
+	}
+	
+	Controller->StopMovement();
+	Controller->Destroy();
 
-	ATwinStickGameMode* GameMode = Cast<ATwinStickGameMode>(GetWorld()->GetAuthGameMode());
-	if (ensure(GameMode)) {
+	UWorld* World = GetWorld();
+	if (IsValid(World) == false) {
+		UE_LOG(LogTemp, Error, TEXT("AEnemyCharacter::Die IsValid(World) == false"))
+		return;
+	}
+	ATwinStickGameMode* GameMode = Cast<ATwinStickGameMode>(World->GetAuthGameMode());
+	if (IsValid(GameMode)) {
 		GameMode->IncrementScore(Score);
 	}
 }

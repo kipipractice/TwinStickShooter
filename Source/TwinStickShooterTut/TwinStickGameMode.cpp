@@ -13,16 +13,13 @@
 void ATwinStickGameMode::BeginPlay()
 {
 	Super::BeginPlay();
-	//DebugPrinter::Print("Some message");
-	//GetWorld()->GetTimerManager().SetTimer(SpawnTimerHandler, &ATwinStickGameMode::SpawnEnemies, WaveTimeInterval, true, 0.0f);
 	GetWorldTimerManager().SetTimer(SpawnTimerHandler, this, &ATwinStickGameMode::SpawnEnemies, WaveTimeInterval, true, 0.0f);
 }
 
 void ATwinStickGameMode::IncrementScore(const int Amount)
 {
-	this->CurrentScore += Amount;
-
-	UpdateHUDScore(this->CurrentScore);
+	CurrentScore += Amount;
+	UpdateHUDScore(CurrentScore);
 }
 
 
@@ -39,15 +36,27 @@ void ATwinStickGameMode::UpdateHUDScore(int Score) {
 
 void ATwinStickGameMode::RespawnPlayer()
 {
-	//DebugPrinter::Print("Spawning enemy");
-	//Destroy all enemy actors
+	UWorld* World = GetWorld();
+	if (IsValid(World) == false) {
+		UE_LOG(LogTemp, Error, TEXT("ATwinStickGameMode::RespawnPlayer IsValid(World) == false"))
+		return;
+	}
+	APlayerController* FirstPlayerController = World->GetFirstPlayerController();
+	if (IsValid(FirstPlayerController) == false) {
+		UE_LOG(LogTemp, Error, TEXT("ATwinStickGameMode::RespawnPlayer IsValid(FirstPlayerController) == false"))
+		return;
+	}
 	TArray<AActor*> EnemyActors;
-	UGameplayStatics::GetAllActorsOfClass(GetWorld(), EnemyClass, EnemyActors);
+	UGameplayStatics::GetAllActorsOfClass(World, EnemyClass, EnemyActors);
+	// Destroy all enemies before respawning the player
 	for (auto&& Enemy : EnemyActors) {
 		Enemy->Destroy();
 	}
-	ATwinSticksCharacter* PlayerActor = GetWorld()->SpawnActor<ATwinSticksCharacter>(PlayerClass, PlayerRespawnLocation);
-	//DebugPrinter::Print("Spawned player character");
+
+	ATwinSticksCharacter* PlayerActor = World->SpawnActor<ATwinSticksCharacter>(PlayerClass, PlayerRespawnLocation);
+	if (IsValid(PlayerActor)) {
+		FirstPlayerController->Possess(PlayerActor);
+	}
 	GetWorld()->GetFirstPlayerController()->Possess(PlayerActor);
 }
 

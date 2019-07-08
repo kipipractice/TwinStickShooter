@@ -11,37 +11,52 @@
 // Sets default values
 ASpawner::ASpawner()
 {
-	PrimaryActorTick.bCanEverTick = true;
+	PrimaryActorTick.bCanEverTick = false;
 }
 
 // Called when the game starts or when spawned
 void ASpawner::BeginPlay()
 {
 	Super::BeginPlay();
-	if (!BoxComponent) {
-		DebugPrinter::Print("No box component attached to spawner", EMessageType::Error);
+	if (IsValid(BoxComponent) == false) {
+		UE_LOG(LogTemp, Warning, TEXT("ASpawner::BeginPlay IsValid(BoxComponent) == false"))
 	}
-	Cast<ATwinStickGameMode>(GetWorld()->GetAuthGameMode())->OnSpawnEnemies.AddDynamic(this, &ASpawner::SpawnEnemy);
+	UWorld* World = GetWorld();
+	if (IsValid(World) == false) {
+		UE_LOG(LogTemp, Warning, TEXT("ASpawner::BeginPlay IsValid(World) == false"))
+		return;
+	}
+	Cast<ATwinStickGameMode>(World->GetAuthGameMode())->OnSpawnEnemies.AddDynamic(this, &ASpawner::SpawnEnemy);
 
 	
 }
 
 
 void ASpawner::SpawnEnemy() {
-	if (!ensure(BoxComponent) && !ensure(EnemyClasses.Num() > 0)) {
-		DebugPrinter::Print("No box component or enemy templates set");
+	if (IsValid(BoxComponent) == false) {
+		UE_LOG(LogTemp, Warning, TEXT("ASpawner::SpawnEnemy IsValid(BoxComponent) == false"))
 		return;
 	}
-	//DebugPrinter::Print("Spawning Enemy");
-	for (auto&& EnemyClass : EnemyClasses) {
+	if(EnemyClasses.Num() == 0) {
+		UE_LOG(LogTemp, Warning, TEXT("ASpawner::SpawnEnemy EnemyClasses.Num() == 0"))
+		return;
+	}
+	UWorld* World = GetWorld();
+	if (IsValid(World) == false) {
+		UE_LOG(LogTemp, Warning, TEXT("ASpawner::SpawnEnemy IsValid(World) == false"))
+		return;
+	}
+	FVector ActorLocation = GetActorLocation();
+	FVector BoxExtent = BoxComponent->GetScaledBoxExtent();
 
+	for (auto&& EnemyClass : EnemyClasses) {
 		FTransform EnemySpawnPosition = FTransform(
 			UKismetMathLibrary::RandomPointInBoundingBox(
-				GetActorLocation(),
-				BoxComponent->GetScaledBoxExtent()
+				ActorLocation,
+				BoxExtent
 			)
 		);
-		GetWorld()->SpawnActor<AEnemyCharacter>(EnemyClass, EnemySpawnPosition);
+		World->SpawnActor<AEnemyCharacter>(EnemyClass, EnemySpawnPosition);
 	}
 
 

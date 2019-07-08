@@ -9,13 +9,12 @@
 #include "Runtime/Engine/Classes/Particles/ParticleSystemComponent.h"
 #include "Runtime/Engine/Classes/Kismet/GameplayStatics.h"
 #include "Runtime/Engine/Classes/Kismet/KismetSystemLibrary.h"
-// Sets default values
+
+
 AProjectile::AProjectile()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = true;
-
-
+	PrimaryActorTick.bCanEverTick = false;
 }
 
 // Called when the game starts or when spawned
@@ -23,37 +22,31 @@ void AProjectile::BeginPlay()
 {
 	Super::BeginPlay();
 
-	if (!CapsuleComponent) {
-		DebugPrinter::Print("Projectile capsule component not set", EMessageType::Warning);
+	if (IsValid(CapsuleComponent) == false) {
+		UE_LOG(LogTemp, Warning, TEXT("AProjectile::BeginPlay IsValid(CapsuleComponent) == false"))
 	}
 	else {
 		CapsuleComponent->OnComponentBeginOverlap.AddDynamic(this, &AProjectile::AProjectile::OnOverlapBegin);
 	}
-	if (!HitParticleSystem) {
-		DebugPrinter::Print("Hit particle system not set", EMessageType::Warning);
+	if (IsValid(HitParticleSystem) == false) {
+		UE_LOG(LogTemp, Warning, TEXT("AProjectile::BeginPlay IsValid(HitParticleSystem) == false"))
 	}
 	
 }
 
 void AProjectile::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	if (OtherActor->GetInstigator() == GetInstigator()) {
-		return;
-	}
-	//DebugPrinter::Print("projectile overlapping");
-	AEnemyCharacter* EnemyCharacter = dynamic_cast<AEnemyCharacter*>(OtherActor);
-	if (EnemyCharacter) {
+	AEnemyCharacter* EnemyCharacter = Cast<AEnemyCharacter>(OtherActor);
+	if (IsValid(EnemyCharacter)) {
 		EnemyCharacter->TakeDamage(Damage);	
 	}
-	if (ensure(HitParticleSystem)) {
-
+	if (IsValid(HitParticleSystem) && IsValid(OtherActor)) {
 		UGameplayStatics::SpawnEmitterAtLocation(
 			GetWorld(),
 			HitParticleSystem,
 			OtherActor->GetActorTransform()
 		);
 	}
-
 	Destroy();
 }
 

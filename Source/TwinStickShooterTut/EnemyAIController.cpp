@@ -11,15 +11,25 @@
 #include "Kismet/KismetMathLibrary.h"
 
 AEnemyAIController::AEnemyAIController() {
-	PrimaryActorTick.bCanEverTick = true;
+	PrimaryActorTick.bCanEverTick = false;
 }
 
 
 void AEnemyAIController::BeginPlay() {
 	Super::BeginPlay();
-	ActorToFollow = Cast<APlayerCharacter>(GetWorld()->GetFirstPlayerController()->GetPawn());
-	if (!ActorToFollow) {
-		DebugPrinter::Print("Actor to follow not found");
+	UWorld* World = GetWorld();
+	if (IsValid(World) == false) {
+		UE_LOG(LogTemp, Error, TEXT("AEnemyAIController::BeginPlay IsValid(World) == false"))
+		return;
+	}
+	APlayerController* FirstPlayerController = World->GetFirstPlayerController();
+	if (IsValid(FirstPlayerController) == false) {
+		UE_LOG(LogTemp, Error, TEXT("AEnemyAIController::BeginPlay IsValid(FirstPlayerController) == false"))
+		return;
+	}
+	PlayerToFollow = Cast<APlayerCharacter>(FirstPlayerController->GetPawn());
+	if (IsValid(PlayerToFollow) == false) {
+		UE_LOG(LogTemp, Error, TEXT("AEnemyAIController::BeginPlay IsValid(ActorToFollow) == false"))
 		return;
 	}
 	GetWorldTimerManager().SetTimer(
@@ -34,17 +44,25 @@ void AEnemyAIController::BeginPlay() {
 
 void AEnemyAIController::Tick(float DeltaTime)
 {
+	if (IsValid(PlayerToFollow) == false) {
+		UE_LOG(LogTemp, Error, TEXT("AEnemyAIController::Tick IsValid(ActorToFollow) == false"))
+	}
+	AActor* Pawn = GetPawn();
+	if (IsValid(Pawn) == false) {
+		UE_LOG(LogTemp, Error, TEXT("AEnemyAIController::Tick IsValid(Pawn) == false"))
+	}
 	FRotator NewRotation = UKismetMathLibrary::FindLookAtRotation(
-		GetPawn()->GetActorLocation(),
-		ActorToFollow->GetActorLocation()
+		Pawn->GetActorLocation(),
+		PlayerToFollow->GetActorLocation()
 	);
-	GetPawn()->SetActorRotation(NewRotation);
+	Pawn->SetActorRotation(NewRotation);
 }
 
 void AEnemyAIController::FollowActor()
 {
-	if (!ensure(ActorToFollow)) {
+	if (IsValid(PlayerToFollow) == false) {
+		UE_LOG(LogTemp, Error, TEXT("AEnemyAIController::FollowActor IsValid(ActorToFollow) == false"))
 		return;
 	}
-	MoveToActor(ActorToFollow);
+	MoveToActor(PlayerToFollow);
 }
