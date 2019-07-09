@@ -31,7 +31,6 @@ public:
 	uint32 GetUserIndex();
 
 protected:
-	
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Basic)
 	FString SaveSlotName;

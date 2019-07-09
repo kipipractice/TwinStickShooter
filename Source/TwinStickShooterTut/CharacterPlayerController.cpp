@@ -17,8 +17,8 @@ ACharacterPlayerController::ACharacterPlayerController() {
 	}
 	else
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Could not find device config! Loading default PC controlls instead!"));
 		ControllerDeviceInputType = InputType::PC;
+		UE_LOG(LogTemp, Warning, TEXT("Could not find device config! Loading default PC controlls instead!"));
 	}
 }
 

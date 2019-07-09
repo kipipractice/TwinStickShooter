@@ -30,8 +30,12 @@ void ATwinStickGameMode::UpdateHUDScore(int Score) {
 	UGameplayStatics::GetAllActorsOfClass(GetWorld(), HUDClass, HUDs);
 	for (AActor* HUD : HUDs) {
 		ATwinSticksHUD* TwinSticksHUD = Cast<ATwinSticksHUD>(HUD);
-		if (TwinSticksHUD) {
+		if (IsValid(TwinSticksHUD)) {
 			TwinSticksHUD->SetScore(Score);
+		}
+		else
+		{
+			UE_LOG(LogTemp, Error, TEXT("ATwinStickGameMode::UpdateHUDScore IsValid(TwinSticksHUD)"));
 		}
 	}
 }
@@ -59,15 +63,13 @@ void ATwinStickGameMode::RespawnPlayer()
 	if (IsValid(PlayerActor)) {
 		FirstPlayerController->Possess(PlayerActor);
 	}
-	GetWorld()->GetFirstPlayerController()->Possess(PlayerActor);
+	World->GetFirstPlayerController()->Possess(PlayerActor);
 }
 
 
 void ATwinStickGameMode::SpawnEnemies()
 {
-	//DebugPrinter::Print("Spawning enemy");
 	OnSpawnEnemies.Broadcast();
-
 }
 
 

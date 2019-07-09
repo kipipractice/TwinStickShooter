@@ -75,6 +75,7 @@ void AGun::SpawnProjectile() {
 	AActor* Player = World->GetFirstPlayerController()->GetPawn();
 	if (IsValid(Player) == false) {
 		UE_LOG(LogTemp, Error, TEXT("AGun::SpawnProjectile() IsValid(Player) == false"));
+		return;
 	}
 
 	FActorSpawnParameters SpawnParameters = FActorSpawnParameters();

@@ -25,7 +25,8 @@ void AEnemyCharacter::BeginPlay() {
 	if (IsValid(DamageBox) == false) {
 		UE_LOG(LogTemp, Warning, TEXT("AEnemyCharacter::BeginPlay IsValid(DamageBox) == false"))
 	}
-	else {
+	else 
+	{
 		DamageBox->OnComponentBeginOverlap.AddDynamic(this, &AEnemyCharacter::OnBoxBeginOverlap);
 		DamageBox->OnComponentEndOverlap.AddDynamic(this, &AEnemyCharacter::OnOverlapEnd);
 	}
@@ -75,27 +76,27 @@ void AEnemyCharacter::OnOverlapEnd(class UPrimitiveComponent* OverlappedComp, cl
 }
 
 
-
 void AEnemyCharacter::Die() {
 	Super::Die();
 
-	SetActorEnableCollision(false);
 	AController* Controller = GetController();
 	if (IsValid(Controller) == false) {
 		UE_LOG(LogTemp, Error, TEXT("AEnemyCharacter::Die IsValid(Controller) == false"))
 		return;
 	}
-	
-	Controller->StopMovement();
-	Controller->Destroy();
-
 	UWorld* World = GetWorld();
 	if (IsValid(World) == false) {
 		UE_LOG(LogTemp, Error, TEXT("AEnemyCharacter::Die IsValid(World) == false"))
 		return;
 	}
 	ATwinStickGameMode* GameMode = Cast<ATwinStickGameMode>(World->GetAuthGameMode());
-	if (IsValid(GameMode)) {
-		GameMode->IncrementScore(Score);
+	if (IsValid(GameMode) == false) {
+		UE_LOG(LogTemp, Error, TEXT("AEnemyCharacter::Die IsValid(GameMode) == false"))
+		return;
 	}
+
+	Controller->StopMovement();
+	Controller->Destroy();
+	SetActorEnableCollision(false);
+	GameMode->IncrementScore(Score);
 }

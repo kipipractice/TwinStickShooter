@@ -7,6 +7,7 @@
 #include "EnemyCharacter.h"
 #include "Engine/World.h"
 #include "TimerManager.h"
+#include "GameFramework/PlayerController.h"
 #include "Kismet/KismetMathLibrary.h"
 
 AEnemyAIController::AEnemyAIController() {

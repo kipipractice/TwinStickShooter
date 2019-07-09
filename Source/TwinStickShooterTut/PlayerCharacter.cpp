@@ -16,6 +16,7 @@
 
 void APlayerCharacter::BeginPlay() {
 	Super::BeginPlay();
+
 	UWorld* World = GetWorld();
 	if (IsValid(World) == false) {
 		UE_LOG(LogTemp, Error, TEXT("APlayerCharacter::BeginPlay() IsValid(World) == false"));

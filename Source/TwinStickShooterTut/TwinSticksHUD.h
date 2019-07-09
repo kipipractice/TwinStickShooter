@@ -30,9 +30,9 @@ protected:
 	UPROPERTY(VisibleAnywhere, Category = "Health")
 	float MaxHealth = 100;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "HUD")
+	UPROPERTY(BlueprintReadWrite, Category = "HUD")
 	UProgressBar* HealthBar;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "HUD")
+	UPROPERTY(BlueprintReadWrite, Category = "HUD")
 	UTextBlock* ScoreText;
 };
