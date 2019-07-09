@@ -24,7 +24,7 @@ void AEnemyAIController::BeginPlay() {
 	}
 	APlayerController* FirstPlayerController = World->GetFirstPlayerController();
 	if (IsValid(FirstPlayerController) == false) {
-		UE_LOG(LogTemp, Error, TEXT("AEnemyAIController::BeginPlay IsValid(FirstPlayerController) == false"))
+		UE_LOG(LogTemp, Error, TEXT("AEnemyAIController::BeginPlay IsValid(FirstPlayerController) == false) == false"))
 		return;
 	}
 	PlayerToFollow = Cast<APlayerCharacter>(FirstPlayerController->GetPawn());

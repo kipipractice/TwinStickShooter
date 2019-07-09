@@ -32,18 +32,18 @@ void AEnemyCharacter::BeginPlay() {
 	}
 	UWorld* World = GetWorld();
 	if (IsValid(World) == false) {
-		UE_LOG(LogTemp, Error, TEXT("AEnemyCharacter::BeginPlay IsValid(World) == false"))
+		UE_LOG(LogTemp, Warning, TEXT("AEnemyCharacter::BeginPlay IsValid(World) == false"))
 		return;
 	}
 	APlayerController* FirstPlayerController = World->GetFirstPlayerController();
 	if (IsValid(FirstPlayerController) == false) {
-		UE_LOG(LogTemp, Error, TEXT("AEnemyCharacter::BeginPlay IsValid(FirstPlayerController) == false"))
+		UE_LOG(LogTemp, Warning, TEXT("AEnemyCharacter::BeginPlay IsValid(FirstPlayerController) == false"))
 		return;
 
 	}
 	PlayerCharacter = Cast<APlayerCharacter>(FirstPlayerController->GetPawn());
 	if (IsValid(PlayerCharacter) == false) {
-		UE_LOG(LogTemp, Error, TEXT("AEnemyCharacter::BeginPlay IsValid(PlayerCharacter) == false"))
+		UE_LOG(LogTemp, Warning, TEXT("AEnemyCharacter::BeginPlay IsValid(PlayerCharacter) == false"))
 	}
 
 }

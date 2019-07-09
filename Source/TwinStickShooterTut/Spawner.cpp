@@ -33,16 +33,16 @@ void ASpawner::BeginPlay()
 
 void ASpawner::SpawnEnemy() {
 	if (IsValid(BoxComponent) == false) {
-		UE_LOG(LogTemp, Warning, TEXT("ASpawner::SpawnEnemy IsValid(BoxComponent) == false"))
+		UE_LOG(LogTemp, Error, TEXT("ASpawner::SpawnEnemy IsValid(BoxComponent) == false"))
 		return;
 	}
 	if(EnemyClasses.Num() == 0) {
-		UE_LOG(LogTemp, Warning, TEXT("ASpawner::SpawnEnemy EnemyClasses.Num() == 0"))
+		UE_LOG(LogTemp, Error, TEXT("ASpawner::SpawnEnemy EnemyClasses.Num() == 0"))
 		return;
 	}
 	UWorld* World = GetWorld();
 	if (IsValid(World) == false) {
-		UE_LOG(LogTemp, Warning, TEXT("ASpawner::SpawnEnemy IsValid(World) == false"))
+		UE_LOG(LogTemp, Error, TEXT("ASpawner::SpawnEnemy IsValid(World) == false"))
 		return;
 	}
 	FVector ActorLocation = GetActorLocation();

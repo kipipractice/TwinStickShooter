@@ -19,13 +19,13 @@ void APlayerCharacter::BeginPlay() {
 
 	UWorld* World = GetWorld();
 	if (IsValid(World) == false) {
-		UE_LOG(LogTemp, Error, TEXT("APlayerCharacter::BeginPlay() IsValid(World) == false"));
+		UE_LOG(LogTemp, Warning, TEXT("APlayerCharacter::BeginPlay() IsValid(World) == false"));
 		return;
 	}
 
 	ATwinStickGameMode* GameMode = Cast<ATwinStickGameMode>(World->GetAuthGameMode());
 	if (IsValid(GameMode) == false) {
-		UE_LOG(LogTemp, Error, TEXT("APlayerCharacter::BeginPlay() IsValid(GameMode) == false"));
+		UE_LOG(LogTemp, Warning, TEXT("APlayerCharacter::BeginPlay() IsValid(GameMode) == false"));
 		return;
 	}
 	GameMode->SetPlayerRespawnLocation(GetActorTransform());

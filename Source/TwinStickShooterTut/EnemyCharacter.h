@@ -57,7 +57,7 @@ protected:
 
 	// Added score when enemy dies.
 	UPROPERTY(EditDefaultsOnly, Category = "Setup")
-	float Score = 500;
+	float Score = 500.0f;
 
 
 	FTimerHandle DamageTimerHandle;

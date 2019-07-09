@@ -35,7 +35,7 @@ void ATwinStickGameMode::UpdateHUDScore(int Score) {
 		}
 		else
 		{
-			UE_LOG(LogTemp, Error, TEXT("ATwinStickGameMode::UpdateHUDScore IsValid(TwinSticksHUD)"));
+			UE_LOG(LogTemp, Error, TEXT("ATwinStickGameMode::UpdateHUDScore IsValid(TwinSticksHUD) == false"));
 		}
 	}
 }

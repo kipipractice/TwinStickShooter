@@ -27,14 +27,15 @@ void AGun::PullTrigger() {
 		return;
 	}
 	// Call Fire because Timer function is called after the delay.
-	Fire();
+	//Fire();
 
 	World->GetTimerManager().SetTimer(
 		FireTimerHandle,
 		this,
 		&AGun::Fire,
 		1 / GetFireRate(),
-		true
+		true,
+		0.0f
 	);
 }
 

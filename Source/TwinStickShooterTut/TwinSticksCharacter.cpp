@@ -155,6 +155,9 @@ void ATwinSticksCharacter::Die() {
 
 
 void ATwinSticksCharacter::OnDeathTimerEnd() {
+	if (IsValid(Gun)) {
+		Gun->Destroy();
+	}
 	Destroy();
 }
 
