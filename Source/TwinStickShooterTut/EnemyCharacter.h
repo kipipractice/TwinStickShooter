@@ -19,6 +19,8 @@ public:
 	// Sets default values for this character's properties
 	AEnemyCharacter();
 
+	void SetTarget(AActor* Target);
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -64,5 +66,5 @@ protected:
 
 	// target player used for checking collision actor
 	UPROPERTY()
-	APlayerCharacter* PlayerCharacter = nullptr;
+	AActor* Target = nullptr;
 };
