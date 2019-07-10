@@ -21,8 +21,15 @@ void APlayerCharacter::BeginPlay() {
 	SetPlayerRespawnTransform(GetActorTransform());
 	
 
+<<<<<<< HEAD
+
+	ATwinStickGameMode* GameMode = Cast<ATwinStickGameMode>(World->GetAuthGameMode());
+	if (IsValid(GameMode) == false) {
+		UE_LOG(LogTemp, Warning, TEXT("APlayerCharacter::BeginPlay() IsValid(GameMode) == false"));
+=======
 	if (IsValid(HealthComponent) == false) {
 		UE_LOG(LogTemp, Error, TEXT("APlayerCharacter::BeginPlay() IsValid(HealthComponent) == false"));
+>>>>>>> 8e5cf70ba20f0712125c95e8f49e00fed747eeb8
 		return;
 	}
 	HealthComponent->OnHealthChanged.AddDynamic(this, &APlayerCharacter::OnHealthChanged);

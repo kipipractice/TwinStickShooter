@@ -10,7 +10,7 @@ void ATwinSticksHUD::SetMaxHealth(float Health) {
 
 void ATwinSticksHUD::SetHealth(float Health) {
 	if (IsValid(HealthBar) == false) {
-		UE_LOG(LogTemp, Error, TEXT("ATwinSticksHUD::SetScore IsValid(HealthBar) == false"));
+		UE_LOG(LogTemp, Error, TEXT("ATwinSticksHUD::SetHealth IsValid(HealthBar) == false"));
 		return;
 	}
 
