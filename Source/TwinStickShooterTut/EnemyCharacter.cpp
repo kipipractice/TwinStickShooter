@@ -32,51 +32,46 @@ void AEnemyCharacter::BeginPlay() {
 		DamageBox->OnComponentBeginOverlap.AddDynamic(this, &AEnemyCharacter::OnBoxBeginOverlap);
 		DamageBox->OnComponentEndOverlap.AddDynamic(this, &AEnemyCharacter::OnOverlapEnd);
 	}
-	UWorld* World = GetWorld();
-	if (IsValid(World) == false) {
-		UE_LOG(LogTemp, Warning, TEXT("AEnemyCharacter::BeginPlay IsValid(World) == false"))
-		return;
-	}
-	APlayerController* FirstPlayerController = World->GetFirstPlayerController();
-	if (IsValid(FirstPlayerController) == false) {
-		UE_LOG(LogTemp, Warning, TEXT("AEnemyCharacter::BeginPlay IsValid(FirstPlayerController) == false"))
-		return;
+}
 
+
+void AEnemyCharacter::SetTarget(AActor* Target) {
+	if (IsValid(Target) == false) {
+		UE_LOG(LogTemp, Error, TEXT("AEnemyCharacter::SetTarget IsValid(Target) == false"));
+		return;
 	}
-	PlayerCharacter = Cast<APlayerCharacter>(FirstPlayerController->GetPawn());
-	if (IsValid(PlayerCharacter) == false) {
-		UE_LOG(LogTemp, Warning, TEXT("AEnemyCharacter::BeginPlay IsValid(PlayerCharacter) == false"))
-	}
+	this->Target = Target;
 }
 
 
 void AEnemyCharacter::OnBoxBeginOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	if (IsValid(PlayerCharacter) == false) {
-		UE_LOG(LogTemp, Error, TEXT("AEnemyCharacter::OnBoxBeginOverlap IsValid(PlayerCharacter) == false"));
+	if (IsValid(Target) == false) {
+		UE_LOG(LogTemp, Error, TEXT("AEnemyCharacter::OnBoxBeginOverlap IsValid(Target) == false"));
 		return;
 	}
 
-	if (OtherActor == PlayerCharacter) {
+	if (OtherActor == Target) {
 		GetWorldTimerManager().SetTimer(
 			DamageTimerHandle,
 			this,
 			&AEnemyCharacter::DealDamage,
 			DamageRate,
 			true,
-			DamageDelay);
+			DamageDelay
+		);
 	}
 
 }
 
 void AEnemyCharacter::DealDamage()
 {
-	if (IsValid(PlayerCharacter) == false) {
-		UE_LOG(LogTemp, Error, TEXT("AEnemyCharacter::DealDamage IsValid(PlayerCharacter) == false"));
+	if (IsValid(Target) == false) {
+		UE_LOG(LogTemp, Error, TEXT("AEnemyCharacter::DealDamage IsValid(Target) == false"));
 		return;
 	}
 
-	UHealthComponent* HealthComponent = PlayerCharacter->FindComponentByClass<UHealthComponent>();
+	UHealthComponent* HealthComponent = Target->FindComponentByClass<UHealthComponent>();
 	if (IsValid(HealthComponent)) {
 		HealthComponent->TakeDamage(DamagePerHit);
 	}
@@ -84,12 +79,12 @@ void AEnemyCharacter::DealDamage()
 
 void AEnemyCharacter::OnOverlapEnd(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
 {
-	if (IsValid(PlayerCharacter) == false) {
-		UE_LOG(LogTemp, Error, TEXT("AEnemyCharacter::OnOverlapEnd IsValid(PlayerCharacter) == false"));
+	if (IsValid(Target) == false) {
+		UE_LOG(LogTemp, Error, TEXT("AEnemyCharacter::OnOverlapEnd IsValid(Target) == false"));
 		return;
 	}
 
-	if (OtherActor == PlayerCharacter) {
+	if (OtherActor == Target) {
 		GetWorldTimerManager().ClearTimer(DamageTimerHandle);
 	}
 }

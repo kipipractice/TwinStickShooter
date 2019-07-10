@@ -32,11 +32,14 @@ public:
 
 	FHealthChange OnHealthChanged;
 
-protected:
-	UPROPERTY(EditDefaultsOnly)
-	int MaxHealth = 100;
+	void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent);
 
+protected:
+	
 	UPROPERTY(EditDefaultsOnly)
+	int MaxHealth;
+
+	UPROPERTY(VisibleInstanceOnly)
 	int Health;
 
 	bool bDead = false;

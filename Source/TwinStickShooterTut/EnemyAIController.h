@@ -7,9 +7,19 @@
 #include "EnemyAIController.generated.h"
 
 class APlayerCharacter;
+class AEnemyCharacter;
+class ANexus;
 /**
  * 
  */
+
+UENUM()
+enum class EFollowActorType : uint8 {
+	Player,
+	Nexus
+};
+
+
 UCLASS()
 class TWINSTICKSHOOTERTUT_API AEnemyAIController : public AAIController
 {
@@ -23,18 +33,34 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 	
-	void Tick(float DeltaTime);
+	void Tick(float DeltaTime) override;
 
-	APlayerCharacter* PlayerToFollow = nullptr;
+	void OnPossess(APawn* PossessedPawn) override;
 
 	FTimerHandle TrackPlayerTimerHandle;
 
-	//interval at which the enemy changes direction and moves towards the player(in seconds)
-	UPROPERTY(EditDefaultsOnly)
+	UPROPERTY(EditDefaultsOnly, Category = "Targeting")
+	EFollowActorType DefaultActorTypeToFollow;
+
+	UPROPERTY()
+	AActor* TargetToFollow = nullptr;
+
+	UPROPERTY()
+	AEnemyCharacter* ControlledEnemy;
+
+	// interval at which the enemy changes direction and moves towards the player(in seconds)
+	UPROPERTY(EditDefaultsOnly, Category = "Targeting")
 	float TrackInterval = 0.25f;
 
-	UPROPERTY(EditDefaultsOnly)
+	UPROPERTY(EditDefaultsOnly, Category = "Targeting")
 	float TrackDelay = 0.25f;
+
+
+	void SwitchTarget(EFollowActorType ActorTypeToFollow);
+
+	APlayerCharacter* GetPlayerCharacter();
+
+	ANexus* GetNexus();
 
 	void FollowActor();
 };
