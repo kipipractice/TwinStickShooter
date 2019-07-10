@@ -10,6 +10,7 @@
 
 class AGun;
 class UAudioComponent;
+class UHealthComponent;
 
 
 // TODO: Tui zvuchi mnogo tupo. Rename na neshto po-umno
@@ -20,9 +21,6 @@ class TWINSTICKSHOOTERTUT_API ATwinSticksCharacter : public ACharacter
 
 public:
 	ATwinSticksCharacter();
-
-	UFUNCTION(BlueprintCallable, Category = "Base Character")
-	virtual void TakeDamage(float Damage);
 
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
@@ -35,11 +33,8 @@ protected:
 
 	virtual void BeginPlay() override;
 
-	UPROPERTY(EditDefaultsOnly, Category = "Base Character")
-	float MaxHealth = 100;
-
-	UPROPERTY(VisibleAnywhere, Category = "Base Character")
-	float Health;
+	UPROPERTY(EditDefaultsOnly, Instanced, Category = "Base Character")
+	UHealthComponent* HealthComponent;
 
 	UPROPERTY(BlueprintReadWrite, Category = "Base Character")
 	UMeshComponent* CharacterMesh;

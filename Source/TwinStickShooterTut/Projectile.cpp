@@ -8,6 +8,7 @@
 #include "Particles/ParticleSystemComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetSystemLibrary.h"
+#include "HealthComponent.h"
 
 
 AProjectile::AProjectile()
@@ -39,16 +40,20 @@ void AProjectile::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* Ot
 	if (OtherActor->GetInstigator() == GetInstigator()) {
 		return;
 	}
-
-	AEnemyCharacter* EnemyCharacter = Cast<AEnemyCharacter>(OtherActor);
-	if (IsValid(EnemyCharacter)) {
-		EnemyCharacter->TakeDamage(Damage);	
+	
+	if (IsValid(OtherActor)) {
+		UHealthComponent* HealthComponent = OtherActor->FindComponentByClass<UHealthComponent>();
+		if (IsValid(HealthComponent)) {
+			HealthComponent->TakeDamage(Damage);
+		}
 	}
-	if (IsValid(HitParticleSystem) && IsValid(OtherActor)) {
+
+
+	if (IsValid(HitParticleSystem)) {
 		UGameplayStatics::SpawnEmitterAtLocation(
 			GetWorld(),
 			HitParticleSystem,
-			OtherActor->GetActorTransform()
+			GetActorTransform()
 		);
 	}
 	Destroy();

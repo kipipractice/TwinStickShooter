@@ -2,13 +2,15 @@
 
 
 #include "EnemyCharacter.h"
-#include "Runtime/Engine/Classes/Components/BoxComponent.h"
-#include "Runtime/Engine/Classes/Engine/EngineTypes.h"
-#include "PlayerCharacter.h"
-#include "Runtime/Engine/Classes/Engine/World.h"
-#include "Runtime/Engine/Public/TimerManager.h"
+#include "Components/BoxComponent.h"
+#include "Engine/EngineTypes.h"
+#include "Engine/World.h"
+#include "TimerManager.h"
 #include "Classes/AIController.h"
 #include "GameFramework/Controller.h"
+
+#include "PlayerCharacter.h"
+#include "HealthComponent.h"
 #include "TwinStickGameMode.h"
 
 // Sets default values
@@ -45,12 +47,16 @@ void AEnemyCharacter::BeginPlay() {
 	if (IsValid(PlayerCharacter) == false) {
 		UE_LOG(LogTemp, Warning, TEXT("AEnemyCharacter::BeginPlay IsValid(PlayerCharacter) == false"))
 	}
-
 }
 
 
 void AEnemyCharacter::OnBoxBeginOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
+	if (IsValid(PlayerCharacter) == false) {
+		UE_LOG(LogTemp, Error, TEXT("AEnemyCharacter::OnBoxBeginOverlap IsValid(PlayerCharacter) == false"));
+		return;
+	}
+
 	if (OtherActor == PlayerCharacter) {
 		GetWorldTimerManager().SetTimer(
 			DamageTimerHandle,
@@ -65,11 +71,24 @@ void AEnemyCharacter::OnBoxBeginOverlap(UPrimitiveComponent* OverlappedComp, AAc
 
 void AEnemyCharacter::DealDamage()
 {
-	PlayerCharacter->TakeDamage(DamagePerHit);
+	if (IsValid(PlayerCharacter) == false) {
+		UE_LOG(LogTemp, Error, TEXT("AEnemyCharacter::DealDamage IsValid(PlayerCharacter) == false"));
+		return;
+	}
+
+	UHealthComponent* HealthComponent = PlayerCharacter->FindComponentByClass<UHealthComponent>();
+	if (IsValid(HealthComponent)) {
+		HealthComponent->TakeDamage(DamagePerHit);
+	}
 }
 
 void AEnemyCharacter::OnOverlapEnd(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
 {
+	if (IsValid(PlayerCharacter) == false) {
+		UE_LOG(LogTemp, Error, TEXT("AEnemyCharacter::OnOverlapEnd IsValid(PlayerCharacter) == false"));
+		return;
+	}
+
 	if (OtherActor == PlayerCharacter) {
 		GetWorldTimerManager().ClearTimer(DamageTimerHandle);
 	}

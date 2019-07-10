@@ -10,6 +10,7 @@
 #include "TwinSticksHUD.h"
 #include "TwinStickGameMode.h"
 #include "CharacterPlayerController.h"
+#include "HealthComponent.h"
 #include "InputType.h"
 
 
@@ -17,18 +18,14 @@
 void APlayerCharacter::BeginPlay() {
 	Super::BeginPlay();
 
-	UWorld* World = GetWorld();
-	if (IsValid(World) == false) {
-		UE_LOG(LogTemp, Warning, TEXT("APlayerCharacter::BeginPlay() IsValid(World) == false"));
-		return;
-	}
+	SetPlayerRespawnTransform(GetActorTransform());
+	
 
-	ATwinStickGameMode* GameMode = Cast<ATwinStickGameMode>(World->GetAuthGameMode());
-	if (IsValid(GameMode) == false) {
-		UE_LOG(LogTemp, Warning, TEXT("APlayerCharacter::BeginPlay() IsValid(GameMode) == false"));
+	if (IsValid(HealthComponent) == false) {
+		UE_LOG(LogTemp, Error, TEXT("APlayerCharacter::BeginPlay() IsValid(HealthComponent) == false"));
 		return;
 	}
-	GameMode->SetPlayerRespawnLocation(GetActorTransform());
+	HealthComponent->OnHealthChanged.AddDynamic(this, &APlayerCharacter::OnHealthChanged);
 }
 
 
@@ -88,9 +85,23 @@ void APlayerCharacter::SetupControllerInputScheme(UInputComponent* PlayerInputCo
 }
 
 
-void APlayerCharacter::TakeDamage(float Damage) {
-	Super::TakeDamage(Damage);
+void APlayerCharacter::SetPlayerRespawnTransform(FTransform RespawnTransform) {
+	UWorld* World = GetWorld();
+	if (IsValid(World) == false) {
+		UE_LOG(LogTemp, Warning, TEXT("APlayerCharacter::BeginPlay() IsValid(World) == false"));
+		return;
+	}
 
+	ATwinStickGameMode* GameMode = Cast<ATwinStickGameMode>(World->GetAuthGameMode());
+	if (IsValid(GameMode) == false) {
+		UE_LOG(LogTemp, Warning, TEXT("APlayerCharacter::BeginPlay() IsValid(GameMode) == false"));
+		return;
+	}
+	GameMode->SetPlayerRespawnLocation(RespawnTransform);
+}
+
+
+void APlayerCharacter::OnHealthChanged(int Health) {
 	if (IsValid(HUD) == false) {
 		UE_LOG(LogTemp, Error, TEXT("APlayerCharacter::TakeDamage IsValid(HUD) == false"));
 		return;
@@ -115,8 +126,13 @@ void APlayerCharacter::PossessedBy(AController* Controller) {
 		return;
 	}
 
-	HUD->SetMaxHealth(MaxHealth);
-	HUD->SetHealth(Health);
+	if (IsValid(HealthComponent) == false) {
+		UE_LOG(LogTemp, Error, TEXT("APlayerCharacter::PossessedBy IsValid(HUD) == false"));
+		return;
+	}
+
+	HUD->SetMaxHealth(HealthComponent->GetMaxHealth());
+	HUD->SetHealth(HealthComponent->GetHealth());
 }
 
 

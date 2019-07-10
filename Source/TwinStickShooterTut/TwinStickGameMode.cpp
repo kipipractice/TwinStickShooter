@@ -2,10 +2,10 @@
 
 
 #include "TwinStickGameMode.h"
-#include "Runtime/Engine/Classes/Engine/World.h"
-#include "Runtime/Engine/Classes/Kismet/GameplayStatics.h"
+#include "Engine/World.h"
+#include "Kismet/GameplayStatics.h"
 #include "TwinSticksCharacter.h"
-#include "Runtime/Engine/Public/TimerManager.h"
+#include "TimerManager.h"
 #include "Kismet/GameplayStatics.h"
 #include "PlayerCharacter.h"
 #include "EnemyCharacter.h"

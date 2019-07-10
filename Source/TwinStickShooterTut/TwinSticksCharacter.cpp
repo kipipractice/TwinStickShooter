@@ -10,6 +10,7 @@
 #include "Components/AudioComponent.h"
 
 #include "Gun.h"
+#include "HealthComponent.h"
 #include "TwinStickGameMode.h"
 
 // Sets default values
@@ -21,7 +22,8 @@ ATwinSticksCharacter::ATwinSticksCharacter()
 	DeathSoundComponent = CreateDefaultSubobject<UAudioComponent>("DeathSoundAudioComponent");
 	DeathSoundComponent->bAutoActivate = false;
 
-	Health = MaxHealth;
+	HealthComponent = CreateDefaultSubobject<UHealthComponent>("HealthComponent");
+	HealthComponent->OnDeath.AddDynamic(this, &ATwinSticksCharacter::Die);
 }
 
 // Called when the game starts or when spawned
@@ -35,7 +37,6 @@ void ATwinSticksCharacter::BeginPlay()
 
 void ATwinSticksCharacter::SpawnStartingGun() {
 	if (IsValid(StartingGunTemplate) == false) {
-		UE_LOG(LogTemp, Error, TEXT("ATwinSticksCharacter::SpawnStartingGun() IsValid(StartingGunTemplate) == false"));
 		return;
 	}
 
@@ -95,20 +96,6 @@ void ATwinSticksCharacter::MoveRight(float Value) {
 }
 
 
-void ATwinSticksCharacter::TakeDamage(float Damage) {
-	if (bDead) {
-		return;
-	}
-
-
-	Health -= Damage;
-	if (Health <= 0 ? true : false) {
-		bDead = true;
-		Die();
-	}
-}
-
-
 void ATwinSticksCharacter::AttachGun(AGun* NewGun) {
 	if (IsValid(NewGun) == false) {
 		UE_LOG(LogTemp, Error, TEXT(" ATwinSticksCharacter::SpawnGun IsValid(NewGun) == false"));
@@ -122,6 +109,7 @@ void ATwinSticksCharacter::AttachGun(AGun* NewGun) {
 
 	if (CharacterMesh->DoesSocketExist("GunSocket") == false) {
 		UE_LOG(LogTemp, Error, TEXT(" ATwinSticksCharacter::SpawnGun CharacterMesh->DoesSocketExist('GunSocket') == false"));
+		return;
 	}
 
 	Gun = NewGun;
@@ -151,6 +139,9 @@ void ATwinSticksCharacter::Die() {
 	);
 
 	StopFiring();
+
+	// FIXME: Sloppy workaround because animation requires it.
+	bDead = true;
 }
 
 

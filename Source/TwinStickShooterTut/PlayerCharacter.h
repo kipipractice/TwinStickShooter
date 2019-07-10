@@ -28,7 +28,7 @@ public:
 
 	virtual void Tick(float DeltaTime) override;
 
-	void TakeDamage(float Damage) override;
+	// void TakeDamage(float Damage) override;
 
 	void PossessedBy(AController* Controller) override;
 
@@ -50,6 +50,12 @@ protected:
 	// Only register controller input if vector length is above this value
 	UPROPERTY(EditDefaultsOnly, Category = "Input")
 	float InputDeadZone = 0.5f;
+
+	UFUNCTION()
+	void SetPlayerRespawnTransform(FTransform RespawnTransform);
+
+	UFUNCTION()
+	void OnHealthChanged(int Health);
 
 	UFUNCTION()
 	void LookAtMousePosition();
