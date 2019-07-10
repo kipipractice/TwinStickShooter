@@ -42,6 +42,8 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category = "Targeting")
 	EFollowActorType DefaultActorTypeToFollow;
 
+	EFollowActorType CurrentlyTargetedActorType;
+
 	UPROPERTY()
 	AActor* TargetToFollow = nullptr;
 
@@ -55,6 +57,13 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category = "Targeting")
 	float TrackDelay = 0.25f;
 
+	// The distance to player at which enemy stops following nexus and starts following player.
+	UPROPERTY(EditDefaultsOnly, Category = "Targeting")
+	float TargetPlayerDistance = 200;
+
+	// Distance to nexus at which distance to player doesnt matter and enemy won't change its target.
+	UPROPERTY(EditDefaultsOnly, Category = "Targeting")
+	float TargetNexusDistance = 200;
 
 	void SwitchTarget(EFollowActorType ActorTypeToFollow);
 
@@ -62,5 +71,9 @@ protected:
 
 	ANexus* GetNexus();
 
-	void FollowActor();
+	void ResetFollowTarget();
+
+	void DecideTarget();
+
+	void LookAtTarget();
 };
