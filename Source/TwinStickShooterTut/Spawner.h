@@ -13,7 +13,6 @@
 class AEnemyCharacter;
 class UBoxComponent;
 
-
 UCLASS()
 class TWINSTICKSHOOTERTUT_API ASpawner : public AActor
 {
@@ -27,13 +26,23 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
+
 	UFUNCTION()
-	void SpawnEnemy();
+	void SpawnEnemyWave(int WaveIndex);
+
+	void SpawnEnemy(TSubclassOf<AEnemyCharacter> EnemyTemplate);
 
 	UPROPERTY(BlueprintReadWrite, Category = "Setup")
 	UBoxComponent* BoxComponent;
 
 	UPROPERTY(EditAnywhere, Category = "Setup")
-	TArray<TSubclassOf<AEnemyCharacter>> EnemyClasses;
+	TSubclassOf<AEnemyCharacter> EnemyTemplate;
+
+	UPROPERTY(EditAnywhere, Category = "Setup")
+	TSubclassOf<AEnemyCharacter> BossTemplate;
+
+
+	UPROPERTY(EditAnywhere, Category = "Setup")
+	TArray<int> EnemiesPerWave;
 
 };
