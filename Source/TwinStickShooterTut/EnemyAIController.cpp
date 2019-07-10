@@ -27,13 +27,13 @@ void AEnemyAIController::BeginPlay() {
 		UE_LOG(LogTemp, Error, TEXT("AEnemyAIController::BeginPlay IsValid(FirstPlayerController) == false) == false"))
 		return;
 	}
-	PlayerToFollow = Cast<APlayerCharacter>(FirstPlayerController->GetPawn());
-	if (IsValid(PlayerToFollow) == false) {
+	ActorToFollow = Cast<APlayerCharacter>(FirstPlayerController->GetPawn());
+	if (IsValid(ActorToFollow) == false) {
 		UE_LOG(LogTemp, Error, TEXT("AEnemyAIController::BeginPlay IsValid(ActorToFollow) == false"))
 		return;
 	}
 	GetWorldTimerManager().SetTimer(
-		TrackPlayerTimerHandle,
+		TrackActorTimerHandle,
 		this,
 		&AEnemyAIController::FollowActor,
 		TrackInterval,
@@ -45,7 +45,8 @@ void AEnemyAIController::BeginPlay() {
 
 void AEnemyAIController::Tick(float DeltaTime)
 {
-	if (IsValid(PlayerToFollow) == false) {
+	Super::Tick(DeltaTime);
+	if (IsValid(ActorToFollow) == false) {
 		UE_LOG(LogTemp, Error, TEXT("AEnemyAIController::Tick IsValid(ActorToFollow) == false"));
 		return;
 	}
@@ -54,19 +55,49 @@ void AEnemyAIController::Tick(float DeltaTime)
 		UE_LOG(LogTemp, Error, TEXT("AEnemyAIController::Tick IsValid(Pawn) == false"));
 		return;
 	}
-
 	FRotator NewRotation = UKismetMathLibrary::FindLookAtRotation(
 		Pawn->GetActorLocation(),
-		PlayerToFollow->GetActorLocation()
+		ActorToFollow->GetActorLocation()
 	);
 	Pawn->SetActorRotation(NewRotation);
+
+	UWorld* World = GetWorld();
+	if (IsValid(World) == false) {
+		UE_LOG(LogTemp, Error, TEXT("AEnemyAIController::Tick IsValid(World) == false"));
+		return;
+	}
+	APlayerController* FirstPlayerController = World->GetFirstPlayerController();
+	if (IsValid(FirstPlayerController) == false) {
+		UE_LOG(LogTemp, Error, TEXT("AEnemyAIController::Tick IsValid(FirstPlayerController) == false"));
+		return;
+	}
+
+	AActor* PlayerPawn = FirstPlayerController->GetPawn();
+
+	if (IsValid(PlayerPawn) == false) {
+		UE_LOG(LogTemp, Error, TEXT("AEnemyAIController::Tick IsValid(PlayerPawn) == false"));
+		return;
+	}
+	float Distance = FVector::Dist(
+		FirstPlayerController->GetPawn()->GetActorLocation(),
+		GetPawn()->GetActorLocation());
+
+	if ((ActorToFollow == PlayerPawn)
+		&& (Distance > FollowPlayerDistance)) {
+		
+		//ActorToFollow = Cast<>(World->GetAuthGameMode())
+	}
+	else if (Distance <= FollowPlayerDistance) {
+		ActorToFollow = FirstPlayerController->GetPawn();
+	}
+
 }
 
 void AEnemyAIController::FollowActor()
 {
-	if (IsValid(PlayerToFollow) == false) {
+	if (IsValid(ActorToFollow) == false) {
 		UE_LOG(LogTemp, Error, TEXT("AEnemyAIController::FollowActor IsValid(ActorToFollow) == false"))
 		return;
 	}
-	MoveToActor(PlayerToFollow);
+	MoveToActor(ActorToFollow);
 }

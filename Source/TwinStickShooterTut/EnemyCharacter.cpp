@@ -118,4 +118,5 @@ void AEnemyCharacter::Die() {
 	Controller->Destroy();
 	SetActorEnableCollision(false);
 	GameMode->IncrementScore(Score);
+	GameMode->DecrementEnemyCounter();
 }

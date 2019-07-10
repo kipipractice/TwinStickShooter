@@ -79,10 +79,10 @@ void ATwinStickGameMode::RespawnPlayer()
 
 	//Spawn The player and possess him by the player controller
 	ATwinSticksCharacter* PlayerActor = World->SpawnActor<ATwinSticksCharacter>(PlayerTemplate, PlayerRespawnLocation);
-	if (IsValid(PlayerActor)) {
-		FirstPlayerController->Possess(PlayerActor);
-	}
-	//World->GetFirstPlayerController()->Possess(PlayerActor);
+	//if (IsValid(PlayerActor)) {
+	//	FirstPlayerController->Possess(PlayerActor);
+	//}
+	World->GetFirstPlayerController()->Possess(PlayerActor);
 }
 
 void ATwinStickGameMode::IncrementEnemyCounter(int EnemyCount)

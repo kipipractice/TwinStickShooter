@@ -6,7 +6,6 @@
 #include "AIController.h"
 #include "EnemyAIController.generated.h"
 
-class APlayerCharacter;
 /**
  * 
  */
@@ -20,14 +19,23 @@ public:
 	AEnemyAIController();
 
 protected:
+
+
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 	
 	void Tick(float DeltaTime);
 
-	APlayerCharacter* PlayerToFollow = nullptr;
+	//distance at which to start following the player instead of the actor specified
+	UPROPERTY(EditDefaultsOnly)
+	float FollowPlayerDistance = 10.0f;
 
-	FTimerHandle TrackPlayerTimerHandle;
+	UPROPERTY()
+	AActor* ActorToFollow = nullptr;
+
+	ANexus* Nexus = nullptr;
+
+	FTimerHandle TrackActorTimerHandle;
 
 	//interval at which the enemy changes direction and moves towards the player(in seconds)
 	UPROPERTY(EditDefaultsOnly)
