@@ -27,7 +27,12 @@ void ASpawner::BeginPlay()
 		return;
 	}
 
-	Cast<ATwinStickGameMode>(World->GetAuthGameMode())->OnSpawnEnemies.AddDynamic(this, &ASpawner::SpawnEnemyWave);
+	ATwinStickGameMode* GameMode = Cast<ATwinStickGameMode>(World->GetAuthGameMode());
+	if (IsValid(GameMode) == false) {
+		UE_LOG(LogTemp, Error, TEXT("ASpawner::BeginPlay IsValid(GameMode) == false"));
+		return;
+	}
+	GameMode->OnSpawnEnemies.AddDynamic(this, &ASpawner::SpawnEnemyWave);
 	
 }
 
@@ -43,6 +48,7 @@ void ASpawner::SpawnEnemyWave(int WaveIndex)
 	}
 	else if (WaveIndex == EnemiesPerWave.Num()) { // Boss battle after we finish spawning the specified number of enemies
 		SpawnEnemy(BossTemplate);
+		// FIXME: Misho, ne pishi takviz neshta
 		Cast<ATwinStickGameMode>(World->GetAuthGameMode())
 			->IncrementEnemyCounter(1);
 	}

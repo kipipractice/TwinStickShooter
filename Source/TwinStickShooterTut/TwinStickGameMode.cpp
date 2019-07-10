@@ -20,11 +20,24 @@ void ATwinStickGameMode::BeginPlay()
 {
 	Super::BeginPlay();
 	if (IsValid(PlayerTemplate) == false) {
-		UE_LOG(LogTemp, Warning, TEXT("ATwinStickGameMode::BeginPlay IsValid(PlayerTemplate) == false"))
+		UE_LOG(LogTemp, Error, TEXT("ATwinStickGameMode::BeginPlay IsValid(PlayerTemplate) == false"));
 	}
 
+	// Spawn enemies on next frame so that all the logic is initialized before that
+	SpawnEnemyWaveOnNextFrame();
+}
+
+
+void ATwinStickGameMode::SpawnEnemyWave() {
 	OnSpawnEnemies.Broadcast(CurrentWaveIndex);
-	
+}
+
+
+void ATwinStickGameMode::SpawnEnemyWaveOnNextFrame() {
+	GetWorldTimerManager().SetTimerForNextTick(
+		this, 
+		&ATwinStickGameMode::SpawnEnemyWave
+	);
 }
 
 
@@ -32,11 +45,6 @@ void ATwinStickGameMode::IncrementScore(const int Amount)
 {
 	CurrentScore += Amount;
 	UpdateHUDScore(CurrentScore);
-}
-
-bool ATwinStickGameMode::AreAllEnemiesDead()
-{
-	return CurrentEnemies == 0;
 }
 
 
@@ -55,6 +63,8 @@ void ATwinStickGameMode::UpdateHUDScore(int Score) {
 	}
 }
 
+
+// TODO: Split into separate functions
 void ATwinStickGameMode::RespawnPlayer()
 {
 	UWorld* World = GetWorld();
@@ -76,13 +86,23 @@ void ATwinStickGameMode::RespawnPlayer()
 		Enemy->Destroy();
 	}
 	
-
+	if (IsValid(PlayerTemplate) == false) {
+		UE_LOG(LogTemp, Error, TEXT("ATwinStickGameMode::RespawnPlayer IsValid(PlayerTemplate) == false"));
+		return;
+	}
 	//Spawn The player and possess him by the player controller
 	ATwinSticksCharacter* PlayerActor = World->SpawnActor<ATwinSticksCharacter>(PlayerTemplate, PlayerRespawnLocation);
-	//if (IsValid(PlayerActor)) {
-	//	FirstPlayerController->Possess(PlayerActor);
-	//}
-	World->GetFirstPlayerController()->Possess(PlayerActor);
+	FirstPlayerController->Possess(PlayerActor);
+
+	// Reset spawners
+	CurrentWaveIndex = 0;
+	CurrentEnemies = 0;
+	SpawnEnemyWaveOnNextFrame();
+}
+
+bool ATwinStickGameMode::AreAllEnemiesDead()
+{
+	return CurrentEnemies <= 0;
 }
 
 void ATwinStickGameMode::IncrementEnemyCounter(int EnemyCount)
@@ -102,5 +122,5 @@ void ATwinStickGameMode::DecrementEnemyCounter()
 
 void ATwinStickGameMode::SetPlayerRespawnLocation(FTransform Location)
 {
-	FTransform PlayerRespawnLocation = Location;
+	PlayerRespawnLocation = Location;
 }

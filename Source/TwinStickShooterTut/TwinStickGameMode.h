@@ -55,6 +55,10 @@ protected:
 	UFUNCTION()
 	void UpdateHUDScore(int Score);
 
+	void SpawnEnemyWave();
+
+	void SpawnEnemyWaveOnNextFrame();
+
 	UPROPERTY()
 	FTransform PlayerRespawnLocation;
 

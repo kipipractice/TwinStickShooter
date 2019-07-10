@@ -88,13 +88,13 @@ void APlayerCharacter::SetupControllerInputScheme(UInputComponent* PlayerInputCo
 void APlayerCharacter::SetPlayerRespawnTransform(FTransform RespawnTransform) {
 	UWorld* World = GetWorld();
 	if (IsValid(World) == false) {
-		UE_LOG(LogTemp, Warning, TEXT("APlayerCharacter::BeginPlay() IsValid(World) == false"));
+		UE_LOG(LogTemp, Warning, TEXT("APlayerCharacter::SetPlayerRespawnTransform IsValid(World) == false"));
 		return;
 	}
 
 	ATwinStickGameMode* GameMode = Cast<ATwinStickGameMode>(World->GetAuthGameMode());
 	if (IsValid(GameMode) == false) {
-		UE_LOG(LogTemp, Warning, TEXT("APlayerCharacter::BeginPlay() IsValid(GameMode) == false"));
+		UE_LOG(LogTemp, Warning, TEXT("APlayerCharacter::SetPlayerRespawnTransform IsValid(GameMode) == false"));
 		return;
 	}
 	GameMode->SetPlayerRespawnLocation(RespawnTransform);
