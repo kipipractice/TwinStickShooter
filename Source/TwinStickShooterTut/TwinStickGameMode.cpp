@@ -2,26 +2,41 @@
 
 
 #include "TwinStickGameMode.h"
-#include "Runtime/Engine/Classes/Engine/World.h"
-#include "Runtime/Engine/Classes/Kismet/GameplayStatics.h"
-#include "TwinSticksCharacter.h"
-#include "Runtime/Engine/Public/TimerManager.h"
+#include "Engine/World.h"
 #include "Kismet/GameplayStatics.h"
+#include "TwinSticksCharacter.h"
+#include "Public/TimerManager.h"
+#include "Kismet/GameplayStatics.h"
+#include "Kismet/KismetMathLibrary.h"
 #include "PlayerCharacter.h"
 #include "EnemyCharacter.h"
 #include "TwinSticksHUD.h"
+#include "Components/BoxComponent.h"
+#include "Engine/TriggerVolume.h"
+#include "Spawner.h"
+
 
 void ATwinStickGameMode::BeginPlay()
 {
 	Super::BeginPlay();
+	if (IsValid(PlayerTemplate) == false) {
+		UE_LOG(LogTemp, Warning, TEXT("ATwinStickGameMode::BeginPlay IsValid(PlayerTemplate) == false"))
+	}
 
-	GetWorldTimerManager().SetTimer(SpawnTimerHandler, this, &ATwinStickGameMode::SpawnEnemies, WaveTimeInterval, true, 0.0f);
+	OnSpawnEnemies.Broadcast(CurrentWaveIndex);
+	
 }
+
 
 void ATwinStickGameMode::IncrementScore(const int Amount)
 {
 	CurrentScore += Amount;
 	UpdateHUDScore(CurrentScore);
+}
+
+bool ATwinStickGameMode::AreAllEnemiesDead()
+{
+	return CurrentEnemies == 0;
 }
 
 
@@ -52,27 +67,40 @@ void ATwinStickGameMode::RespawnPlayer()
 		UE_LOG(LogTemp, Error, TEXT("ATwinStickGameMode::RespawnPlayer IsValid(FirstPlayerController) == false"))
 		return;
 	}
+
+	
+	// Destroy all enemies before respawning the player
 	TArray<AActor*> EnemyActors;
 	UGameplayStatics::GetAllActorsOfClass(World, EnemyClass, EnemyActors);
-	// Destroy all enemies before respawning the player
 	for (auto&& Enemy : EnemyActors) {
 		Enemy->Destroy();
 	}
+	
 
-	ATwinSticksCharacter* PlayerActor = World->SpawnActor<ATwinSticksCharacter>(PlayerClass, PlayerRespawnLocation);
+	//Spawn The player and possess him by the player controller
+	ATwinSticksCharacter* PlayerActor = World->SpawnActor<ATwinSticksCharacter>(PlayerTemplate, PlayerRespawnLocation);
 	if (IsValid(PlayerActor)) {
 		FirstPlayerController->Possess(PlayerActor);
 	}
-	World->GetFirstPlayerController()->Possess(PlayerActor);
+	//World->GetFirstPlayerController()->Possess(PlayerActor);
 }
 
-
-void ATwinStickGameMode::SpawnEnemies()
+void ATwinStickGameMode::IncrementEnemyCounter(int EnemyCount)
 {
-	OnSpawnEnemies.Broadcast();
+	CurrentEnemies += EnemyCount;
 }
 
+void ATwinStickGameMode::DecrementEnemyCounter()
+{
+	CurrentEnemies -= 1;
+	if (AreAllEnemiesDead()) {
+		//TODO: add delay
+		CurrentWaveIndex++;
+		OnSpawnEnemies.Broadcast(CurrentWaveIndex);
+	}
+}
 
-void ATwinStickGameMode::SetPlayerRespawnLocation(FTransform PlayerRespawnTransform) {
-	PlayerRespawnLocation = PlayerRespawnTransform;
+void ATwinStickGameMode::SetPlayerRespawnLocation(FTransform Location)
+{
+	FTransform PlayerRespawnLocation = Location;
 }

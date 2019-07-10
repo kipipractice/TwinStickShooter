@@ -10,12 +10,15 @@
 //forward declarations
 class AEnemyCharacter;
 class APlayerCharacter;
+class ATriggerVolume;
+class ASpawner;
+class UBoxComponent;
 
 /**
  * 
  */
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE(FSpawnEnemies);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FSpawnEnemies, int, WaveIndex);
 
 UCLASS()
 class TWINSTICKSHOOTERTUT_API ATwinStickGameMode : public AGameModeBase
@@ -34,30 +37,37 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void RespawnPlayer();
 
-	void SetPlayerRespawnLocation(FTransform PlayerRespawnTransform);
+	UFUNCTION()
+	void IncrementEnemyCounter(int EnemyCount);
+
+	UFUNCTION()
+	void DecrementEnemyCounter();
 
 	FSpawnEnemies OnSpawnEnemies;
 
+	void SetPlayerRespawnLocation(FTransform Location);
+
 protected:
-	void SpawnEnemies();
 
-	int CurrentScore = 0;
-
-	UPROPERTY(EditDefaultsOnly)
-	float WaveTimeInterval = 1.0f;
-	
-	UPROPERTY(EditDefaultsOnly)
-	FTransform PlayerRespawnLocation;
-
-	UPROPERTY(EditDefaultsOnly)
-	TSubclassOf<class AEnemyCharacter> EnemyClass;
-	
-	UPROPERTY(EditDefaultsOnly)
-	TSubclassOf<class APlayerCharacter> PlayerClass;
-
-	FTimerHandle SpawnTimerHandler;
+	UFUNCTION()
+	bool AreAllEnemiesDead();
 
 	UFUNCTION()
 	void UpdateHUDScore(int Score);
+
+	UPROPERTY()
+	FTransform PlayerRespawnLocation;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Setup")
+	TSubclassOf<class APlayerCharacter> PlayerTemplate;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Setup")
+	TSubclassOf<AEnemyCharacter> EnemyClass;
+
+	int CurrentScore = 0;
+
+	int CurrentWaveIndex = 0;
+
+	int CurrentEnemies = 0;
 
 };
