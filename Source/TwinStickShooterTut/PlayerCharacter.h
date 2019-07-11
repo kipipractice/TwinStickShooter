@@ -7,6 +7,7 @@
 #include "PlayerCharacter.generated.h"
 
 class ATwinSticksHUD;
+class UPlayerStatsWidget;
 
 
 enum class InputType : uint8;
@@ -42,7 +43,8 @@ protected:
 	FLookAroundDelegate LookAroundDelegate;
 
 	UPROPERTY()
-	ATwinSticksHUD* HUD;
+
+	UPlayerStatsWidget* PlayerStatsWidget;
 
 	UPROPERTY(VisibleAnywhere, Category = "Input")
 	InputType ControllerInputType;

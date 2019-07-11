@@ -4,10 +4,9 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/HUD.h"
-#include "Components/TextBlock.h"
-#include "Components/ProgressBar.h"
 #include "TwinSticksHUD.generated.h"
 
+class UPlayerStatsWidget;
 /**
  * 
  */
@@ -16,23 +15,17 @@ class TWINSTICKSHOOTERTUT_API ATwinSticksHUD : public AHUD
 {
 	GENERATED_BODY()
 
+	ATwinSticksHUD();
+
 public:
 	UFUNCTION()
-	void SetMaxHealth(float Health);
-
-	UFUNCTION()
-	void SetHealth(float Health);
-
-	UFUNCTION()
-	void SetScore(int Score);
+	UPlayerStatsWidget* GetPlayerStatsWidget();
 
 protected:
-	UPROPERTY(VisibleAnywhere, Category = "Health")
-	float MaxHealth = 100;
+	void PostInitializeComponents() override;
 
-	UPROPERTY(BlueprintReadWrite, Category = "HUD")
-	UProgressBar* HealthBar;
+	UPROPERTY(EditDefaultsOnly, Category = UI)
+	TSubclassOf<UUserWidget> PlayerStatsWidgetTemplate;
 
-	UPROPERTY(BlueprintReadWrite, Category = "HUD")
-	UTextBlock* ScoreText;
+	UPlayerStatsWidget* PlayerStatsWidget;
 };
