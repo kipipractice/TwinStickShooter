@@ -15,8 +15,6 @@ class TWINSTICKSHOOTERTUT_API ATwinSticksHUD : public AHUD
 {
 	GENERATED_BODY()
 
-	ATwinSticksHUD();
-
 public:
 	UFUNCTION()
 	UPlayerStatsWidget* GetPlayerStatsWidget();
@@ -25,7 +23,7 @@ protected:
 	void PostInitializeComponents() override;
 
 	UPROPERTY(EditDefaultsOnly, Category = UI)
-	TSubclassOf<UUserWidget> PlayerStatsWidgetTemplate;
+	TSubclassOf<UPlayerStatsWidget> PlayerStatsWidgetTemplate;
 
 	UPlayerStatsWidget* PlayerStatsWidget;
 };

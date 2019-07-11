@@ -24,6 +24,9 @@ protected:
 
 	UPROPERTY()
 	ANexus* Nexus = nullptr;
+
+	UFUNCTION()
+	void SetNexusHealth(int Health);
 	
 	UFUNCTION()
 	void LoseGame();

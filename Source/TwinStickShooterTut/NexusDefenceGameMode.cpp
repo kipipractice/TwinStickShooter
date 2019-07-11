@@ -5,7 +5,11 @@
 #include "Kismet/GameplayStatics.h"
 #include "Engine/World.h"
 #include "HealthComponent.h"
+#include "CharacterPlayerController.h"
+#include "NexusDefenceHUD.h"
 #include "Nexus.h"
+#include "NexusDefenceStatsWidget.h"
+#include "TimerManager.h"
 
 
 void ANexusDefenceGameMode::BeginPlay() {
@@ -36,10 +40,30 @@ void ANexusDefenceGameMode::BeginPlay() {
 		return;
 	}
 	HealthComponent->OnDeath.AddDynamic(this, &ANexusDefenceGameMode::LoseGame);
+	HealthComponent->OnHealthChanged.AddDynamic(this, &ANexusDefenceGameMode::SetNexusHealth);
 
 	this->Nexus = Nexus;
 }
 
+
+
+void ANexusDefenceGameMode::SetNexusHealth(int Health) {
+	for (ACharacterPlayerController* PlayerController : PlayerControllers) {
+		if (IsValid(PlayerController) == false) {
+			UE_LOG(LogTemp, Error, TEXT("ANexusDefenceGameMode::SetNexusHealth IsValid(PlayerController) == false"));
+			return;
+		}
+
+		ANexusDefenceHUD* NexusDefenceHUD = Cast<ANexusDefenceHUD>(PlayerController->GetHUD());
+		if (IsValid(NexusDefenceHUD) == false) {
+			UE_LOG(LogTemp, Error, TEXT("ANexusDefenceGameMode::SetNexusHealth IsValid(NexusDefenceHUD) == false"));
+			return;
+		}
+
+		UNexusDefenceStatsWidget* NexusStatsWidget = NexusDefenceHUD->GetNexusDefenceWidget();
+		NexusStatsWidget->SetNexusHealth(Health);
+	}
+}
 
 
 ANexus* ANexusDefenceGameMode::GetNexus() {
@@ -48,5 +72,27 @@ ANexus* ANexusDefenceGameMode::GetNexus() {
 
 
 void ANexusDefenceGameMode::LoseGame() {
-	UE_LOG(LogTemp, Error, TEXT("Player has lost the game!"));
+	for (ACharacterPlayerController* PlayerController : PlayerControllers) {
+		if (IsValid(PlayerController) == false) {
+			UE_LOG(LogTemp, Error, TEXT("ANexusDefenceGameMode::SetNexusHealth IsValid(PlayerController) == false"));
+			return;
+		}
+
+		ANexusDefenceHUD* NexusDefenceHUD = Cast<ANexusDefenceHUD>(PlayerController->GetHUD());
+		if (IsValid(NexusDefenceHUD) == false) {
+			UE_LOG(LogTemp, Error, TEXT("ANexusDefenceGameMode::SetNexusHealth IsValid(NexusDefenceHUD) == false"));
+			return;
+		}
+
+		UNexusDefenceStatsWidget* NexusStatsWidget = NexusDefenceHUD->GetNexusDefenceWidget();
+		NexusStatsWidget->SetLoseGame();
+		
+		FTimerHandle RespawnTimerHandle; // not used anywhere
+		GetWorldTimerManager().SetTimer(
+			RespawnTimerHandle,
+			this,
+			&ATwinStickGameMode::RestartLevel,
+			3
+		);
+	}
 }

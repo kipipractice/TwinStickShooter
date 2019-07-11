@@ -5,11 +5,6 @@
 #include "PlayerStatsWidget.h"
 
 
-ATwinSticksHUD::ATwinSticksHUD() {
-	PrimaryActorTick.bCanEverTick = false;
-}
-
-
 void ATwinSticksHUD::PostInitializeComponents() {
 	Super::PostInitializeComponents();
 
