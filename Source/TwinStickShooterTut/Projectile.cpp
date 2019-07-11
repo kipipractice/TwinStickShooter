@@ -28,19 +28,16 @@ void AProjectile::BeginPlay()
 	else 
 	{
 		CapsuleComponent->OnComponentBeginOverlap.AddDynamic(this, &AProjectile::AProjectile::OnOverlapBegin);
+		CapsuleComponent->IgnoreActorWhenMoving(GetOwner(), true);
 	}
 	if (IsValid(HitParticleSystem) == false) {
 		UE_LOG(LogTemp, Warning, TEXT("AProjectile::BeginPlay IsValid(HitParticleSystem) == false"))
 	}
-	
+
 }
 
 void AProjectile::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	if (OtherActor->GetInstigator() == GetInstigator()) {
-		return;
-	}
-	
 	if (IsValid(OtherActor)) {
 		UHealthComponent* HealthComponent = OtherActor->FindComponentByClass<UHealthComponent>();
 		if (IsValid(HealthComponent)) {

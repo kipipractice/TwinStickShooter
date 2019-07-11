@@ -73,7 +73,7 @@ void AGun::SpawnProjectile() {
 		return;
 	}
 
-	AActor* Player = World->GetFirstPlayerController()->GetPawn();
+	APawn* Player = World->GetFirstPlayerController()->GetPawn();
 	if (IsValid(Player) == false) {
 		UE_LOG(LogTemp, Error, TEXT("AGun::SpawnProjectile() IsValid(Player) == false"));
 		return;
