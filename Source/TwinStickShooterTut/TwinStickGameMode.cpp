@@ -15,6 +15,7 @@
 #include "TwinSticksHUD.h"
 #include "PlayerStatsWidget.h"
 #include "Spawner.h"
+#include "CharacterPlayerController.h"
 
 
 void ATwinStickGameMode::BeginPlay()
@@ -26,6 +27,27 @@ void ATwinStickGameMode::BeginPlay()
 
 	// Spawn enemies on next frame so that all the logic is initialized before that
 	SpawnEnemyWaveOnNextFrame();
+
+
+	UWorld* World = GetWorld();
+	if (IsValid(World) == false) {
+		UE_LOG(LogTemp, Error, TEXT("ATwinStickGameMode::BeginPlay IsValid(World) == false"));
+		return;
+	}
+
+	TArray<AActor*> PlayerControllerActors;
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), ACharacterPlayerController::StaticClass(), PlayerControllerActors);
+	for (AActor* PlayerControllerActor : PlayerControllerActors) {
+		ACharacterPlayerController* PlayerController = Cast<ACharacterPlayerController>(PlayerControllerActor);
+		if (IsValid(PlayerController)) {
+			PlayerControllers.Add(PlayerController);
+		}
+		else
+		{
+			UE_LOG(LogTemp, Error, TEXT("ATwinStickGameMode::BeginPlay IsValid(PlayerController)"));
+			continue;
+		}
+	}
 }
 
 
@@ -50,14 +72,18 @@ void ATwinStickGameMode::IncrementScore(const int Amount)
 
 
 void ATwinStickGameMode::UpdateHUDScore(int Score) {
-	TArray<AActor*> HUDs;
-	UGameplayStatics::GetAllActorsOfClass(GetWorld(), HUDClass, HUDs);
-	for (AActor* HUD : HUDs) {
-		ATwinSticksHUD* TwinSticksHUD = Cast<ATwinSticksHUD>(HUD);
+	for (ACharacterPlayerController* PlayerController : PlayerControllers) {
+		if (IsValid(PlayerController) == false) {
+			UE_LOG(LogTemp, Error, TEXT("ATwinStickGameMode::UpdateHUDScore IsValid(PlayerController) == false"));
+			continue;
+		}
+
+		ATwinSticksHUD* TwinSticksHUD = Cast<ATwinSticksHUD>(PlayerController->GetHUD());
 		if (IsValid(TwinSticksHUD) == false) {
 			UE_LOG(LogTemp, Error, TEXT("ATwinStickGameMode::UpdateHUDScore IsValid(TwinSticksHUD) == false"));
 			continue;
 		}
+
 		UPlayerStatsWidget* PlayerStats = TwinSticksHUD->GetPlayerStatsWidget();
 		if (IsValid(PlayerStats)) {
 			PlayerStats->SetScore(Score);
@@ -83,6 +109,11 @@ void ATwinStickGameMode::RespawnPlayer()
 	if (IsValid(FirstPlayerController) == false) {
 		UE_LOG(LogTemp, Error, TEXT("ATwinStickGameMode::RespawnPlayer IsValid(FirstPlayerController) == false"))
 		return;
+	}
+
+	APawn* PlayerCharacter = FirstPlayerController->GetPawn();
+	if (IsValid(PlayerCharacter)) {
+		PlayerCharacter->Destroy();
 	}
 
 	
@@ -130,4 +161,14 @@ void ATwinStickGameMode::DecrementEnemyCounter()
 void ATwinStickGameMode::SetPlayerRespawnLocation(FTransform Location)
 {
 	PlayerRespawnLocation = Location;
+}
+
+
+void ATwinStickGameMode::RestartLevel() {
+	UWorld* World = GetWorld();
+	if (IsValid(World) == false) {
+		UE_LOG(LogTemp, Error, TEXT("ATwinStickGameMode::RestartLevel IsValid(World) == false"));
+		return;
+	}
+	UGameplayStatics::OpenLevel(this, FName(*World->GetName()), false);
 }

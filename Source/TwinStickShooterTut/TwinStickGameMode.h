@@ -13,6 +13,7 @@ class APlayerCharacter;
 class ATriggerVolume;
 class ASpawner;
 class UBoxComponent;
+class ACharacterPlayerController;
 
 /**
  * 
@@ -47,6 +48,9 @@ public:
 
 	void SetPlayerRespawnLocation(FTransform Location);
 
+	UFUNCTION()
+	void RestartLevel();
+
 protected:
 
 	UFUNCTION()
@@ -74,4 +78,6 @@ protected:
 
 	int CurrentEnemies = 0;
 
+	UPROPERTY()
+	TArray<ACharacterPlayerController*> PlayerControllers;
 };

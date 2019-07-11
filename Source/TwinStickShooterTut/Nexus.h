@@ -18,6 +18,8 @@ public:
 	ANexus();
 
 protected:
+
 	UPROPERTY(EditDefaultsOnly, Instanced)
 	UHealthComponent* HealthComponent;
+
 };
