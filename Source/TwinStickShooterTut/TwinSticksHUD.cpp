@@ -2,27 +2,34 @@
 
 
 #include "TwinSticksHUD.h"
-#include "Containers/UnrealString.h"
+#include "PlayerStatsWidget.h"
 
-void ATwinSticksHUD::SetMaxHealth(float Health) {
-	MaxHealth = Health;
-}
 
-void ATwinSticksHUD::SetHealth(float Health) {
-	if (IsValid(HealthBar) == false) {
-		UE_LOG(LogTemp, Error, TEXT("ATwinSticksHUD::SetHealth IsValid(HealthBar) == false"));
-		return;
-	}
-
-	HealthBar->SetPercent((float)(Health / MaxHealth));
+ATwinSticksHUD::ATwinSticksHUD() {
+	PrimaryActorTick.bCanEverTick = false;
 }
 
 
-void ATwinSticksHUD::SetScore(int Score) {
-	if (IsValid(ScoreText) == false) {
-		UE_LOG(LogTemp, Error, TEXT("ATwinSticksHUD::SetScore IsValid(ScoreText) == false"));
+void ATwinSticksHUD::PostInitializeComponents() {
+	Super::PostInitializeComponents();
+
+	if (IsValid(PlayerStatsWidgetTemplate) == false) {
+		UE_LOG(LogTemp, Error, TEXT("ATwinSticksHUD::ATwinSticksHUD IsValid(PlayerStatsWidgetTemplate) == false"));
 		return;
 	}
 
-	ScoreText->SetText(FText::FromString(FString::FromInt(Score)));
+	PlayerStatsWidget = Cast<UPlayerStatsWidget>(CreateWidget(GetWorld(), PlayerStatsWidgetTemplate));
+	if (IsValid(PlayerStatsWidget) == false) {
+		UE_LOG(LogTemp, Error, TEXT("ATwinSticksHUD::ATwinSticksHUD IsValid(PlayerStatsWidget) == false"));
+		return;
+	}
+	PlayerStatsWidget->AddToViewport();
+}
+
+
+UPlayerStatsWidget* ATwinSticksHUD::GetPlayerStatsWidget() {
+	if (IsValid(PlayerStatsWidget) == false) {
+		UE_LOG(LogTemp, Error, TEXT("ATwinSticksHUD::GetPlayerStatsWidget IsValid(PlayerStatsWidget) == false"));
+	}
+	return PlayerStatsWidget;
 }

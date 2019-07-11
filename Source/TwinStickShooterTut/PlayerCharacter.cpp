@@ -11,6 +11,7 @@
 #include "TwinStickGameMode.h"
 #include "CharacterPlayerController.h"
 #include "HealthComponent.h"
+#include "PlayerStatsWidget.h"
 #include "InputType.h"
 
 
@@ -102,12 +103,13 @@ void APlayerCharacter::SetPlayerRespawnTransform(FTransform RespawnTransform) {
 
 
 void APlayerCharacter::OnHealthChanged(int Health) {
-	if (IsValid(HUD) == false) {
+	if (IsValid(PlayerStatsWidget) == false) {
 		UE_LOG(LogTemp, Error, TEXT("APlayerCharacter::TakeDamage IsValid(HUD) == false"));
 		return;
 	}
 
-	HUD->SetHealth(Health);
+
+	PlayerStatsWidget->SetHealth(Health);
 }
 
 
@@ -119,20 +121,26 @@ void APlayerCharacter::PossessedBy(AController* Controller) {
 		UE_LOG(LogTemp, Error, TEXT("APlayerCharacter::PossessedBy IsValid(PlayerController) == false"));
 		return;
 	}
-
-	HUD = Cast<ATwinSticksHUD>(PlayerController->GetHUD());
+	
+	ATwinSticksHUD* HUD = Cast<ATwinSticksHUD>(PlayerController->GetHUD());
 	if (IsValid(HUD) == false) {
 		UE_LOG(LogTemp, Error, TEXT("APlayerCharacter::PossessedBy IsValid(HUD) == false"));
 		return;
 	}
 
-	if (IsValid(HealthComponent) == false) {
-		UE_LOG(LogTemp, Error, TEXT("APlayerCharacter::PossessedBy IsValid(HUD) == false"));
+	PlayerStatsWidget = HUD->GetPlayerStatsWidget();
+	if (IsValid(PlayerStatsWidget) == false) {
+		UE_LOG(LogTemp, Error, TEXT("APlayerCharacter::PossessedBy IsValid(PlayerStatsWidget) == false"));
 		return;
 	}
 
-	HUD->SetMaxHealth(HealthComponent->GetMaxHealth());
-	HUD->SetHealth(HealthComponent->GetHealth());
+	if (IsValid(HealthComponent) == false) {
+		UE_LOG(LogTemp, Error, TEXT("APlayerCharacter::PossessedBy IsValid(HealthComponent) == false"));
+		return;
+	}
+
+	PlayerStatsWidget->SetMaxHealth(HealthComponent->GetMaxHealth());
+	PlayerStatsWidget->SetHealth(HealthComponent->GetHealth());
 }
 
 

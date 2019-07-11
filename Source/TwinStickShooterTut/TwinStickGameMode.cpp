@@ -4,15 +4,16 @@
 #include "TwinStickGameMode.h"
 #include "Engine/World.h"
 #include "Kismet/GameplayStatics.h"
-#include "TwinSticksCharacter.h"
-#include "Public/TimerManager.h"
+#include "TimerManager.h"
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetMathLibrary.h"
+#include "Components/BoxComponent.h"
+#include "Engine/TriggerVolume.h"
+#include "TwinSticksCharacter.h"
 #include "PlayerCharacter.h"
 #include "EnemyCharacter.h"
 #include "TwinSticksHUD.h"
-#include "Components/BoxComponent.h"
-#include "Engine/TriggerVolume.h"
+#include "PlayerStatsWidget.h"
 #include "Spawner.h"
 
 
@@ -53,12 +54,18 @@ void ATwinStickGameMode::UpdateHUDScore(int Score) {
 	UGameplayStatics::GetAllActorsOfClass(GetWorld(), HUDClass, HUDs);
 	for (AActor* HUD : HUDs) {
 		ATwinSticksHUD* TwinSticksHUD = Cast<ATwinSticksHUD>(HUD);
-		if (IsValid(TwinSticksHUD)) {
-			TwinSticksHUD->SetScore(Score);
+		if (IsValid(TwinSticksHUD) == false) {
+			UE_LOG(LogTemp, Error, TEXT("ATwinStickGameMode::UpdateHUDScore IsValid(TwinSticksHUD) == false"));
+			continue;
+		}
+		UPlayerStatsWidget* PlayerStats = TwinSticksHUD->GetPlayerStatsWidget();
+		if (IsValid(PlayerStats)) {
+			PlayerStats->SetScore(Score);
 		}
 		else
 		{
-			UE_LOG(LogTemp, Error, TEXT("ATwinStickGameMode::UpdateHUDScore IsValid(TwinSticksHUD) == false"));
+			UE_LOG(LogTemp, Error, TEXT("ATwinStickGameMode::UpdateHUDScore IsValid(PlayerStats) == false"));
+			continue;
 		}
 	}
 }
