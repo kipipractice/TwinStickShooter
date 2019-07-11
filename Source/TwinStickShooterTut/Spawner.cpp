@@ -6,6 +6,8 @@
 #include "TwinStickGameMode.h"
 #include "Components/BoxComponent.h"
 #include "Kismet/KismetMathLibrary.h"
+#include "Engine/DataTable.h"
+#include "SpawnerTable.h"
 
 // Sets default values
 ASpawner::ASpawner()
@@ -34,6 +36,20 @@ void ASpawner::BeginPlay()
 	}
 	GameMode->OnSpawnEnemies.AddDynamic(this, &ASpawner::SpawnEnemyWave);
 	
+	static const FString ContextString(TEXT("GENERAL"));
+	FSpawnerTable* GOLookupRow = SpawnerLookupTable->FindRow<FSpawnerTable>(
+		*FString::Printf(
+			TEXT("%d"),
+			0),
+		ContextString
+		);
+	if (!GOLookupRow) {
+		UE_LOG(LogTemp, Error, TEXT("ASpawner::BeginPlay() IsValid(GOLookupRow) == false"))
+	}
+	else {
+		UE_LOG(LogTemp, Display, TEXT("ASpawner::BeginPlay() GOLookupRow: %d"), GOLookupRow->EnemyCount)
+	}
+
 }
 
 void ASpawner::SpawnEnemyWave(int WaveIndex)

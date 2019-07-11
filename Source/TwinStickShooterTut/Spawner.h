@@ -12,7 +12,7 @@
 //forward declarations
 class AEnemyCharacter;
 class UBoxComponent;
-
+class UDataTable;
 UCLASS()
 class TWINSTICKSHOOTERTUT_API ASpawner : public AActor
 {
@@ -41,6 +41,8 @@ protected:
 	UPROPERTY(EditAnywhere, Category = "Setup")
 	TSubclassOf<AEnemyCharacter> BossTemplate;
 
+	UPROPERTY(EditDefaultsOnly, Category = "Setup")
+	UDataTable* SpawnerLookupTable = nullptr;
 
 	UPROPERTY(EditAnywhere, Category = "Setup")
 	TArray<int> EnemiesPerWave;
