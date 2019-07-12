@@ -29,54 +29,6 @@ void ASpawner::BeginPlay()
 		return;
 	}
 
-	ATwinStickGameMode* GameMode = Cast<ATwinStickGameMode>(World->GetAuthGameMode());
-	if (IsValid(GameMode) == false) {
-		UE_LOG(LogTemp, Error, TEXT("ASpawner::BeginPlay IsValid(GameMode) == false"));
-		return;
-	}
-	GameMode->OnSpawnEnemies.AddDynamic(this, &ASpawner::SpawnEnemyWave);
-	
-	static const FString ContextString(TEXT("GENERAL"));
-	FSpawnerTable* GOLookupRow = SpawnerLookupTable->FindRow<FSpawnerTable>(
-		*FString::Printf(
-			TEXT("%d"),
-			0),
-		ContextString
-		);
-	if (!GOLookupRow) {
-		UE_LOG(LogTemp, Error, TEXT("ASpawner::BeginPlay() IsValid(GOLookupRow) == false"))
-	}
-	else {
-		UE_LOG(LogTemp, Display, TEXT("ASpawner::BeginPlay() GOLookupRow: %d"), GOLookupRow->EnemyCount)
-	}
-
-}
-
-void ASpawner::SpawnEnemyWave(int WaveIndex)
-{
-	UWorld* World = GetWorld();
-	if (IsValid(World) == false) {
-		UE_LOG(LogTemp, Warning, TEXT("ASpawner::BeginPlay IsValid(World) == false"))
-			return;
-	}
-	if (WaveIndex > EnemiesPerWave.Num()) { // two more than the array
-		return;
-	}
-	else if (WaveIndex == EnemiesPerWave.Num()) { // Boss battle after we finish spawning the specified number of enemies
-		SpawnEnemy(BossTemplate);
-		// FIXME: Misho, ne pishi takviz neshta
-		Cast<ATwinStickGameMode>(World->GetAuthGameMode())
-			->IncrementEnemyCounter(1);
-	}
-	else {
-		for (int i = 0; i < EnemiesPerWave[WaveIndex]; i++) {
-			SpawnEnemy(EnemyTemplate);
-		}
-		Cast<ATwinStickGameMode>(World->GetAuthGameMode())
-			->IncrementEnemyCounter(EnemiesPerWave[WaveIndex]);
-	}
-	
-	
 }
 
 void ASpawner::SpawnEnemy(TSubclassOf<AEnemyCharacter> EnemyTemplate) {
@@ -85,7 +37,7 @@ void ASpawner::SpawnEnemy(TSubclassOf<AEnemyCharacter> EnemyTemplate) {
 			return;
 	}
 	if (IsValid(EnemyTemplate) == false) {
-		UE_LOG(LogTemp, Error, TEXT("ATwinStickGameMode::SpawnEnemy EnemyClasses.Num() == 0"))
+		UE_LOG(LogTemp, Error, TEXT("ATwinStickGameMode::SpawnEnemy IsValid(EnemyTemplate) == false"))
 			return;
 	}
 	UWorld* World = GetWorld();
@@ -93,6 +45,8 @@ void ASpawner::SpawnEnemy(TSubclassOf<AEnemyCharacter> EnemyTemplate) {
 		UE_LOG(LogTemp, Error, TEXT("ASpawner::SpawnEnemy IsValid(World) == false"))
 			return;
 	}
+
+	//Spawn enemy at random location inside bounding box
 	FVector ActorLocation = GetActorLocation();
 	FVector BoxExtent = BoxComponent->GetScaledBoxExtent();
 	FTransform EnemySpawnPosition = FTransform(
@@ -103,7 +57,19 @@ void ASpawner::SpawnEnemy(TSubclassOf<AEnemyCharacter> EnemyTemplate) {
 	);
 	FActorSpawnParameters SpawnParameters;
 	SpawnParameters.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
-	World->SpawnActor<AEnemyCharacter>(EnemyTemplate, EnemySpawnPosition, SpawnParameters);
+	AEnemyCharacter* Enemy = World->SpawnActor<AEnemyCharacter>(EnemyTemplate.Get(), EnemySpawnPosition, SpawnParameters);
+	
+	if (IsValid(Enemy) == false) {
+		UE_LOG(LogTemp, Warning, TEXT("ASpawner::SpawnEnemies (Enemy) == false"))
+		return;
+	}
+	
+	ATwinStickGameMode* GameMode = Cast<ATwinStickGameMode>(World->GetAuthGameMode());
+	if (IsValid(GameMode) == false) {
+		UE_LOG(LogTemp, Error, TEXT("ASpawner::BeginPlay IsValid(GameMode) == false"));
+		return;
+	}
+	GameMode->IncrementEnemyCounter(1);
 }
 
 

@@ -22,29 +22,14 @@ public:
 	// Sets default values for this actor's properties
 	ASpawner();
 
+	UFUNCTION()
+	void SpawnEnemy(TSubclassOf<AEnemyCharacter> EnemyTemplate);
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-
-	UFUNCTION()
-	void SpawnEnemyWave(int WaveIndex);
-
-	void SpawnEnemy(TSubclassOf<AEnemyCharacter> EnemyTemplate);
-
 	UPROPERTY(BlueprintReadWrite, Category = "Setup")
 	UBoxComponent* BoxComponent;
-
-	UPROPERTY(EditAnywhere, Category = "Setup")
-	TSubclassOf<AEnemyCharacter> EnemyTemplate;
-
-	UPROPERTY(EditAnywhere, Category = "Setup")
-	TSubclassOf<AEnemyCharacter> BossTemplate;
-
-	UPROPERTY(EditDefaultsOnly, Category = "Setup")
-	UDataTable* SpawnerLookupTable = nullptr;
-
-	UPROPERTY(EditAnywhere, Category = "Setup")
-	TArray<int> EnemiesPerWave;
 
 };

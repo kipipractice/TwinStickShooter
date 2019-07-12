@@ -8,6 +8,8 @@
 
 
 class ANexus;
+class UDataTable;
+class UNexusDefenceStatsWidget;
 /**
  * 
  */
@@ -27,7 +29,32 @@ protected:
 
 	UFUNCTION()
 	void SetNexusHealth(int Health);
-	
+
+	void LoseGame() override;
+
+	void WinGame() override;
+
+	void DecrementEnemyCounter() override;
+
+	//UPROPERTY(EditDefaultsOnly, Category = "Setup")
+	//UDataTable* SpawnerLookupTable = nullptr;
+
+	int CurrentWaveIndex = 0;
+
 	UFUNCTION()
-	void LoseGame();
+	void SpawnEnemyWave();
+
+	UFUNCTION()
+	void SpawnEnemyWaveOnNextFrame();
+
+	void RespawnPlayer() override;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Setup")
+	TArray<int> EnemiesPerWave;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Setup")
+	TSubclassOf<AEnemyCharacter> BossTemplate;
+
+private:
+	UNexusDefenceStatsWidget* GetNexusStatsWidget(APlayerController* PlayerController);
 };

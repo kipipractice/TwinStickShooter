@@ -25,10 +25,6 @@ void ATwinStickGameMode::BeginPlay()
 		UE_LOG(LogTemp, Error, TEXT("ATwinStickGameMode::BeginPlay IsValid(PlayerTemplate) == false"));
 	}
 
-	// Spawn enemies on next frame so that all the logic is initialized before that
-	SpawnEnemyWaveOnNextFrame();
-
-
 	UWorld* World = GetWorld();
 	if (IsValid(World) == false) {
 		UE_LOG(LogTemp, Error, TEXT("ATwinStickGameMode::BeginPlay IsValid(World) == false"));
@@ -50,26 +46,11 @@ void ATwinStickGameMode::BeginPlay()
 	}
 }
 
-
-void ATwinStickGameMode::SpawnEnemyWave() {
-	OnSpawnEnemies.Broadcast(CurrentWaveIndex);
-}
-
-
-void ATwinStickGameMode::SpawnEnemyWaveOnNextFrame() {
-	GetWorldTimerManager().SetTimerForNextTick(
-		this, 
-		&ATwinStickGameMode::SpawnEnemyWave
-	);
-}
-
-
 void ATwinStickGameMode::IncrementScore(const int Amount)
 {
 	CurrentScore += Amount;
 	UpdateHUDScore(CurrentScore);
 }
-
 
 void ATwinStickGameMode::UpdateHUDScore(int Score) {
 	for (ACharacterPlayerController* PlayerController : PlayerControllers) {
@@ -96,8 +77,6 @@ void ATwinStickGameMode::UpdateHUDScore(int Score) {
 	}
 }
 
-
-// TODO: Split into separate functions
 void ATwinStickGameMode::RespawnPlayer()
 {
 	UWorld* World = GetWorld();
@@ -132,10 +111,18 @@ void ATwinStickGameMode::RespawnPlayer()
 	ATwinSticksCharacter* PlayerActor = World->SpawnActor<ATwinSticksCharacter>(PlayerTemplate, PlayerRespawnLocation);
 	FirstPlayerController->Possess(PlayerActor);
 
-	// Reset spawners
-	CurrentWaveIndex = 0;
 	CurrentEnemies = 0;
-	SpawnEnemyWaveOnNextFrame();
+
+}
+
+void ATwinStickGameMode::WinGame()
+{
+
+}
+
+void ATwinStickGameMode::LoseGame()
+{
+
 }
 
 bool ATwinStickGameMode::AreAllEnemiesDead()
@@ -151,18 +138,12 @@ void ATwinStickGameMode::IncrementEnemyCounter(int EnemyCount)
 void ATwinStickGameMode::DecrementEnemyCounter()
 {
 	CurrentEnemies -= 1;
-	if (AreAllEnemiesDead()) {
-		//TODO: add delay
-		CurrentWaveIndex++;
-		OnSpawnEnemies.Broadcast(CurrentWaveIndex);
-	}
 }
 
 void ATwinStickGameMode::SetPlayerRespawnLocation(FTransform Location)
 {
 	PlayerRespawnLocation = Location;
 }
-
 
 void ATwinStickGameMode::RestartLevel() {
 	UWorld* World = GetWorld();
