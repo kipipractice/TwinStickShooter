@@ -12,6 +12,7 @@
 #include "Gun.h"
 #include "HealthComponent.h"
 #include "TwinStickGameMode.h"
+#include "CustomMacros.h"
 
 // Sets default values
 ATwinSticksCharacter::ATwinSticksCharacter()
@@ -36,15 +37,11 @@ void ATwinSticksCharacter::BeginPlay()
 
 
 void ATwinSticksCharacter::SpawnStartingGun() {
-	if (IsValid(StartingGunTemplate) == false) {
-		return;
-	}
+	// No validate because player may not have a starting gun.
+	if (IsValid(StartingGunTemplate) == false) { return; }
 
 	UWorld* World = GetWorld();
-	if (IsValid(World) == false) {
-		UE_LOG(LogTemp, Error, TEXT("ATwinSticksCharacter::SpawnStartingGun() IsValid(World) == false"));
-		return;
-	}
+	if (validate(IsValid(World)) == false) { return; }
 
 	FActorSpawnParameters SpawnInfo;
 	SpawnInfo.Owner = this;
@@ -59,6 +56,8 @@ void ATwinSticksCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInpu
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 	
+	if (validate(IsValid(PlayerInputComponent)) == false) { return; };
+
 	PlayerInputComponent->BindAction("Fire", IE_Pressed, this, &ATwinSticksCharacter::StartFiring);
 	PlayerInputComponent->BindAction("Fire", IE_Released, this, &ATwinSticksCharacter::StopFiring);
 
@@ -68,19 +67,13 @@ void ATwinSticksCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInpu
 
 
 void ATwinSticksCharacter::StartFiring() {
-	if (IsValid(Gun) == false) {
-		UE_LOG(LogTemp, Warning, TEXT("ATwinSticksCharacter::StartFiring() IsValid(Gun) == false"));
-		return;
-	}
+	if (validate(IsValid(Gun)) == false) { return; }
 
 	Gun->PullTrigger();
 }
 
 void ATwinSticksCharacter::StopFiring() {
-	if (IsValid(Gun) == false) {
-		UE_LOG(LogTemp, Warning, TEXT("ATwinSticksCharacter::StopFiring IsValid(Gun) == false"));
-		return;
-	}
+	if (validate(IsValid(Gun)) == false) { return; }
 
 	Gun->ReleaseTrigger();
 }
@@ -97,20 +90,9 @@ void ATwinSticksCharacter::MoveRight(float Value) {
 
 
 void ATwinSticksCharacter::AttachGun(AGun* NewGun) {
-	if (IsValid(NewGun) == false) {
-		UE_LOG(LogTemp, Error, TEXT(" ATwinSticksCharacter::SpawnGun IsValid(NewGun) == false"));
-		return;
-	}
-
-	if (IsValid(CharacterMesh) == false) {
-		UE_LOG(LogTemp, Error, TEXT(" ATwinSticksCharacter::SpawnGun IsValid(CharacterMesh) == false"));
-		return;
-	}
-
-	if (CharacterMesh->DoesSocketExist("GunSocket") == false) {
-		UE_LOG(LogTemp, Error, TEXT(" ATwinSticksCharacter::SpawnGun CharacterMesh->DoesSocketExist('GunSocket') == false"));
-		return;
-	}
+	if (validate(IsValid(NewGun)) == false) { return; }
+	if (validate(IsValid(CharacterMesh)) == false) { return; }
+	if (validate(CharacterMesh->DoesSocketExist("GunSocket")) == false) { return; }
 
 	Gun = NewGun;
 	Gun->AttachToComponent(CharacterMesh, FAttachmentTransformRules::SnapToTargetNotIncludingScale, "GunSocket");
@@ -119,16 +101,11 @@ void ATwinSticksCharacter::AttachGun(AGun* NewGun) {
 
 void ATwinSticksCharacter::Die() {
 	UWorld* World = GetWorld();
-	if (IsValid(World) == false) {
-		UE_LOG(LogTemp, Error, TEXT("ATwinSticksCharacter::Die() IsValid(World) == false"));
-		return;
-	}
+	if (validate(IsValid(World)) == false) { return; }
 
-	if (IsValid(DeathSoundComponent) == false) {
-		UE_LOG(LogTemp, Error, TEXT("ATwinSticksCharacter::Die() IsValid(DeathSoundComponent) == false"));
-		return;
+	if (validate(IsValid(DeathSoundComponent))) {
+		DeathSoundComponent->Play();
 	}
-	DeathSoundComponent->Play();
 
 	World->GetTimerManager().SetTimer(
 		DeathTimerHandle,
@@ -137,8 +114,6 @@ void ATwinSticksCharacter::Die() {
 		DeathAnimationTime,
 		true
 	);
-
-	StopFiring();
 
 	// FIXME: Sloppy workaround because animation requires it.
 	bDead = true;
@@ -155,7 +130,11 @@ void ATwinSticksCharacter::OnDeathTimerEnd() {
 
 void ATwinSticksCharacter::LookInDirection(FVector Direction) {
 	FRotator Rotation = UKismetMathLibrary::MakeRotFromX(Direction);
-	GetController()->SetControlRotation(Rotation);
+
+	AController* Controller = GetController();
+	if (validate(IsValid(Controller))) {
+		GetController()->SetControlRotation(Rotation);
+	}
 }
 
 

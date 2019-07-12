@@ -3,6 +3,7 @@
 
 #include "NexusDefenceHUD.h"
 #include "NexusDefenceStatsWidget.h"
+#include "CustomMacros.h"
 
 UNexusDefenceStatsWidget* ANexusDefenceHUD::GetNexusDefenceWidget() {
 	return NexusDefenceWidget;
@@ -11,15 +12,10 @@ UNexusDefenceStatsWidget* ANexusDefenceHUD::GetNexusDefenceWidget() {
 void ANexusDefenceHUD::PostInitializeComponents() {
 	Super::PostInitializeComponents();
 
-	if (IsValid(NexusDefenceWidgetTemplate) == false) {
-		UE_LOG(LogTemp, Error, TEXT("ANexusDefenceHUD::PostInitializeComponents IsValid(PlayerStatsWidgetTemplate) == false"));
-		return;
-	}
+	if (validate(IsValid(NexusDefenceWidgetTemplate)) == false) { return; }
 
 	NexusDefenceWidget = Cast<UNexusDefenceStatsWidget>(CreateWidget(GetWorld(), NexusDefenceWidgetTemplate));
-	if (IsValid(NexusDefenceWidgetTemplate) == false) {
-		UE_LOG(LogTemp, Error, TEXT("ANexusDefenceHUD::PostInitializeComponents IsValid(NexusDefenceWidgetTemplate) == false"));
-		return;
-	}
+	if (validate(IsValid(NexusDefenceWidget)) == false) { return; }
+	
 	NexusDefenceWidget->AddToViewport();
 }

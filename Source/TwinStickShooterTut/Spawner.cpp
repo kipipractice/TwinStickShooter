@@ -8,6 +8,7 @@
 #include "Kismet/KismetMathLibrary.h"
 #include "Engine/DataTable.h"
 #include "SpawnerTable.h"
+#include "CustomMacros.h"
 
 // Sets default values
 ASpawner::ASpawner()
@@ -19,32 +20,16 @@ ASpawner::ASpawner()
 void ASpawner::BeginPlay()
 {
 	Super::BeginPlay();
-	if (IsValid(BoxComponent) == false) {
-		UE_LOG(LogTemp, Warning, TEXT("ASpawner::BeginPlay IsValid(BoxComponent) == false"))
-	}
-	
-	UWorld* World = GetWorld();
-	if (IsValid(World) == false) {
-		UE_LOG(LogTemp, Warning, TEXT("ASpawner::BeginPlay IsValid(World) == false"))
-		return;
-	}
 
+	validate(IsValid(BoxComponent));
 }
 
 void ASpawner::SpawnEnemy(TSubclassOf<AEnemyCharacter> EnemyTemplate) {
-	if (IsValid(BoxComponent) == false) {
-		UE_LOG(LogTemp, Error, TEXT("ATwinStickGameMode::SpawnEnemy IsValid(BoxComponent) == false"))
-			return;
-	}
-	if (IsValid(EnemyTemplate) == false) {
-		UE_LOG(LogTemp, Error, TEXT("ATwinStickGameMode::SpawnEnemy IsValid(EnemyTemplate) == false"))
-			return;
-	}
+	if (validate(IsValid(BoxComponent))  == false) { return; }
+	if (validate(IsValid(EnemyTemplate)) == false) { return; }
+
 	UWorld* World = GetWorld();
-	if (IsValid(World) == false) {
-		UE_LOG(LogTemp, Error, TEXT("ASpawner::SpawnEnemy IsValid(World) == false"))
-			return;
-	}
+	if (validate(IsValid(World)) == false) { return; }
 
 	//Spawn enemy at random location inside bounding box
 	FVector ActorLocation = GetActorLocation();
@@ -57,18 +42,13 @@ void ASpawner::SpawnEnemy(TSubclassOf<AEnemyCharacter> EnemyTemplate) {
 	);
 	FActorSpawnParameters SpawnParameters;
 	SpawnParameters.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
+
 	AEnemyCharacter* Enemy = World->SpawnActor<AEnemyCharacter>(EnemyTemplate.Get(), EnemySpawnPosition, SpawnParameters);
-	
-	if (IsValid(Enemy) == false) {
-		UE_LOG(LogTemp, Warning, TEXT("ASpawner::SpawnEnemies (Enemy) == false"))
-		return;
-	}
+	if (validate(IsValid(Enemy)) == false) { return; }
 	
 	ATwinStickGameMode* GameMode = Cast<ATwinStickGameMode>(World->GetAuthGameMode());
-	if (IsValid(GameMode) == false) {
-		UE_LOG(LogTemp, Error, TEXT("ASpawner::BeginPlay IsValid(GameMode) == false"));
-		return;
-	}
+	if (validate(IsValid(GameMode)) == false) { return; }
+
 	GameMode->IncrementEnemyCounter(1);
 }
 

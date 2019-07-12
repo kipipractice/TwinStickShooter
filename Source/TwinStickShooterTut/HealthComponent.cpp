@@ -2,6 +2,7 @@
 
 
 #include "HealthComponent.h"
+#include "CustomMacros.h"
 
 // Sets default values for this component's properties
 UHealthComponent::UHealthComponent()
@@ -16,10 +17,14 @@ void UHealthComponent::PostEditChangeProperty(FPropertyChangedEvent& PropertyCha
 	Health = MaxHealth;
 }
 
+void UHealthComponent::BeginPlay() {
+	Super::BeginPlay();
+
+	validate(MaxHealth > 0);
+}
+
 void UHealthComponent::TakeDamage(float Damage) {
-	if (bDead) {
-		return;
-	}
+	if (bDead) { return; }
 
 	Health -= Damage;
 
@@ -32,9 +37,7 @@ void UHealthComponent::TakeDamage(float Damage) {
 
 
 void UHealthComponent::Heal(float HealingPower) {
-	if (bDead) {
-		return;
-	}
+	if (bDead) { return; }
 
 	Health += HealingPower;
 	if (Health > MaxHealth) {

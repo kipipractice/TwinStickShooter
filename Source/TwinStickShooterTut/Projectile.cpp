@@ -9,7 +9,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetSystemLibrary.h"
 #include "HealthComponent.h"
-
+#include "CustomMacros.h"
 
 AProjectile::AProjectile()
 {
@@ -22,37 +22,35 @@ void AProjectile::BeginPlay()
 {
 	Super::BeginPlay();
 
-	if (IsValid(CapsuleComponent) == false) {
-		UE_LOG(LogTemp, Warning, TEXT("AProjectile::BeginPlay IsValid(CapsuleComponent) == false"))
-	}
-	else 
-	{
+	if (validate(IsValid(CapsuleComponent))) { 
+		AActor* Owner = GetOwner();
+		if (validate(IsValid(Owner)) == false) { return; }
+
 		CapsuleComponent->OnComponentBeginOverlap.AddDynamic(this, &AProjectile::AProjectile::OnOverlapBegin);
-		CapsuleComponent->IgnoreActorWhenMoving(GetOwner(), true);
-	}
-	if (IsValid(HitParticleSystem) == false) {
-		UE_LOG(LogTemp, Warning, TEXT("AProjectile::BeginPlay IsValid(HitParticleSystem) == false"))
+		CapsuleComponent->IgnoreActorWhenMoving(Owner, true);
 	}
 
+	validate(IsValid(HitParticleSystem));
 }
 
 void AProjectile::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	if (IsValid(OtherActor)) {
-		UHealthComponent* HealthComponent = OtherActor->FindComponentByClass<UHealthComponent>();
-		if (IsValid(HealthComponent)) {
-			HealthComponent->TakeDamage(Damage);
-		}
+	if (validate(IsValid(OtherActor)) == false) { return; }
+
+	UHealthComponent* HealthComponent = OtherActor->FindComponentByClass<UHealthComponent>();
+	if (IsValid(HealthComponent)) {
+		HealthComponent->TakeDamage(Damage);
 	}
 
 
-	if (IsValid(HitParticleSystem)) {
+	if (validate(IsValid(HitParticleSystem))) {
 		UGameplayStatics::SpawnEmitterAtLocation(
 			GetWorld(),
 			HitParticleSystem,
 			GetActorTransform()
 		);
 	}
+
 	Destroy();
 }
 

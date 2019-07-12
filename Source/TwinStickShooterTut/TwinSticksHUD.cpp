@@ -3,28 +3,22 @@
 
 #include "TwinSticksHUD.h"
 #include "PlayerStatsWidget.h"
-
+#include "CustomMacros.h"
 
 void ATwinSticksHUD::PostInitializeComponents() {
 	Super::PostInitializeComponents();
 
-	if (IsValid(PlayerStatsWidgetTemplate) == false) {
-		UE_LOG(LogTemp, Error, TEXT("ATwinSticksHUD::ATwinSticksHUD IsValid(PlayerStatsWidgetTemplate) == false"));
-		return;
-	}
+	if (validate(IsValid(PlayerStatsWidgetTemplate)) == false) { return; }
 
 	PlayerStatsWidget = Cast<UPlayerStatsWidget>(CreateWidget(GetWorld(), PlayerStatsWidgetTemplate));
-	if (IsValid(PlayerStatsWidget) == false) {
-		UE_LOG(LogTemp, Error, TEXT("ATwinSticksHUD::ATwinSticksHUD IsValid(PlayerStatsWidget) == false"));
-		return;
+	if (validate(IsValid(PlayerStatsWidget))) { 
+		PlayerStatsWidget->AddToViewport();
 	}
-	PlayerStatsWidget->AddToViewport();
 }
 
 
 UPlayerStatsWidget* ATwinSticksHUD::GetPlayerStatsWidget() {
-	if (IsValid(PlayerStatsWidget) == false) {
-		UE_LOG(LogTemp, Error, TEXT("ATwinSticksHUD::GetPlayerStatsWidget IsValid(PlayerStatsWidget) == false"));
-	}
+	if (validate(IsValid(PlayerStatsWidget)) == false) { return nullptr;  }
+
 	return PlayerStatsWidget;
 }

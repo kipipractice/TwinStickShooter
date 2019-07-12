@@ -64,6 +64,8 @@ protected:
 	UFUNCTION()
 	void UpdateHUDScore(int Score);
 
+	void FindPlayerControllers();
+
 
 	UPROPERTY(EditDefaultsOnly)
 	FName WinGameLevel;

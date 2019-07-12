@@ -19,33 +19,24 @@
 #include "UObject/SoftObjectPath.h"
 #include "UObject/SoftObjectPtr.h"
 
+#include "CustomMacros.h"
+
 void ANexusDefenceGameMode::BeginPlay() {
 	Super::BeginPlay();
 
 	UWorld* World = GetWorld();
-	if (IsValid(World) == false) {
-		UE_LOG(LogTemp, Error, TEXT("ANexusDefenceGameMode::BeginPlay IsValid(World) == false"));
-		return;
-	}
+	if (validate(IsValid(World)) == false) { return; }
 
 	TArray<AActor*> NexusArray;
 	UGameplayStatics::GetAllActorsOfClass(World, ANexus::StaticClass(), NexusArray);
-	if (NexusArray.Num() != 1) {
-		UE_LOG(LogTemp, Error, TEXT("ANexusDefenceGameMode::BeginPlay NexusArray.Num() != 0"));
-		return;
-	}
+	if (validate(NexusArray.Num() == 1) == false) { return; }
 
 	ANexus* Nexus = Cast<ANexus>(NexusArray[0]);
-	if (IsValid(Nexus) == false) {
-		UE_LOG(LogTemp, Error, TEXT("ANexusDefenceGameMode::BeginPlay IsValid(Nexus) == false"));
-		return;
-	}
+	if (validate(IsValid(Nexus)) == false) { return; }
 	
 	UHealthComponent* HealthComponent = Nexus->FindComponentByClass<UHealthComponent>();
-	if (IsValid(HealthComponent) == false) {
-		UE_LOG(LogTemp, Error, TEXT("ANexusDefenceGameMode::BeginPlay IsValid(HealthComponent) == false"));
-		return;
-	}
+	if (validate(IsValid(HealthComponent)) == false) { return; }
+
 	HealthComponent->OnDeath.AddDynamic(this, &ANexusDefenceGameMode::LoseGame);
 	HealthComponent->OnHealthChanged.AddDynamic(this, &ANexusDefenceGameMode::SetNexusHealth);
 
@@ -107,10 +98,8 @@ void ANexusDefenceGameMode::SpawnEnemyWave() {
 	}
 
 	*/
-	if (CurrentWaveIndex > EnemiesPerWave.Num()) {
-		UE_LOG(LogTemp, Error, TEXT("ANexusDefenceGameMode::SpawnEnemyWave CurrentWaveIndex > EnemiesPerWave.Num()"))
-		return;
-	}
+	if (validate(CurrentWaveIndex <= EnemiesPerWave.Num()) == false) { return; }
+
 	TArray<AActor*> Spawners;
 	UGameplayStatics::GetAllActorsOfClass(GetWorld(), ASpawner::StaticClass(), Spawners);
 	if (CurrentWaveIndex == EnemiesPerWave.Num()) { // Boss Wave
@@ -137,33 +126,24 @@ void ANexusDefenceGameMode::RespawnPlayer()
 
 UNexusDefenceStatsWidget* ANexusDefenceGameMode::GetNexusStatsWidget(APlayerController* PlayerController)
 {
-	if (IsValid(PlayerController) == false) {
-		UE_LOG(LogTemp, Error, TEXT("ANexusDefenceGameMode::SetNexusHealth IsValid(PlayerController) == false"));
-		return nullptr;
-	}
+	if (validate(IsValid(PlayerController)) == false) { return nullptr; }
 
 	ANexusDefenceHUD* NexusDefenceHUD = Cast<ANexusDefenceHUD>(PlayerController->GetHUD());
-	if (IsValid(NexusDefenceHUD) == false) {
-		UE_LOG(LogTemp, Error, TEXT("ANexusDefenceGameMode::SetNexusHealth IsValid(NexusDefenceHUD) == false"));
-		return nullptr;
-	}
+	if (validate(IsValid(NexusDefenceHUD)) == false) { return nullptr; }
+
 	return NexusDefenceHUD->GetNexusDefenceWidget();
 }
 
 void ANexusDefenceGameMode::SetNexusHealth(int Health) {
 	for (ACharacterPlayerController* PlayerController : PlayerControllers) {
-		if (IsValid(PlayerController) == false) {
-			UE_LOG(LogTemp, Error, TEXT("ANexusDefenceGameMode::SetNexusHealth IsValid(PlayerController) == false"));
-			return;
-		}
+		if (validate(IsValid(PlayerController)) == false) { return; }
 
 		ANexusDefenceHUD* NexusDefenceHUD = Cast<ANexusDefenceHUD>(PlayerController->GetHUD());
-		if (IsValid(NexusDefenceHUD) == false) {
-			UE_LOG(LogTemp, Error, TEXT("ANexusDefenceGameMode::SetNexusHealth IsValid(NexusDefenceHUD) == false"));
-			return;
-		}
+		if (validate(IsValid(NexusDefenceHUD)) == false) { return; }
 
 		UNexusDefenceStatsWidget* NexusStatsWidget = NexusDefenceHUD->GetNexusDefenceWidget();
+		if (validate(IsValid(NexusStatsWidget)) == false) { return; }
+
 		NexusStatsWidget->SetNexusHealth(Health);
 	}
 }
@@ -178,7 +158,7 @@ void ANexusDefenceGameMode::LoseGame() {
 	Super::LoseGame();
 	for (ACharacterPlayerController* PlayerController : PlayerControllers) {
 		UNexusDefenceStatsWidget* NexusStatsWidget = GetNexusStatsWidget(PlayerController);
-		if (IsValid(NexusStatsWidget)) {
+		if (validate(IsValid(NexusStatsWidget))) {
 			NexusStatsWidget->SetLoseGame();
 		}
 		
@@ -197,9 +177,10 @@ void ANexusDefenceGameMode::WinGame() {
 	for (ACharacterPlayerController* PlayerController : PlayerControllers) {
 		UNexusDefenceStatsWidget * NexusStatsWidget = GetNexusStatsWidget(PlayerController);
 
-		if (IsValid(NexusStatsWidget)) {
+		if (validate(IsValid(NexusStatsWidget))) {
 			NexusStatsWidget->SetWinGame();
 		}
+
 		FTimerHandle RespawnTimerHandle; // not used anywhere
 		GetWorldTimerManager().SetTimer(
 			RespawnTimerHandle,

@@ -16,32 +16,28 @@
 #include "PlayerStatsWidget.h"
 #include "Spawner.h"
 #include "CharacterPlayerController.h"
-
+#include "CustomMacros.h"
 
 void ATwinStickGameMode::BeginPlay()
 {
 	Super::BeginPlay();
-	if (IsValid(PlayerTemplate) == false) {
-		UE_LOG(LogTemp, Error, TEXT("ATwinStickGameMode::BeginPlay IsValid(PlayerTemplate) == false"));
-	}
+	validate(IsValid(PlayerTemplate));
 
+	FindPlayerControllers();
+}
+
+void ATwinStickGameMode::FindPlayerControllers() {
 	UWorld* World = GetWorld();
-	if (IsValid(World) == false) {
-		UE_LOG(LogTemp, Error, TEXT("ATwinStickGameMode::BeginPlay IsValid(World) == false"));
-		return;
-	}
+	if (validate(IsValid(World)) == false) { return; }
 
+	PlayerControllers.Reset();
 	TArray<AActor*> PlayerControllerActors;
 	UGameplayStatics::GetAllActorsOfClass(GetWorld(), ACharacterPlayerController::StaticClass(), PlayerControllerActors);
+
 	for (AActor* PlayerControllerActor : PlayerControllerActors) {
 		ACharacterPlayerController* PlayerController = Cast<ACharacterPlayerController>(PlayerControllerActor);
-		if (IsValid(PlayerController)) {
+		if (validate(IsValid(PlayerController))) {
 			PlayerControllers.Add(PlayerController);
-		}
-		else
-		{
-			UE_LOG(LogTemp, Error, TEXT("ATwinStickGameMode::BeginPlay IsValid(PlayerController)"));
-			continue;
 		}
 	}
 }
@@ -54,41 +50,27 @@ void ATwinStickGameMode::IncrementScore(const int Amount)
 
 void ATwinStickGameMode::UpdateHUDScore(int Score) {
 	for (ACharacterPlayerController* PlayerController : PlayerControllers) {
-		if (IsValid(PlayerController) == false) {
-			UE_LOG(LogTemp, Error, TEXT("ATwinStickGameMode::UpdateHUDScore IsValid(PlayerController) == false"));
-			continue;
-		}
+		if (validate(IsValid(PlayerController)) == false) { continue; }
 
 		ATwinSticksHUD* TwinSticksHUD = Cast<ATwinSticksHUD>(PlayerController->GetHUD());
-		if (IsValid(TwinSticksHUD) == false) {
-			UE_LOG(LogTemp, Error, TEXT("ATwinStickGameMode::UpdateHUDScore IsValid(TwinSticksHUD) == false"));
-			continue;
-		}
+		if (validate(IsValid(TwinSticksHUD)) == false) { continue; }
 
 		UPlayerStatsWidget* PlayerStats = TwinSticksHUD->GetPlayerStatsWidget();
-		if (IsValid(PlayerStats)) {
+		if (validate(IsValid(PlayerStats))) {
 			PlayerStats->SetScore(Score);
-		}
-		else
-		{
-			UE_LOG(LogTemp, Error, TEXT("ATwinStickGameMode::UpdateHUDScore IsValid(PlayerStats) == false"));
-			continue;
 		}
 	}
 }
 
+
+// FIXME: PLS na otdelni funkcii
 void ATwinStickGameMode::RespawnPlayer()
 {
 	UWorld* World = GetWorld();
-	if (IsValid(World) == false) {
-		UE_LOG(LogTemp, Error, TEXT("ATwinStickGameMode::RespawnPlayer IsValid(World) == false"))
-		return;
-	}
+	if (validate(IsValid(World) == false)) { return; }
+
 	APlayerController* FirstPlayerController = World->GetFirstPlayerController();
-	if (IsValid(FirstPlayerController) == false) {
-		UE_LOG(LogTemp, Error, TEXT("ATwinStickGameMode::RespawnPlayer IsValid(FirstPlayerController) == false"))
-		return;
-	}
+	if (validate(IsValid(FirstPlayerController)) == false) { return; }
 
 	APawn* PlayerCharacter = FirstPlayerController->GetPawn();
 	if (IsValid(PlayerCharacter)) {
@@ -103,16 +85,12 @@ void ATwinStickGameMode::RespawnPlayer()
 		Enemy->Destroy();
 	}
 	
-	if (IsValid(PlayerTemplate) == false) {
-		UE_LOG(LogTemp, Error, TEXT("ATwinStickGameMode::RespawnPlayer IsValid(PlayerTemplate) == false"));
-		return;
-	}
+	if (validate(IsValid(PlayerTemplate) == false)) { return; }
 	//Spawn The player and possess him by the player controller
 	ATwinSticksCharacter* PlayerActor = World->SpawnActor<ATwinSticksCharacter>(PlayerTemplate, PlayerRespawnLocation);
 	FirstPlayerController->Possess(PlayerActor);
 
 	CurrentEnemies = 0;
-
 }
 
 void ATwinStickGameMode::WinGame()
@@ -147,10 +125,8 @@ void ATwinStickGameMode::SetPlayerRespawnLocation(FTransform Location)
 
 void ATwinStickGameMode::RestartLevel() {
 	UWorld* World = GetWorld();
-	if (IsValid(World) == false) {
-		UE_LOG(LogTemp, Error, TEXT("ATwinStickGameMode::RestartLevel IsValid(World) == false"));
-		return;
-	}
+	if (validate(IsValid(World)) == false) { return; }
+
 	UGameplayStatics::OpenLevel(this, FName(*World->GetName()), false);
 }
 

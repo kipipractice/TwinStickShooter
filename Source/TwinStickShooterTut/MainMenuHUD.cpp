@@ -15,6 +15,7 @@ void AMainMenuHUD::SaveSettings() {
 		UGameplayStatics::CreateSaveGameObject(USettingsSaveGame::StaticClass())
 	);
 
+	// Dont't use validate. Expected behaviour!
 	if (IsValid(SaveGameInstance)) {
 		SaveGameInstance->Type = Type;
 
@@ -26,6 +27,6 @@ void AMainMenuHUD::SaveSettings() {
 	}
 	else
 	{
-		UE_LOG(LogTemp, Warning, TEXT("AMainMenuHUD::SaveSettings() IsValid(SaveGameInstance) == false"));
+		UE_LOG(LogTemp, Warning, TEXT("AMainMenuHUD::SaveSettings IsValid(SaveGameInstance) == false"));
 	}
 }

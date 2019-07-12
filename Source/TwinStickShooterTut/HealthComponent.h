@@ -35,6 +35,7 @@ public:
 	void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent);
 
 protected:
+	void BeginPlay() override;
 	
 	UPROPERTY(EditDefaultsOnly)
 	int MaxHealth;
