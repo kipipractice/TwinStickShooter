@@ -85,7 +85,7 @@ void ATwinStickGameMode::RespawnPlayer()
 		Enemy->Destroy();
 	}
 	
-	if (validate(IsValid(PlayerTemplate) == false)) { return; }
+	if (validate(IsValid(PlayerTemplate)) == false) { return; }
 	//Spawn The player and possess him by the player controller
 	ATwinSticksCharacter* PlayerActor = World->SpawnActor<ATwinSticksCharacter>(PlayerTemplate, PlayerRespawnLocation);
 	FirstPlayerController->Possess(PlayerActor);
