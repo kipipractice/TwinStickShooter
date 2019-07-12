@@ -55,6 +55,9 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category = "Setup")
 	TSubclassOf<AEnemyCharacter> BossTemplate;
 
+	UPROPERTY(EditDefaultsOnly)
+	FName WinGameLevel;
+
 private:
 	UNexusDefenceStatsWidget* GetNexusStatsWidget(APlayerController* PlayerController);
 };

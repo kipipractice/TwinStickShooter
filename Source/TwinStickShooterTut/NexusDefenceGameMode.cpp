@@ -113,10 +113,10 @@ void ANexusDefenceGameMode::SpawnEnemyWave() {
 	}
 	TArray<AActor*> Spawners;
 	UGameplayStatics::GetAllActorsOfClass(GetWorld(), ASpawner::StaticClass(), Spawners);
-	UE_LOG(LogTemp, Warning, TEXT("Num Spawners: %d"), Spawners.Num())
 	if (CurrentWaveIndex == EnemiesPerWave.Num()) { // Boss Wave
+		UE_LOG(LogTemp, Display, TEXT("Spawning Boss"))
 		ASpawner* Spawner = Cast<ASpawner>(Spawners[0]);
-		Spawner->SpawnEnemy(BossTemplate);
+		Spawner->SpawnEnemy(EnemyClass);
 	}
 	else { //Regular Wave
 		int EnemiesThisWave = EnemiesPerWave[CurrentWaveIndex];
@@ -203,7 +203,8 @@ void ANexusDefenceGameMode::WinGame() {
 		if (IsValid(NexusStatsWidget)) {
 			NexusStatsWidget->SetWinGame();
 		}
-		
+		/*
+
 		FTimerHandle RespawnTimerHandle; // not used anywhere
 		GetWorldTimerManager().SetTimer(
 			RespawnTimerHandle,
@@ -211,6 +212,9 @@ void ANexusDefenceGameMode::WinGame() {
 			&ATwinStickGameMode::RestartLevel,
 			3
 		);
+		*/
+		UGameplayStatics::OpenLevel(this, WinGameLevel, false);
+		
 	}
 }
 
@@ -219,7 +223,7 @@ void ANexusDefenceGameMode::DecrementEnemyCounter()
 	Super::DecrementEnemyCounter();
 	if (AreAllEnemiesDead()) {
 		CurrentWaveIndex++;
-		if (CurrentWaveIndex > EnemiesPerWave.Num()) { //We won the game
+		if (CurrentWaveIndex > EnemiesPerWave.Num()) { //We win the game after all the enemy waves and the boss wave
 			WinGame();
 		}
 		//TODO: add delay
