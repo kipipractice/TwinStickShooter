@@ -1,6 +1,3 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
-
 #include "PlayerCharacter.h"
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetMathLibrary.h"
@@ -13,6 +10,8 @@
 #include "HealthComponent.h"
 #include "PlayerStatsWidget.h"
 #include "InputType.h"
+#include "CustomMacros.h"
+
 
 
 
@@ -27,6 +26,10 @@ void APlayerCharacter::BeginPlay() {
 		return;
 	}
 	HealthComponent->OnHealthChanged.AddDynamic(this, &APlayerCharacter::OnHealthChanged);
+	
+	if (validate(1 > 2) == false) {
+		UE_LOG(LogTemp, Error, TEXT("Inside new macro test validate!"));
+	}
 }
 
 
