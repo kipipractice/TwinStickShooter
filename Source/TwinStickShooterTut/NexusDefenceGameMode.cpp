@@ -51,87 +51,54 @@ void ANexusDefenceGameMode::BeginPlay() {
 
 	this->Nexus = Nexus;
 
-	SpawnEnemyWaveOnNextFrame();
-	/*
-	ConstructorHelpers::FObjectFinder<UDataTable>
-		SpawnerLookupTable_BP(TEXT("DataTable'/Game/TwinSticksShooter/DataTables/SpawnerTable.SpawnerTable'"));
-	//TODO: check if object loading succeeded
-	SpawnerLookupTable = SpawnerLookupTable_BP.Object;
 	if (IsValid(SpawnerLookupTable) == false) {
 		UE_LOG(LogTemp, Error, TEXT("ANexusDefenceGameMode::BeginPlay IsValid(SpawnerLookupTable) == false"))
 	}
-	*/
-	
+	else {
+		WaveCount = SpawnerLookupTable->GetRowNames().Num();
+		UE_LOG(LogTemp, Display, TEXT("%d"), WaveCount)
+	}
+	SpawnEnemyWave();
 }
 
 
-void ANexusDefenceGameMode::SpawnEnemyWaveOnNextFrame() {
-	GetWorldTimerManager().SetTimerForNextTick(
-		this,
-		&ANexusDefenceGameMode::SpawnEnemyWave
-	);
-}
 
 void ANexusDefenceGameMode::SpawnEnemyWave() {
 	
-	
-	/*
+
+	if (CurrentWaveIndex == WaveCount) {
+		UE_LOG(LogTemp, Display, TEXT("Finished all the waves"))
+		WinGame();
+	}
 	if (IsValid(SpawnerLookupTable) == false) {
 		UE_LOG(LogTemp, Error, TEXT("ANexusDefenceGameMode::BeginPlay IsValid(SpawnerLookupTable) == false"))
 		return;
 	}
 
+	//TODO: Get the number of entries in the data table
+
 	FString ContextString(TEXT("GENERAL"));
 	FName WaveName = FName(*FString::FromInt(CurrentWaveIndex));
-	FSpawnerTable* SpawnerLookupRow = SpawnerLookupTable->FindRow(WaveName, ContextString);
+	FSpawnerTable* SpawnerLookupRow = SpawnerLookupTable->FindRow<FSpawnerTable>(WaveName, ContextString);
 	if (SpawnerLookupRow == nullptr) {
 		UE_LOG(LogTemp, Error, TEXT("ANexusDefenceGameMode::BeginPlay SpawnerLookupRow == nullptr"))
 		return;
 	}
-	else { // we have the spawner lookup row data
-		UE_LOG(LogTemp, Display, TEXT("SpawnerLookupRow data found"))
-	}
-
-	TAssetPtr<AEnemyCharacter> EnemyAssetPtr = SpawnerLookupRow->EnemyAsset;
-	FStreamableManager AssetLoader;
-	FStringAssetReference AssetToLoad;
-	AssetToLoad = EnemyAssetPtr.ToStringReference();
-	AssetLoader.SimpleAsyncLoad(AssetToLoad);
-
-
+	UE_LOG(LogTemp, Display, TEXT("SpawnerLookupRow data found"))
 	TArray<AActor*> Spawners;
 	UGameplayStatics::GetAllActorsOfClass(GetWorld(), ASpawner::StaticClass(), Spawners);
 	for (int i = 0; i < SpawnerLookupRow->EnemyCount; i++) {
 		ASpawner* Spawner = Cast<ASpawner>(Spawners[i % Spawners.Num()]);
-		Spawner->SpawnEnemy(EnemyAssetPtr.Get());
+		Spawner->SpawnEnemy(SpawnerLookupRow->EnemyAsset);
 	}
-
-	*/
-	if (CurrentWaveIndex > EnemiesPerWave.Num()) {
-		UE_LOG(LogTemp, Error, TEXT("ANexusDefenceGameMode::SpawnEnemyWave CurrentWaveIndex > EnemiesPerWave.Num()"))
-		return;
-	}
-	TArray<AActor*> Spawners;
-	UGameplayStatics::GetAllActorsOfClass(GetWorld(), ASpawner::StaticClass(), Spawners);
-	if (CurrentWaveIndex == EnemiesPerWave.Num()) { // Boss Wave
-		UE_LOG(LogTemp, Display, TEXT("Spawning Boss"))
-		ASpawner* Spawner = Cast<ASpawner>(Spawners[0]);
-		Spawner->SpawnEnemy(EnemyClass);
-	}
-	else { //Regular Wave
-		int EnemiesThisWave = EnemiesPerWave[CurrentWaveIndex];
-		for (int i = 0; i < EnemiesThisWave; i++) {
-			ASpawner* Spawner = Cast<ASpawner>(Spawners[i % Spawners.Num()]);
-			Spawner->SpawnEnemy(EnemyClass);
-		}
-	}
+	
 }
 
 void ANexusDefenceGameMode::RespawnPlayer()
 {
 	Super::RespawnPlayer();
 	CurrentWaveIndex = 0;
-	SpawnEnemyWaveOnNextFrame();
+	SpawnEnemyWave();
 
 }
 
@@ -223,10 +190,11 @@ void ANexusDefenceGameMode::DecrementEnemyCounter()
 	Super::DecrementEnemyCounter();
 	if (AreAllEnemiesDead()) {
 		CurrentWaveIndex++;
-		if (CurrentWaveIndex > EnemiesPerWave.Num()) { //We win the game after all the enemy waves and the boss wave
+		if (CurrentWaveIndex == WaveCount) { //We win the game after all the enemy waves and the boss wave
+			UE_LOG(LogTemp, Display, TEXT("You won the game"))
 			WinGame();
 		}
 		//TODO: add delay
-		SpawnEnemyWaveOnNextFrame();
+		SpawnEnemyWave();
 	}
 }

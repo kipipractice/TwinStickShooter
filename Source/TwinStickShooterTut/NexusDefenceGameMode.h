@@ -36,28 +36,21 @@ protected:
 
 	void DecrementEnemyCounter() override;
 
-	//UPROPERTY(EditDefaultsOnly, Category = "Setup")
-	//UDataTable* SpawnerLookupTable = nullptr;
+	UPROPERTY(EditDefaultsOnly, Category = "Setup")
+	const UDataTable* SpawnerLookupTable = nullptr;
 
 	int CurrentWaveIndex = 0;
 
 	UFUNCTION()
 	void SpawnEnemyWave();
 
-	UFUNCTION()
-	void SpawnEnemyWaveOnNextFrame();
-
 	void RespawnPlayer() override;
-
-	UPROPERTY(EditDefaultsOnly, Category = "Setup")
-	TArray<int> EnemiesPerWave;
-
-	UPROPERTY(EditDefaultsOnly, Category = "Setup")
-	TSubclassOf<AEnemyCharacter> BossTemplate;
 
 	UPROPERTY(EditDefaultsOnly)
 	FName WinGameLevel;
 
-private:
+	int WaveCount = 0;
+
 	UNexusDefenceStatsWidget* GetNexusStatsWidget(APlayerController* PlayerController);
+	
 };
