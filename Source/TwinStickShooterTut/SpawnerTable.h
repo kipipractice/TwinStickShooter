@@ -30,5 +30,5 @@ public:
 
 	/** Enemy Asset*/
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Setup)
-		TAssetPtr<AEnemyCharacter> EnemyAsset;
+	TSubclassOf<AEnemyCharacter> EnemyAsset;
 };
