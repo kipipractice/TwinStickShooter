@@ -17,11 +17,11 @@ struct FSpawnerTable : public FTableRowBase
 public:
 
 	FSpawnerTable()
-		: EnemyCount(0)
-		, EnemyAsset(0)
+		: EnemyCount(0),
+		EnemyAsset(0)
 	{}
 
-	/** The 'Name' column is the same as the Current Wave */
+	// "Name" is the same as the Wave Index
 
 	// Number of enemies to spawn
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Setup)

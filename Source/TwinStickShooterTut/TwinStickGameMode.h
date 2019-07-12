@@ -19,8 +19,6 @@ class ACharacterPlayerController;
  * 
  */
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FSpawnEnemies, int, WaveIndex);
-
 UCLASS()
 class TWINSTICKSHOOTERTUT_API ATwinStickGameMode : public AGameModeBase
 {
@@ -35,16 +33,14 @@ public:
 	void IncrementScore(const int Amount);
 
 	// Respawns the player to his initial transform
-	UFUNCTION(BlueprintCallable)
-	void RespawnPlayer();
+	UFUNCTION()
+	virtual void RespawnPlayer();
 
 	UFUNCTION()
 	void IncrementEnemyCounter(int EnemyCount);
 
 	UFUNCTION()
-	void DecrementEnemyCounter();
-
-	FSpawnEnemies OnSpawnEnemies;
+	virtual void DecrementEnemyCounter();
 
 	void SetPlayerRespawnLocation(FTransform Location);
 
@@ -54,14 +50,17 @@ public:
 protected:
 
 	UFUNCTION()
+	virtual void WinGame();
+
+	UFUNCTION()
+	virtual void LoseGame();
+
+	UFUNCTION()
 	bool AreAllEnemiesDead();
 
 	UFUNCTION()
 	void UpdateHUDScore(int Score);
 
-	void SpawnEnemyWave();
-
-	void SpawnEnemyWaveOnNextFrame();
 
 	UPROPERTY()
 	FTransform PlayerRespawnLocation;
@@ -73,8 +72,6 @@ protected:
 	TSubclassOf<AEnemyCharacter> EnemyClass;
 
 	int CurrentScore = 0;
-
-	int CurrentWaveIndex = 0;
 
 	int CurrentEnemies = 0;
 
