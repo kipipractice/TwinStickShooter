@@ -11,7 +11,7 @@ RetType GetLambdaValue(InnerType&& Inner, FString CallingFunc)
 
 
 #define validate(Expression)                                                  \
-	GetLambdaValue<bool>([] (FString FuncName) {                              \
+	GetLambdaValue<bool>([&] (FString FuncName) {                             \
 		if((Expression) == false) {                                           \
 			UE_LOG(LogTemp, Error,                                            \
 				TEXT("%s::%s:%d  ("#Expression") == false"),                  \
