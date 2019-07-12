@@ -116,7 +116,7 @@ void ANexusDefenceGameMode::SpawnEnemyWave() {
 	if (CurrentWaveIndex == EnemiesPerWave.Num()) { // Boss Wave
 		UE_LOG(LogTemp, Display, TEXT("Spawning Boss"))
 		ASpawner* Spawner = Cast<ASpawner>(Spawners[0]);
-		Spawner->SpawnEnemy(EnemyClass);
+		Spawner->SpawnEnemy(BossTemplate);
 	}
 	else { //Regular Wave
 		int EnemiesThisWave = EnemiesPerWave[CurrentWaveIndex];
@@ -177,8 +177,6 @@ ANexus* ANexusDefenceGameMode::GetNexus() {
 void ANexusDefenceGameMode::LoseGame() {
 	Super::LoseGame();
 	for (ACharacterPlayerController* PlayerController : PlayerControllers) {
-		
-
 		UNexusDefenceStatsWidget* NexusStatsWidget = GetNexusStatsWidget(PlayerController);
 		if (IsValid(NexusStatsWidget)) {
 			NexusStatsWidget->SetLoseGame();
@@ -197,23 +195,18 @@ void ANexusDefenceGameMode::LoseGame() {
 void ANexusDefenceGameMode::WinGame() {
 	Super::WinGame();
 	for (ACharacterPlayerController* PlayerController : PlayerControllers) {
-
 		UNexusDefenceStatsWidget * NexusStatsWidget = GetNexusStatsWidget(PlayerController);
 
 		if (IsValid(NexusStatsWidget)) {
 			NexusStatsWidget->SetWinGame();
 		}
-		/*
-
 		FTimerHandle RespawnTimerHandle; // not used anywhere
 		GetWorldTimerManager().SetTimer(
 			RespawnTimerHandle,
 			this,
-			&ATwinStickGameMode::RestartLevel,
+			&ATwinStickGameMode::LoadWinLevel,
 			3
 		);
-		*/
-		UGameplayStatics::OpenLevel(this, WinGameLevel, false);
 		
 	}
 }

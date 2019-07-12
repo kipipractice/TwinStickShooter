@@ -153,3 +153,8 @@ void ATwinStickGameMode::RestartLevel() {
 	}
 	UGameplayStatics::OpenLevel(this, FName(*World->GetName()), false);
 }
+
+
+void ATwinStickGameMode::LoadWinLevel() {
+	UGameplayStatics::OpenLevel(this, WinGameLevel, false);
+}

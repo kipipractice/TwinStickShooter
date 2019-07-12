@@ -47,6 +47,9 @@ public:
 	UFUNCTION()
 	void RestartLevel();
 
+	UFUNCTION()
+	void LoadWinLevel();
+
 protected:
 
 	UFUNCTION()
@@ -61,6 +64,9 @@ protected:
 	UFUNCTION()
 	void UpdateHUDScore(int Score);
 
+
+	UPROPERTY(EditDefaultsOnly)
+	FName WinGameLevel;
 
 	UPROPERTY()
 	FTransform PlayerRespawnLocation;
