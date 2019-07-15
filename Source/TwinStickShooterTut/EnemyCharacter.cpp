@@ -91,5 +91,19 @@ void AEnemyCharacter::Die() {
 	Controller->Destroy();
 	SetActorEnableCollision(false);
 	GameMode->IncrementScore(Score);
+}
+
+
+void AEnemyCharacter::Destroyed() {
+	Super::Destroyed();
+
+	UE_LOG(LogTemp, Warning, TEXT("DEstroyed!"));
+
+	UWorld* World = GetWorld();
+	if (validate(IsValid(World)) == false) { return; }
+
+	ATwinStickGameMode* GameMode = Cast<ATwinStickGameMode>(World->GetAuthGameMode());
+	if (validate(IsValid(GameMode)) == false) { return; }
+
 	GameMode->DecrementEnemyCounter();
 }

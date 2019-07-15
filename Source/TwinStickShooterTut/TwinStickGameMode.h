@@ -76,9 +76,6 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category = "Setup")
 	TSubclassOf<class APlayerCharacter> PlayerTemplate;
 
-	UPROPERTY(EditDefaultsOnly, Category = "Setup")
-	TSubclassOf<AEnemyCharacter> EnemyClass;
-
 	int CurrentScore = 0;
 
 	int CurrentEnemies = 0;

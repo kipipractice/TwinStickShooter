@@ -56,9 +56,7 @@ void ASpawner::SpawnEnemy(TSubclassOf<ATwinSticksCharacter> EnemyTemplate, int C
 		if (validate(IsValid(GameMode)) == false) { continue;; }
 
 		GameMode->IncrementEnemyCounter(1);
-	
 	}
-	
 }
 
 
