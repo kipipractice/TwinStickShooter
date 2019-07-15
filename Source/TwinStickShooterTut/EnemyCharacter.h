@@ -21,8 +21,6 @@ public:
 
 	void SetTarget(AActor* Target);
 
-	void Destroyed() override;
-
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;

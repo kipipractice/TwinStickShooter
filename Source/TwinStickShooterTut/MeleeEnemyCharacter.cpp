@@ -11,7 +11,7 @@
 
 
 AMeleeEnemyCharacter::AMeleeEnemyCharacter() {
-
+	PrimaryActorTick.bCanEverTick = false;
 }
 
 void AMeleeEnemyCharacter::BeginPlay()

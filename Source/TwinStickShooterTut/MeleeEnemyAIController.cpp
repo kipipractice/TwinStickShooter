@@ -7,6 +7,7 @@
 void AMeleeEnemyAIController::BeginPlay()
 {
 	Super::BeginPlay();
+
 	GetWorldTimerManager().SetTimer(
 		TrackPlayerTimerHandle,
 		this,
