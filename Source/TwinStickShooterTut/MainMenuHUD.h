@@ -16,15 +16,14 @@ UCLASS()
 class TWINSTICKSHOOTERTUT_API AMainMenuHUD : public AHUD
 {
 	GENERATED_BODY()
-	
-protected:
-	
+
+public:
 	UFUNCTION(BlueprintCallable)
 	void SetInputType(InputType Type);
 
-private:
-	InputType Type;
-
 	UFUNCTION(BlueprintCallable)
 	void SaveSettings();
+
+	InputType Type;
+
 };
