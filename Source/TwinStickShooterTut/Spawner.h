@@ -10,7 +10,7 @@
 
 
 //forward declarations
-class AEnemyCharacter;
+class ATwinSticksCharacter;
 class UBoxComponent;
 class UDataTable;
 UCLASS()
@@ -22,8 +22,10 @@ public:
 	// Sets default values for this actor's properties
 	ASpawner();
 
+
+	//Spawn specified number of enemies inside the box component
 	UFUNCTION()
-	void SpawnEnemy(TSubclassOf<AEnemyCharacter> EnemyTemplate);
+	void SpawnEnemy(TSubclassOf<ATwinSticksCharacter> EnemyTemplate, int Count);
 
 protected:
 	// Called when the game starts or when spawned

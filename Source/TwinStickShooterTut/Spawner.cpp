@@ -2,7 +2,7 @@
 
 
 #include "Spawner.h"
-#include "EnemyCharacter.h"
+#include "TwinSticksCharacter.h"
 #include "TwinStickGameMode.h"
 #include "Components/BoxComponent.h"
 #include "Kismet/KismetMathLibrary.h"
@@ -24,32 +24,41 @@ void ASpawner::BeginPlay()
 	validate(IsValid(BoxComponent));
 }
 
-void ASpawner::SpawnEnemy(TSubclassOf<AEnemyCharacter> EnemyTemplate) {
+void ASpawner::SpawnEnemy(TSubclassOf<ATwinSticksCharacter> EnemyTemplate, int Count) {
 	if (validate(IsValid(BoxComponent))  == false) { return; }
 	if (validate(IsValid(EnemyTemplate)) == false) { return; }
 
 	UWorld* World = GetWorld();
 	if (validate(IsValid(World)) == false) { return; }
 
-	//Spawn enemy at random location inside bounding box
-	FVector ActorLocation = GetActorLocation();
-	FVector BoxExtent = BoxComponent->GetScaledBoxExtent();
-	FTransform EnemySpawnPosition = FTransform(
-		UKismetMathLibrary::RandomPointInBoundingBox(
-			ActorLocation,
-			BoxExtent
-		)
-	);
-	FActorSpawnParameters SpawnParameters;
-	SpawnParameters.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
 
-	AEnemyCharacter* Enemy = World->SpawnActor<AEnemyCharacter>(EnemyTemplate.Get(), EnemySpawnPosition, SpawnParameters);
-	if (validate(IsValid(Enemy)) == false) { return; }
+	for (int i = 0; i < Count; i++) {
+		//Get random point inside the bounding box
+		FVector ActorLocation = GetActorLocation();
+		FVector BoxExtent = BoxComponent->GetScaledBoxExtent();
+		FTransform EnemySpawnPosition = FTransform(
+			UKismetMathLibrary::RandomPointInBoundingBox(
+				ActorLocation,
+				BoxExtent
+			)
+		);
+
+		FActorSpawnParameters SpawnParameters;
+		SpawnParameters.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
+
+		ATwinSticksCharacter* Enemy = World->SpawnActor<ATwinSticksCharacter>(
+			EnemyTemplate,
+			EnemySpawnPosition,
+			SpawnParameters);
+		if (validate(IsValid(Enemy)) == false) { continue;; }
+
+		ATwinStickGameMode* GameMode = Cast<ATwinStickGameMode>(World->GetAuthGameMode());
+		if (validate(IsValid(GameMode)) == false) { continue;; }
+
+		GameMode->IncrementEnemyCounter(1);
 	
-	ATwinStickGameMode* GameMode = Cast<ATwinStickGameMode>(World->GetAuthGameMode());
-	if (validate(IsValid(GameMode)) == false) { return; }
-
-	GameMode->IncrementEnemyCounter(1);
+	}
+	
 }
 
 

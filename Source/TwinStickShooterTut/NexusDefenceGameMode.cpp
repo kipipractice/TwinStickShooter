@@ -19,6 +19,7 @@
 #include "UObject/SoftObjectPath.h"
 #include "UObject/SoftObjectPtr.h"
 #include "CustomMacros.h"
+#include "TwinSticksCharacter.h"
 
 void ANexusDefenceGameMode::BeginPlay() {
 	Super::BeginPlay();
@@ -66,13 +67,29 @@ void ANexusDefenceGameMode::SpawnEnemyWave() {
 	
 	TArray<AActor*> Spawners;
 	UGameplayStatics::GetAllActorsOfClass(GetWorld(), ASpawner::StaticClass(), Spawners);
-	for (int i = 0; i < SpawnerLookupRow->EnemyCount; i++) {
-		ASpawner* Spawner = Cast<ASpawner>(Spawners[i % Spawners.Num()]);
-		if (validate(IsValid(Spawner))) {
-			Spawner->SpawnEnemy(SpawnerLookupRow->EnemyAsset);
-		}
-	}
 	
+	if (validate(Spawners.Num() == 3) == false) { return; }
+	ASpawner* FirstSpawner  = Cast<ASpawner>(Spawners[0]);
+	if (validate(IsValid(FirstSpawner)) &&
+		validate(IsValid(SpawnerLookupRow->SpawnerOneEnemyAsset))) {
+			FirstSpawner->SpawnEnemy(
+			SpawnerLookupRow->SpawnerOneEnemyAsset,
+			SpawnerLookupRow->SpawnerOneEnemyCount);
+	}
+	ASpawner* SecondSpawner = Cast<ASpawner>(Spawners[1]);
+	if (validate(IsValid(SecondSpawner)) &&
+		validate(IsValid(SpawnerLookupRow->SpawnerTwoEnemyAsset))) {
+			SecondSpawner->SpawnEnemy(
+			SpawnerLookupRow->SpawnerTwoEnemyAsset,
+			SpawnerLookupRow->SpawnerTwoEnemyCount);
+	}
+	ASpawner* ThirdSpawner = Cast<ASpawner>(Spawners[2]);
+	if (validate(IsValid(ThirdSpawner)) &&
+		validate(IsValid(SpawnerLookupRow->SpawnerThreeEnemyAsset))) {
+			ThirdSpawner->SpawnEnemy(
+			SpawnerLookupRow->SpawnerThreeEnemyAsset,
+			SpawnerLookupRow->SpawnerThreeEnemyCount);
+	}
 }
 
 void ANexusDefenceGameMode::RespawnPlayer()

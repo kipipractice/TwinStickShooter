@@ -7,7 +7,7 @@
 #include "SpawnerTable.generated.h"
 
 
-class AEnemyCharacter;
+class ATwinSticksCharacter;
 
 USTRUCT(BlueprintType)
 struct FSpawnerTable : public FTableRowBase
@@ -17,18 +17,40 @@ struct FSpawnerTable : public FTableRowBase
 public:
 
 	FSpawnerTable()
-		: EnemyCount(0),
-		EnemyAsset(0)
+		: SpawnerOneEnemyCount(0),
+		SpawnerOneEnemyAsset(0),
+		SpawnerTwoEnemyCount(0),
+		SpawnerTwoEnemyAsset(0),
+		SpawnerThreeEnemyCount(0),
+		SpawnerThreeEnemyAsset(0)
+
 	{}
 
 	// "Name" is the same as the Wave Index
 
 	// Number of enemies to spawn
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Setup)
-	int EnemyCount;
+	int SpawnerOneEnemyCount;
 
 
 	/** Enemy Asset*/
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Setup)
-	TSubclassOf<AEnemyCharacter> EnemyAsset;
+	TSubclassOf<ATwinSticksCharacter> SpawnerOneEnemyAsset;
+
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Setup)
+	int SpawnerTwoEnemyCount;
+
+	/** Enemy Asset*/
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Setup)
+	TSubclassOf<ATwinSticksCharacter> SpawnerTwoEnemyAsset;
+
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Setup)
+	int SpawnerThreeEnemyCount;
+
+
+	/** Enemy Asset*/
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Setup)
+	TSubclassOf<ATwinSticksCharacter> SpawnerThreeEnemyAsset;
 };
