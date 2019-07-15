@@ -36,6 +36,8 @@ public:
 	UFUNCTION()
 	void StopFiring();
 
+	void Destroyed() override;
+
 protected:
 
 	virtual void BeginPlay() override;
@@ -69,7 +71,6 @@ protected:
 
 	UFUNCTION()
 	void AttachGun(AGun* NewGun);
-
 
 	UFUNCTION()
 	virtual void OnDeathTimerEnd();

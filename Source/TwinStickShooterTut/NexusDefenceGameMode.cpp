@@ -79,13 +79,30 @@ void ANexusDefenceGameMode::SpawnEnemyWave() {
 		if (validate(IsValid(SpawnInfo.EnemyAsset)) == false) { continue; }
 		Spawner->SpawnEnemy(SpawnInfo.EnemyAsset, SpawnInfo.EnemyCount);
 	}
-	
 }
 
 void ANexusDefenceGameMode::RespawnPlayer()
 {
 	Super::RespawnPlayer();
-	CurrentWaveIndex = 0;
+
+	if (validate(IsValid(Nexus))) {
+		UHealthComponent* HealthComponent = Nexus->FindComponentByClass<UHealthComponent>();
+		if (validate(IsValid(HealthComponent))) {
+			HealthComponent->TakeDamage(DamageToNexusPerRespawn);
+		}
+	}
+
+	/*
+	UNexusDefenceStatsWidget* NexusStatsWidget = GetNexusStatsWidget();
+	if (validate(IsValid(NexusStatsWidget))) {
+		UHealthComponent* HealthComponent = Nexus->FindComponentByClass<UHealthComponent>();
+		if (validate(IsValid(HealthComponent))) {
+			NexusStatsWidget->SetNexusHealth(HealthComponent->GetHealth());
+		}
+	}
+	*/
+
+	// CurrentWaveIndex = 0;
 	SpawnEnemyWave();
 }
 

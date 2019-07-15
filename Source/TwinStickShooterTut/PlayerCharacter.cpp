@@ -154,8 +154,6 @@ void APlayerCharacter::Die() {
 
 	DisableInput(PlayerController);
 	LookAroundDelegate.Unbind();
-
-	StopFiring();
 }
 
 

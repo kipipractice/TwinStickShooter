@@ -117,16 +117,21 @@ void ATwinSticksCharacter::Die() {
 
 	// FIXME: Sloppy workaround because animation requires it.
 	bDead = true;
+	StopFiring();
 }
 
 
 void ATwinSticksCharacter::OnDeathTimerEnd() {
-	if (IsValid(Gun)) {
-		Gun->Destroy();
-	}
 	Destroy();
 }
 
+void ATwinSticksCharacter::Destroyed() {
+	Super::Destroyed();
+
+	if (IsValid(Gun)) {
+		Gun->Destroy();
+	}
+}
 
 void ATwinSticksCharacter::LookInDirection(FVector Direction) {
 	FRotator Rotation = UKismetMathLibrary::MakeRotFromX(Direction);

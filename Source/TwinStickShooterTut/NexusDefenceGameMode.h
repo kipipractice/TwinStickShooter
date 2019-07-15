@@ -49,5 +49,8 @@ protected:
 	int WaveCount = 0;
 
 	UNexusDefenceStatsWidget* GetNexusStatsWidget(APlayerController* PlayerController);
+
+	UPROPERTY(EditDefaultsOnly, Category = "Setup")
+	int DamageToNexusPerRespawn = 500;
 	
 };

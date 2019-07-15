@@ -32,7 +32,9 @@ public:
 
 	FHealthChange OnHealthChanged;
 
-	void PostEditChangeProperty(FPropertyChangedEvent & PropertyChangedEvent) override;
+#if WITH_EDITOR
+	virtual void PostEditChangeProperty(FPropertyChangedEvent & PropertyChangedEvent) override;
+#endif
 
 protected:
 	void BeginPlay() override;

@@ -12,10 +12,12 @@ UHealthComponent::UHealthComponent()
 	PrimaryComponentTick.bCanEverTick = false;
 }
 
+#if WITH_EDITOR
 void UHealthComponent::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent) {
 	Super::PostEditChangeProperty(PropertyChangedEvent);
 	Health = MaxHealth;
 }
+#endif
 
 void UHealthComponent::BeginPlay() {
 	Super::BeginPlay();
