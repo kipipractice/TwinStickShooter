@@ -5,12 +5,7 @@
 #include "Components/BoxComponent.h"
 #include "Engine/EngineTypes.h"
 #include "Engine/World.h"
-#include "TimerManager.h"
-#include "Classes/AIController.h"
 #include "GameFramework/Controller.h"
-
-#include "PlayerCharacter.h"
-#include "HealthComponent.h"
 #include "TwinStickGameMode.h"
 #include "CustomMacros.h"
 
@@ -24,10 +19,6 @@ AEnemyCharacter::AEnemyCharacter()
 void AEnemyCharacter::BeginPlay() {
 	Super::BeginPlay();
 
-	if (validate(IsValid(DamageBox))) {
-		DamageBox->OnComponentBeginOverlap.AddDynamic(this, &AEnemyCharacter::OnBoxBeginOverlap);
-		DamageBox->OnComponentEndOverlap.AddDynamic(this, &AEnemyCharacter::OnOverlapEnd);
-	}
 }
 
 
@@ -35,43 +26,6 @@ void AEnemyCharacter::SetTarget(AActor* Target) {
 	if (validate(IsValid(Target)) == false) { return; }
 
 	this->Target = Target;
-}
-
-
-void AEnemyCharacter::OnBoxBeginOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
-{
-	if (validate(IsValid(Target)) == false) { return; }
-
-	if (OtherActor == Target) {
-		GetWorldTimerManager().SetTimer(
-			DamageTimerHandle,
-			this,
-			&AEnemyCharacter::DealDamage,
-			DamageRate,
-			true,
-			DamageDelay
-		);
-	}
-
-}
-
-void AEnemyCharacter::DealDamage()
-{
-	if (validate(IsValid(Target)) == false) { return; }
-
-	UHealthComponent* HealthComponent = Target->FindComponentByClass<UHealthComponent>();
-	if (validate(IsValid(HealthComponent))) {
-		HealthComponent->TakeDamage(DamagePerHit);
-	}
-}
-
-void AEnemyCharacter::OnOverlapEnd(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
-{
-	if (validate(IsValid(Target)) == false) { return; }
-
-	if (OtherActor == Target) {
-		GetWorldTimerManager().ClearTimer(DamageTimerHandle);
-	}
 }
 
 

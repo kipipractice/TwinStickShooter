@@ -29,6 +29,13 @@ public:
 	UPROPERTY(BlueprintReadOnly)
 	bool bDead;
 
+
+	UFUNCTION()
+	void StartFiring();
+
+	UFUNCTION()
+	void StopFiring();
+
 protected:
 
 	virtual void BeginPlay() override;
@@ -63,11 +70,6 @@ protected:
 	UFUNCTION()
 	void AttachGun(AGun* NewGun);
 
-	UFUNCTION()
-	void StartFiring();
-
-	UFUNCTION()
-	void StopFiring();
 
 	UFUNCTION()
 	virtual void OnDeathTimerEnd();

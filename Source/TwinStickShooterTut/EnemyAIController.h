@@ -37,33 +37,27 @@ protected:
 
 	void OnPossess(APawn* PossessedPawn) override;
 
-	FTimerHandle TrackPlayerTimerHandle;
-
 	UPROPERTY(EditDefaultsOnly, Category = "Targeting")
 	EFollowActorType DefaultActorTypeToFollow;
 
 	EFollowActorType CurrentlyTargetedActorType;
 
 	UPROPERTY()
-	AActor* TargetToFollow = nullptr;
+	AActor* Target = nullptr;
 
 	UPROPERTY()
 	AEnemyCharacter* ControlledEnemy;
 
-	// interval at which the enemy changes direction and moves towards the player(in seconds)
-	UPROPERTY(EditDefaultsOnly, Category = "Targeting")
-	float TrackInterval = 0.25f;
-
-	UPROPERTY(EditDefaultsOnly, Category = "Targeting")
-	float TrackDelay = 0.25f;
 
 	// The distance to player at which enemy stops following nexus and starts following player.
 	UPROPERTY(EditDefaultsOnly, Category = "Targeting")
-	float TargetPlayerDistance = 200;
+	float TargetPlayerDistance = 200.0f;
 
 	// Distance to nexus at which distance to player doesnt matter and enemy won't change its target.
 	UPROPERTY(EditDefaultsOnly, Category = "Targeting")
-	float TargetNexusDistance = 200;
+	float TargetNexusDistance = 200.0f;
+
+	bool bLockedToNexus = false;
 
 	void SwitchTarget(EFollowActorType ActorTypeToFollow);
 
@@ -71,7 +65,7 @@ protected:
 
 	ANexus* GetNexus();
 
-	void ResetFollowTarget();
+	void FollowTarget();
 
 	void DecideTarget();
 

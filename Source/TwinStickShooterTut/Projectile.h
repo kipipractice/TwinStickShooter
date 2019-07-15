@@ -42,4 +42,7 @@ protected:
 	//Damage to deal on hit
 	UPROPERTY(EditDefaultsOnly, Category = "Gameplay")
 	float Damage = 30.0f;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Gameplay")
+	TArray<FName> TagsToIgnore;
 };

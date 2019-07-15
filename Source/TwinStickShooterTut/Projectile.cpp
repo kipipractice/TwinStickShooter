@@ -37,6 +37,11 @@ void AProjectile::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* Ot
 {
 	if (validate(IsValid(OtherActor)) == false) { return; }
 
+	for (FName Tag : OtherActor->Tags) {
+		if (TagsToIgnore.Contains(Tag)) {
+			return;
+		}
+	}
 	UHealthComponent* HealthComponent = OtherActor->FindComponentByClass<UHealthComponent>();
 	if (IsValid(HealthComponent)) {
 		HealthComponent->TakeDamage(Damage);

@@ -4,7 +4,6 @@
 #include "EnemyAIController.h"
 #include "Engine/EngineTypes.h"
 #include "Engine/World.h"
-#include "TimerManager.h"
 #include "GameFramework/PlayerController.h"
 #include "Kismet/KismetMathLibrary.h"
 
@@ -23,14 +22,6 @@ AEnemyAIController::AEnemyAIController() {
 void AEnemyAIController::BeginPlay() {
 	Super::BeginPlay();
 
-	GetWorldTimerManager().SetTimer(
-		TrackPlayerTimerHandle,
-		this,
-		&AEnemyAIController::ResetFollowTarget,
-		TrackInterval,
-		true,
-		TrackDelay
-	);
 }
 	
 
@@ -44,6 +35,9 @@ void AEnemyAIController::Tick(float DeltaTime)
 
 
 void AEnemyAIController::DecideTarget() {
+	//We cannot change target if we are already locked to the nexus
+	if (bLockedToNexus) return;
+
 	if (validate(IsValid(ControlledEnemy)) == false) { return; }
 
 	APlayerCharacter* PlayerCharacter = GetPlayerCharacter();
@@ -58,6 +52,7 @@ void AEnemyAIController::DecideTarget() {
 	// Dont retarget if already in range of nexus. 
 	// Otherwise player can cheese the enemies by switching targeting between nexus and player character.
 	if (DistanceToNexus < TargetNexusDistance && CurrentlyTargetedActorType == EFollowActorType::Nexus) {
+		bLockedToNexus = true;
 		return;
 	}
 	FVector PlayerLocation = PlayerCharacter->GetActorLocation();
@@ -73,14 +68,14 @@ void AEnemyAIController::DecideTarget() {
 }
 
 void AEnemyAIController::LookAtTarget() {
-	if (validate(IsValid(TargetToFollow)) == false) { return; }
+	if (validate(IsValid(Target)) == false) { return; }
 
 	AActor* Pawn = GetPawn();
 	if (validate(IsValid(Pawn)) == false) { return; }
 
 	FRotator NewRotation = UKismetMathLibrary::FindLookAtRotation(
 		Pawn->GetActorLocation(),
-		TargetToFollow->GetActorLocation()
+		Target->GetActorLocation()
 	);
 	FRotator PawnRotation = Pawn->GetActorRotation();
 	PawnRotation.Yaw = NewRotation.Yaw;
@@ -121,8 +116,8 @@ void AEnemyAIController::SwitchTarget(EFollowActorType ActorTypeToFollow) {
 
 	if (validate(IsValid(NewTarget)) == false) { return; }
 
-	TargetToFollow = NewTarget;
-	ControlledEnemy->SetTarget(TargetToFollow);
+	Target = NewTarget;
+	ControlledEnemy->SetTarget(Target);
 }
 
 APlayerCharacter* AEnemyAIController::GetPlayerCharacter() {
@@ -151,9 +146,9 @@ ANexus* AEnemyAIController::GetNexus() {
 	return Nexus;
 }
 
-void AEnemyAIController::ResetFollowTarget()
+void AEnemyAIController::FollowTarget()
 {
-	if (validate(IsValid(TargetToFollow)) == false) { return; }
+	if (validate(IsValid(Target)) == false) { return; }
 
-	MoveToActor(TargetToFollow);
+	MoveToActor(Target);
 }

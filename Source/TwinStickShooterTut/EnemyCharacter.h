@@ -27,42 +27,9 @@ protected:
 
 	void Die() override;
 
-	//Box component overlap begin overlap event
-	UFUNCTION()
-	void OnBoxBeginOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,
-		UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep,
-		const FHitResult& SweepResult);
-
-	//Box component overlap end overlap event
-	UFUNCTION()
-	void OnOverlapEnd(class UPrimitiveComponent* OverlappedComp,
-		class AActor* OtherActor,
-		class UPrimitiveComponent* OtherComp,
-		int32 OtherBodyIndex);
-
-	void DealDamage();
-
-	UPROPERTY(BlueprintReadWrite)
-	UBoxComponent* DamageBox = nullptr;
-
-	//Rate at which the ai controller deals damage (in seconds)
-	UPROPERTY(EditDefaultsOnly, Category = "Setup")
-	float DamageRate = 1.0f;
-
-	//Delay before starting to deal damage (in seconds)
-	UPROPERTY(EditDefaultsOnly, Category = "Setup")
-	float DamageDelay = 0.1f;
-
-	//Damage to deal to the player, per hit
-	UPROPERTY(EditDefaultsOnly, Category = "Setup")
-	float DamagePerHit = 30.0f;
-
 	// Added score when enemy dies.
 	UPROPERTY(EditDefaultsOnly, Category = "Setup")
 	float Score = 500.0f;
-
-
-	FTimerHandle DamageTimerHandle;
 
 	// target player used for checking collision actor
 	UPROPERTY()
