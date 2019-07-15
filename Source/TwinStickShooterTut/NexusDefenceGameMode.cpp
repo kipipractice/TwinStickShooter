@@ -44,7 +44,7 @@ void ANexusDefenceGameMode::BeginPlay() {
 
 	if (validate(IsValid(SpawnerLookupTable))) { 
 		WaveCount = SpawnerLookupTable->GetRowNames().Num();
-		UE_LOG(LogTemp, Display, TEXT("%d"), WaveCount)
+		UE_LOG(LogTemp, Display, TEXT("%d"), WaveCount);
 		SpawnEnemyWave();
 	}
 }
@@ -55,41 +55,31 @@ void ANexusDefenceGameMode::SpawnEnemyWave() {
 	if (CurrentWaveIndex == WaveCount) {
 		UE_LOG(LogTemp, Display, TEXT("Finished all the waves"))
 		WinGame();
+		return;
 	}
+	UE_LOG(LogTemp, Warning, TEXT("Spawn wave %d"), CurrentWaveIndex);
 
 	if (validate(IsValid(SpawnerLookupTable)) == false) { return; }
 
 	FString ContextString(TEXT("GENERAL"));
 	FName WaveName = FName(*FString::FromInt(CurrentWaveIndex));
 	FSpawnerTable* SpawnerLookupRow = SpawnerLookupTable->FindRow<FSpawnerTable>(WaveName, ContextString);
-
 	if (validate(SpawnerLookupRow != nullptr) == false) { return; }
+	TArray<FSpawnerInfo> WaveInfo = SpawnerLookupRow->SpawnerEnemyPlacement;
 	
 	TArray<AActor*> Spawners;
 	UGameplayStatics::GetAllActorsOfClass(GetWorld(), ASpawner::StaticClass(), Spawners);
 	
-	if (validate(Spawners.Num() == 3) == false) { return; }
-	ASpawner* FirstSpawner  = Cast<ASpawner>(Spawners[0]);
-	if (validate(IsValid(FirstSpawner)) &&
-		validate(IsValid(SpawnerLookupRow->SpawnerOneEnemyAsset))) {
-			FirstSpawner->SpawnEnemy(
-			SpawnerLookupRow->SpawnerOneEnemyAsset,
-			SpawnerLookupRow->SpawnerOneEnemyCount);
+	if (validate(WaveInfo.Num() >= Spawners.Num()) == false) { return; }
+
+	for (int i = 0; i < Spawners.Num(); i++) {
+		ASpawner* Spawner = Cast<ASpawner>(Spawners[i]);
+		FSpawnerInfo SpawnInfo = WaveInfo[i];
+		if (validate(IsValid(Spawner)) == false) { continue; }
+		if (validate(IsValid(SpawnInfo.EnemyAsset)) == false) { continue; }
+		Spawner->SpawnEnemy(SpawnInfo.EnemyAsset, SpawnInfo.EnemyCount);
 	}
-	ASpawner* SecondSpawner = Cast<ASpawner>(Spawners[1]);
-	if (validate(IsValid(SecondSpawner)) &&
-		validate(IsValid(SpawnerLookupRow->SpawnerTwoEnemyAsset))) {
-			SecondSpawner->SpawnEnemy(
-			SpawnerLookupRow->SpawnerTwoEnemyAsset,
-			SpawnerLookupRow->SpawnerTwoEnemyCount);
-	}
-	ASpawner* ThirdSpawner = Cast<ASpawner>(Spawners[2]);
-	if (validate(IsValid(ThirdSpawner)) &&
-		validate(IsValid(SpawnerLookupRow->SpawnerThreeEnemyAsset))) {
-			ThirdSpawner->SpawnEnemy(
-			SpawnerLookupRow->SpawnerThreeEnemyAsset,
-			SpawnerLookupRow->SpawnerThreeEnemyCount);
-	}
+	
 }
 
 void ANexusDefenceGameMode::RespawnPlayer()
@@ -175,7 +165,7 @@ void ANexusDefenceGameMode::DecrementEnemyCounter()
 	if (AreAllEnemiesDead()) {
 		CurrentWaveIndex++;
 		if (CurrentWaveIndex == WaveCount) { //We win the game after all the enemy waves and the boss wave
-			UE_LOG(LogTemp, Display, TEXT("You won the game"))
+			UE_LOG(LogTemp, Display, TEXT("You won the game"));
 			WinGame();
 		}
 		//TODO: add delay

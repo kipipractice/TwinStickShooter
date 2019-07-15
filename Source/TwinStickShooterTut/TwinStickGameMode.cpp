@@ -67,7 +67,7 @@ void ATwinStickGameMode::UpdateHUDScore(int Score) {
 void ATwinStickGameMode::RespawnPlayer()
 {
 	UWorld* World = GetWorld();
-	if (validate(IsValid(World) == false)) { return; }
+	if (validate(IsValid(World)) == false) { return; }
 
 	APlayerController* FirstPlayerController = World->GetFirstPlayerController();
 	if (validate(IsValid(FirstPlayerController)) == false) { return; }
@@ -80,7 +80,7 @@ void ATwinStickGameMode::RespawnPlayer()
 	
 	// Destroy all enemies before respawning the player
 	TArray<AActor*> EnemyActors;
-	UGameplayStatics::GetAllActorsOfClass(World, EnemyClass, EnemyActors);
+	UGameplayStatics::GetAllActorsOfClass(World, AEnemyCharacter::StaticClass(), EnemyActors);
 	for (auto&& Enemy : EnemyActors) {
 		Enemy->Destroy();
 	}

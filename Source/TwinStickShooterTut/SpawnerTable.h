@@ -6,8 +6,21 @@
 #include "Engine/DataTable.h"
 #include "SpawnerTable.generated.h"
 
-
 class ATwinSticksCharacter;
+class AEnemyCharacter;
+
+USTRUCT(BlueprintType, Meta=(DisplayName="SpawnerInfo"))
+struct FSpawnerInfo {
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	int EnemyCount;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TSubclassOf<ATwinSticksCharacter> EnemyAsset;
+};
+
+
 
 USTRUCT(BlueprintType)
 struct FSpawnerTable : public FTableRowBase
@@ -17,40 +30,10 @@ struct FSpawnerTable : public FTableRowBase
 public:
 
 	FSpawnerTable()
-		: SpawnerOneEnemyCount(0),
-		SpawnerOneEnemyAsset(0),
-		SpawnerTwoEnemyCount(0),
-		SpawnerTwoEnemyAsset(0),
-		SpawnerThreeEnemyCount(0),
-		SpawnerThreeEnemyAsset(0)
-
+		:
+		SpawnerEnemyPlacement()
 	{}
 
-	// "Name" is the same as the Wave Index
-
-	// Number of enemies to spawn
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Setup)
-	int SpawnerOneEnemyCount;
-
-
-	/** Enemy Asset*/
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Setup)
-	TSubclassOf<ATwinSticksCharacter> SpawnerOneEnemyAsset;
-
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Setup)
-	int SpawnerTwoEnemyCount;
-
-	/** Enemy Asset*/
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Setup)
-	TSubclassOf<ATwinSticksCharacter> SpawnerTwoEnemyAsset;
-
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Setup)
-	int SpawnerThreeEnemyCount;
-
-
-	/** Enemy Asset*/
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Setup)
-	TSubclassOf<ATwinSticksCharacter> SpawnerThreeEnemyAsset;
+	TArray<struct FSpawnerInfo> SpawnerEnemyPlacement;
 };

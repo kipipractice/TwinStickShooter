@@ -21,6 +21,8 @@ public:
 
 	void SetTarget(AActor* Target);
 
+	void Destroyed() override;
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -34,4 +36,5 @@ protected:
 	// target player used for checking collision actor
 	UPROPERTY()
 	AActor* Target = nullptr;
+
 };
