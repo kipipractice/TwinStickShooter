@@ -61,8 +61,16 @@ void ATwinSticksCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInpu
 	PlayerInputComponent->BindAction("Fire", IE_Pressed, this, &ATwinSticksCharacter::StartFiring);
 	PlayerInputComponent->BindAction("Fire", IE_Released, this, &ATwinSticksCharacter::StopFiring);
 
+	PlayerInputComponent->BindAction("ToggleCrouch", IE_Pressed, this, &ATwinSticksCharacter::ToggleCrouch);
+
 	PlayerInputComponent->BindAxis("MoveForward", this, &ATwinSticksCharacter::MoveForward);
 	PlayerInputComponent->BindAxis("MoveRight", this, &ATwinSticksCharacter::MoveRight);
+
+}
+
+
+void ATwinSticksCharacter::ToggleCrouch() {
+	bCrouch = !bCrouch;
 }
 
 

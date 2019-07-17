@@ -26,9 +26,11 @@ public:
 
 	// TODO: Figure out how to make a blueprint getter.
 	// losh kod ama ako ne e public ne bachka v animaciqta.
-	UPROPERTY(BlueprintReadOnly)
-	bool bDead;
+	UPROPERTY(BlueprintReadOnly, Category = "Animation")
+	bool bDead = false;
 
+	UPROPERTY(BlueprintReadOnly, Category = "Animation")
+	bool bCrouch = false;
 
 	UFUNCTION()
 	void StartFiring();
@@ -39,6 +41,7 @@ public:
 	void Destroyed() override;
 
 protected:
+	void ToggleCrouch();
 
 	virtual void BeginPlay() override;
 
