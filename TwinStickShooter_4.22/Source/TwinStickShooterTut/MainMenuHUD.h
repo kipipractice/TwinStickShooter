@@ -7,6 +7,9 @@
 #include "MainMenuHUD.generated.h"
 
 
+class UMainMenuWidget;
+class USettingsWidget;
+
 enum class InputType : uint8;
 
 /**
@@ -18,6 +21,10 @@ class TWINSTICKSHOOTERTUT_API AMainMenuHUD : public AHUD
 	GENERATED_BODY()
 
 public:
+	void LoadMainMenu();
+
+	void LoadSettings();
+
 	UFUNCTION(BlueprintCallable)
 	void SetInputType(InputType Type);
 
@@ -26,4 +33,17 @@ public:
 
 	InputType Type;
 
+protected:
+
+	void PostInitializeComponents() override;
+
+	UPROPERTY(EditDefaultsOnly, Category = "UI")
+	TSubclassOf<UMainMenuWidget> MainMenuWidgetTemplate;
+
+	UPROPERTY(EditDefaultsOnly, Category = "UI")
+	TSubclassOf<USettingsWidget> SettingsWidgetTemplate;
+
+	UMainMenuWidget* MainMenuWidget;
+
+	USettingsWidget* SettingsWidget;
 };
