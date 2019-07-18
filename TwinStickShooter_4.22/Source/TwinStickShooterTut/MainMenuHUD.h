@@ -23,7 +23,7 @@ class TWINSTICKSHOOTERTUT_API AMainMenuHUD : public AHUD
 public:
 	void LoadMainMenu();
 
-	void LoadSettings();
+	void LoadSettingsMenu();
 
 	UFUNCTION(BlueprintCallable)
 	void SetInputType(InputType Type);
